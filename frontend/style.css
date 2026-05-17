@@ -1,3 +1,15 @@
+@font-face {
+    font-family: Jost;
+    src: url(fonts/Jost-VariableFont_wght.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: Mina;
+    src: url(fonts/Mina-Regular.ttf) format('truetype');
+}
+
+
+
 * {
   margin: 0;
   padding: 0;
@@ -5,7 +17,9 @@
 }
 
 html {
+    font-family: Jost, sans-serif;
     background-color: #ffffff;
+    font-family: Jost, sans-serif;
 }
 
 :root {
@@ -14,16 +28,18 @@ html {
     --cor-fundo: #ffffff;
     --cor-texto-preto: #000000;
     --cor-texto-branco: #ffffff;
-    --cor-texto-transparente: #ffffff50;
+    --cor-texto-transparente: #ffffff65;
 }
 
-nav {
+/* parte da barra de navegação!!!! */
+
+#header {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    height: 110px;
     background-color: var(--roxo);
-    padding: 5%;
-    padding-bottom: 0;
     color: var(--cor-texto-preto);
     
 }
@@ -35,31 +51,63 @@ nav {
 
 }
 
-logo {
+#logo {
     font-size: 24px;
     font-weight: bold;
     margin-right: 20px;
+    
 }
 
 .div-busca {
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
     align-items: center;
-    margin-left: 20px;
+    justify-items: start;
     color: var(--cor-texto-branco);
+    gap: 30px;
+
 }
 
 #busca {
-    padding: 5px;
+    padding: 10px;
     background-color: var(--preto);
     color: var(--cor-texto-transparente);
-    border: none;
+    border: 1px solid var(--cor-texto-transparente);
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    width: 400px;
+    background-image: ;
 }
 
-.div-links {
+.div-nav {
     display: flex;
     flex-direction: row;
     align-items: center;
     background-color: var(--preto);
-    padding: 3%;
+    padding: 15px;
+    width: 100%;
+    justify-content: center;
+    gap: 50px;
 }
+
+#hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px;
+    background-image: url(imgs/Fundo-Hero.png);
+    background-size: cover;
+    font-family: Mina, sans-serif;
+}
+
+#frete-gratis {
+    display: flex;
+    background-color: var(--cor-texto-branco);
+    color: var(--cor-texto-preto);
+    border-radius: 50px;
+    padding: 5px;
+    width: 385px;
+    justify-content: center;
+}
+
+/* parte do corpo da página*/
