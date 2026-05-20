@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuração de Módulos – Cleo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <div id="header-2">
+        <h2 id="logo">Cleo (logo placeholder)</h2>
+    </div>
+</header>
+
+<div class="corpo-config">
+
+    <!-- Menu lateral -->
+    <div class="menu-config">
+        <h2>MENU</h2>
+        <hr>
+        <button class="btn-menu"       onclick="location.href='configuracao-de-usuario.html'">Configuração de Usuários</button>
+        <button class="btn-menu ativo" onclick="location.href='configuracao-de-modulos.html'">Configuração de Módulos</button>
+        <button class="btn-menu"       onclick="location.href='configuracao-de-perfil.html'">Configuração de Perfil</button>
+    </div>
+
+    <!-- Conteúdo principal -->
+    <div class="config">
+
+        <div class="config-topo">
+            <h2>Configuração de Módulos</h2>
+            <button id="btn-novo" onclick="abrirModal()">+ Novo Módulo</button>
+        </div>
+
+        <div class="config-meio">
+            <div class="input-buscar">
+                <input id="buscar-config" type="text" placeholder="Buscar módulo..." oninput="filtrarTabela()">
+                <button class="buscar" type="button">
+                    Buscar
+                </button>
+            </div>
+            <button class="btn-config" onclick="editarSelecionado()">Editar</button>
+            <button class="btn-config" onclick="desativarSelecionado()">Desativar</button>
+        </div>
+
+        <div class="config-tabela">
+            <hr>
+            <table class="tabela-usuarios" id="tabela-modulos">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Situação</th>
+                    </tr>
+                </thead>
+                <tbody id="corpo-tabela">
+                    <!-- Linhas carregadas pelo JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal de cadastro / edição -->
+<div id="modal-overlay" class="modal-overlay" style="display:none">
+    <div class="modal">
+        <h3 id="modal-titulo">Novo Módulo</h3>
+        <hr style="margin-bottom:16px">
+
+        <input type="hidden" id="campo-id">
+
+        <label>Nome do Módulo</label>
+        <input type="text" id="campo-nome" placeholder="Ex: Financeiro">
+
+        <label>Descrição</label>
+        <input type="text" id="campo-descricao" placeholder="Descrição do módulo">
+
+        <div class="modal-botoes">
+            <button class="btn-config" onclick="fecharModal()">Cancelar</button>
+            <button id="btn-novo" onclick="salvarModulo()">Salvar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // -------------------------------------------------------
+    // Dados simulados – substitua pelas chamadas ao back-end
+    // -------------------------------------------------------
+    let modulos = [
+        { id: 1, nome: "Financeiro",  descricao: "Gestão financeira da loja",    ativo: "s" },
+        { id: 2, nome: "Estoque",     descricao: "Controle de produtos e estoque", ativo: "s" },
+        { id: 3, nome: "Atendimento", descricao: "Atendimento ao cliente",        ativo: "s" }
+    ];
+
+    let proximoId = 4;
+    let linhaSelecionada = null;
+
+    function renderTabela(lista) {
+        const tbody = document.getElementById("corpo-tabela");
+        tbody.innerHTML = "";
+        lista.forEach(m => {
+            const tr = document.createElement("tr");
+            tr.dataset.id = m.id;
+            tr.innerHTML = `
+                <td><input type="radio" name="sel-modulo" onchange="selecionarLinha(${m.id})"></td>
+                <td>${m.id}</td>
+                <td>${m.nome}</td>
+                <td>${m.descricao}</td>
+                <td class="${m.ativo === 's' ? 'ativo-status' : 'inativo-status'}">
+                    ${m.ativo === 's' ? 'Ativo' : 'Inativo'}
+                </td>`;
+            tbody.appendChild(tr);
+        });
+    }
+
+    function filtrarTabela() {
+        const termo = document.getElementById("buscar-modulo").value.toLowerCase();
+        const filtrados = modulos.filter(m =>
+            m.nome.toLowerCase().includes(termo) ||
+            m.descricao.toLowerCase().includes(termo)
+        );
+        renderTabela(filtrados);
+    }
+
+    function selecionarLinha(id) {
+        linhaSelecionada = id;
+    }
+
+    function abrirModal(modulo = null) {
+        document.getElementById("modal-titulo").textContent = modulo ? "Editar Módulo" : "Novo Módulo";
+        document.getElementById("campo-id").value        = modulo ? modulo.id        : "";
+        document.getElementById("campo-nome").value      = modulo ? modulo.nome      : "";
+        document.getElementById("campo-descricao").value = modulo ? modulo.descricao : "";
+        document.getElementById("modal-overlay").style.display = "flex";
+    }
+
+    function fecharModal() {
+        document.getElementById("modal-overlay").style.display = "none";
+    }
+
+    function salvarModulo() {
+        const id        = document.getElementById("campo-id").value;
+        const nome      = document.getElementById("campo-nome").value.trim();
+        const descricao = document.getElementById("campo-descricao").value.trim();
+
+        if (!nome) { alert("O nome do módulo é obrigatório."); return; }
+
+        if (id) {
+            const m = modulos.find(m => m.id === parseInt(id));
+            if (m) { m.nome = nome; m.descricao = descricao; }
+        } else {
+            modulos.push({ id: proximoId++, nome, descricao, ativo: "s" });
+        }
+
+        fecharModal();
+        renderTabela(modulos);
+    }
+
+    function editarSelecionado() {
+        if (!linhaSelecionada) { alert("Selecione um módulo."); return; }
+        const m = modulos.find(m => m.id === linhaSelecionada);
+        abrirModal(m);
+    }
+
+    function desativarSelecionado() {
+        if (!linhaSelecionada) { alert("Selecione um módulo."); return; }
+        if (!confirm("Deseja desativar este módulo?")) return;
+        const m = modulos.find(m => m.id === linhaSelecionada);
+        if (m) m.ativo = "n";
+        renderTabela(modulos);
+    }
+
+    renderTabela(modulos);
+</script>
+
+</body>
+</html>

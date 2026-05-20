@@ -41,10 +41,19 @@ h1, h2 {
 
 #header {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
     height: 110px;
+    background-color: var(--roxo);
+    color: var(--cor-texto-preto);
+    
+}
+
+#header-2 {
+    display: flex;
+    justify-content: flex-start;
+    height: 80px;
     background-color: var(--roxo);
     color: var(--cor-texto-preto);
     
@@ -58,9 +67,11 @@ h1, h2 {
 }
 
 #logo {
+    display: flex;
+    margin-left: 20px;
+    align-self: center;
     font-size: 24px;
     font-weight: bold;
-    margin-right: 20px;
     
 }
 
@@ -119,7 +130,75 @@ h1, h2 {
 
 /* parte do corpo da página*/
 
+/* parte das imagens dos produtos */
 
+main{
+    width: 90%;
+    margin: auto;
+    padding-top: 30px;
+}
+
+/* Topo produtos */
+
+.topo-produtos{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.topo-produtos select{
+    padding: 5px;
+}
+
+/* Cards */
+
+.cards-produtos{
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.card{
+    width: 250px;
+    background-color: white;
+}
+
+.card img{
+    width: 100%;
+    height: 320px;
+    object-fit: cover;
+}
+
+.info{
+    background-color: purple;
+    color: white;
+    text-align: center;
+    padding: 10px;
+}
+
+/* Categorias */
+
+.categorias{
+    margin-top: 50px;
+}
+
+.categorias-lista{
+    display: flex;
+    justify-content: space-around;
+    margin-top: 30px;
+}
+
+.categoria{
+    text-align: center;
+}
+
+.categoria img{
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+}
 
 /*configurações de usuário*/
 
@@ -171,19 +250,19 @@ hr {
     width: 100;
 }
 
-#buscar-usuario {
+#buscar-config {
     font-family: Jost, sans-serif;
     font-size: medium;
     padding: 5px;
-    width: 400px;
+    width: 300px;
     height: 40px;
 }
 
 .buscar {
-    display: flex;
-    all: unset;
-    cursor: pointer;
-
+    border: 1px solid var(--cor-texto-preto);
+    padding: 10px;
+    background-color: var(--cor-texto-branco);
+    color: var(--cor-texto-preto);
 
 }
 
@@ -254,4 +333,69 @@ table, th, td {
     border-collapse: collapse;
     padding: 10px;
     text-align: left;
+}
+/* ---- Botão de menu ativo (página atual) ---- */
+.btn-menu.ativo {
+    background-color: var(--cor-texto-preto);
+    color: var(--cor-texto-branco);
+}
+
+/* ---- Status Ativo / Inativo na tabela ---- */
+.ativo-status {
+    color: #2e7d32;
+    font-weight: bold;
+}
+.inativo-status {
+    color: #c62828;
+    font-weight: bold;
+}
+
+/* ---- Overlay do modal ---- */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+/* ---- Caixa do modal ---- */
+.modal {
+    background: #fff;
+    padding: 30px;
+    width: 420px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+}
+
+.modal h3 {
+    font-family: Mina, sans-serif;
+    font-size: 1.3rem;
+}
+
+.modal label {
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-top: 4px;
+}
+
+.modal input[type="text"],
+.modal input[type="password"],
+.modal select {
+    padding: 8px;
+    font-family: Jost, sans-serif;
+    font-size: medium;
+    border: 1px solid #aaa;
+    width: 100%;
+}
+
+.modal-botoes {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
 }

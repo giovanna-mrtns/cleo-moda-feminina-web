@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuração de Perfil – Cleo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <div id="header-2">
+        <h2 id="logo">Cleo (logo placeholder)</h2>
+    </div>
+</header>
+
+<div class="corpo-config">
+
+    <!-- Menu lateral -->
+    <div class="menu-config">
+        <h2>MENU</h2>
+        <hr>
+        <button class="btn-menu"       onclick="location.href='configuracao-de-usuario.html'">Configuração de Usuários</button>
+        <button class="btn-menu"       onclick="location.href='configuracao-de-modulos.html'">Configuração de Módulos</button>
+        <button class="btn-menu ativo" onclick="location.href='configuracao-de-perfil.html'">Configuração de Perfil</button>
+    </div>
+
+    <!-- Conteúdo principal -->
+    <div class="config">
+
+        <div class="config-topo">
+            <h2>Configuração de Perfil</h2>
+            <button id="btn-novo" onclick="abrirModalPerfil()">+ Novo Perfil</button>
+        </div>
+
+        <!-- Seletor de perfil -->
+        <div class="config-meio">
+            <label style="font-size:medium; font-weight:bold">Perfil selecionado:</label>
+            <select id="select-perfil" onchange="carregarPermissoes()" style="padding:8px; font-size:medium; font-family:inherit">
+                <option value="1">Gerente</option>
+                <option value="2">Vendedor</option>
+                <option value="3">Atendente</option>
+            </select>
+            <button class="btn-config" onclick="abrirModalEditarPerfil()">Editar Perfil</button>
+            <button class="btn-config" onclick="desativarPerfil()">Desativar Perfil</button>
+        </div>
+
+        <!-- Tabela de permissões: módulo x checkboxes -->
+        <div class="config-tabela">
+            <hr>
+            <p style="margin:10px 0; color:#555">
+                Marque as permissões que o perfil selecionado terá em cada módulo.
+            </p>
+            <table class="tabela-usuarios" id="tabela-permissoes">
+                <thead>
+                    <tr>
+                        <th>Módulo</th>
+                        <th style="text-align:center">Visualizar</th>
+                        <th style="text-align:center">Editar</th>
+                        <th style="text-align:center">Excluir</th>
+                    </tr>
+                </thead>
+                <tbody id="corpo-permissoes">
+                    <!-- Linhas geradas pelo JavaScript -->
+                </tbody>
+            </table>
+
+            <div style="display:flex; justify-content:flex-end; margin-top:20px">
+                <button id="btn-novo" onclick="salvarPermissoes()">Salvar Permissões</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal novo/editar perfil -->
+<div id="modal-overlay" class="modal-overlay" style="display:none">
+    <div class="modal">
+        <h3 id="modal-titulo">Novo Perfil</h3>
+        <hr style="margin-bottom:16px">
+        <input type="hidden" id="campo-id-perfil">
+        <label>Nome do Perfil</label>
+        <input type="text" id="campo-nome-perfil" placeholder="Ex: Vendedor">
+        <div class="modal-botoes">
+            <button class="btn-config" onclick="fecharModal()">Cancelar</button>
+            <button id="btn-novo" onclick="salvarPerfil()">Salvar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // -------------------------------------------------------
+    // Dados simulados – substitua pelas chamadas ao back-end
+    // -------------------------------------------------------
+    const perfis = [
+        { id: 1, nome: "Gerente"   },
+        { id: 2, nome: "Vendedor"  },
+        { id: 3, nome: "Atendente" }
+    ];
+
+    const modulos = [
+        { id: 1, nome: "Financeiro"  },
+        { id: 2, nome: "Estoque"     },
+        { id: 3, nome: "Atendimento" }
+    ];
+
+    // permissoes[idPerfil][idModulo] = { visualizar, editar, excluir }
+    const permissoes = {
+        1: { 1: {v:true,  e:true,  x:true},  2: {v:true,  e:true,  x:true},  3: {v:true,  e:true,  x:true}  },
+        2: { 1: {v:false, e:false, x:false}, 2: {v:true,  e:true,  x:false}, 3: {v:true,  e:false, x:false} },
+        3: { 1: {v:false, e:false, x:false}, 2: {v:true,  e:false, x:false}, 3: {v:true,  e:true,  x:false} }
+    };
+
+    // Carrega a tabela de checkboxes para o perfil selecionado
+    function carregarPermissoes() {
+        const idPerfil = parseInt(document.getElementById("select-perfil").value);
+        const tbody = document.getElementById("corpo-permissoes");
+        tbody.innerHTML = "";
+
+        modulos.forEach(m => {
+            const perm = (permissoes[idPerfil] && permissoes[idPerfil][m.id])
+                ? permissoes[idPerfil][m.id]
+                : { v: false, e: false, x: false };
+
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td><strong>${m.nome}</strong></td>
+                <td style="text-align:center">
+                    <input type="checkbox" id="v-${m.id}" ${perm.v ? "checked" : ""}
+                        onchange="sincronizar(${m.id})">
+                </td>
+                <td style="text-align:center">
+                    <input type="checkbox" id="e-${m.id}" ${perm.e ? "checked" : ""}
+                        onchange="sincronizar(${m.id})">
+                </td>
+                <td style="text-align:center">
+                    <input type="checkbox" id="x-${m.id}" ${perm.x ? "checked" : ""}
+                        onchange="sincronizar(${m.id})">
+                </td>`;
+            tbody.appendChild(tr);
+        });
+    }
+
+    // Regra: desmarcar "Visualizar" desmarca automaticamente "Editar" e "Excluir"
+    function sincronizar(idModulo) {
+        const v = document.getElementById("v-" + idModulo);
+        const e = document.getElementById("e-" + idModulo);
+        const x = document.getElementById("x-" + idModulo);
+        if (!v.checked) { e.checked = false; x.checked = false; }
+    }
+
+    // Salva as permissões marcadas (atualiza o objeto local; conecte ao back-end aqui)
+    function salvarPermissoes() {
+        const idPerfil = parseInt(document.getElementById("select-perfil").value);
+        if (!permissoes[idPerfil]) permissoes[idPerfil] = {};
+
+        modulos.forEach(m => {
+            permissoes[idPerfil][m.id] = {
+                v: document.getElementById("v-" + m.id).checked,
+                e: document.getElementById("e-" + m.id).checked,
+                x: document.getElementById("x-" + m.id).checked
+            };
+        });
+
+        alert("Permissões salvas com sucesso!");
+    }
+
+    // ---- Modal de novo/editar perfil ----
+    function abrirModalPerfil() {
+        document.getElementById("modal-titulo").textContent = "Novo Perfil";
+        document.getElementById("campo-id-perfil").value   = "";
+        document.getElementById("campo-nome-perfil").value = "";
+        document.getElementById("modal-overlay").style.display = "flex";
+    }
+
+    function abrirModalEditarPerfil() {
+        const idPerfil = parseInt(document.getElementById("select-perfil").value);
+        const p = perfis.find(p => p.id === idPerfil);
+        document.getElementById("modal-titulo").textContent    = "Editar Perfil";
+        document.getElementById("campo-id-perfil").value       = p.id;
+        document.getElementById("campo-nome-perfil").value     = p.nome;
+        document.getElementById("modal-overlay").style.display = "flex";
+    }
+
+    function fecharModal() {
+        document.getElementById("modal-overlay").style.display = "none";
+    }
+
+    function salvarPerfil() {
+        const id   = document.getElementById("campo-id-perfil").value;
+        const nome = document.getElementById("campo-nome-perfil").value.trim();
+        if (!nome) { alert("O nome do perfil é obrigatório."); return; }
+
+        if (id) {
+            const p = perfis.find(p => p.id === parseInt(id));
+            if (p) {
+                p.nome = nome;
+                // Atualiza o option no select
+                const opt = document.querySelector(`#select-perfil option[value="${id}"]`);
+                if (opt) opt.textContent = nome;
+            }
+        } else {
+            const novoId = perfis.length ? Math.max(...perfis.map(p => p.id)) + 1 : 1;
+            perfis.push({ id: novoId, nome });
+            const select = document.getElementById("select-perfil");
+            const opt = document.createElement("option");
+            opt.value = novoId;
+            opt.textContent = nome;
+            select.appendChild(opt);
+        }
+
+        fecharModal();
+    }
+
+    function desativarPerfil() {
+        const sel = document.getElementById("select-perfil");
+        const nome = sel.options[sel.selectedIndex].text;
+        if (!confirm(`Deseja desativar o perfil "${nome}"?`)) return;
+        sel.options[sel.selectedIndex].text = nome + " (inativo)";
+        alert("Perfil desativado.");
+    }
+
+    // Carrega ao abrir a página
+    carregarPermissoes();
+</script>
+
+</body>
+</html>
