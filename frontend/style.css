@@ -1,0 +1,161 @@
+@font-face {
+    font-family: Jost;
+    src: url(fonts/Jost-VariableFont_wght.ttf) format('truetype');
+}
+
+@font-face {
+    font-family: Mina;
+    src: url(fonts/Mina-Regular.ttf) format('truetype');
+}
+
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+    font-family: Jost, sans-serif;
+    background-color: #ffffff;
+    font-family: Jost, sans-serif;
+}
+
+:root {
+    --roxo: #851B87;
+    --preto: #090000;
+    --cor-fundo: #ffffff;
+    --cor-texto-preto: #000000;
+    --cor-texto-branco: #ffffff;
+    --cor-texto-transparente: #ffffff65;
+}
+
+/* parte da barra de navegação!!!! */
+
+#header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 110px;
+    background-color: var(--roxo);
+    color: var(--cor-texto-preto);
+    
+}
+
+#parte-superior {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+}
+
+#logo {
+    font-size: 24px;
+    font-weight: bold;
+    margin-right: 20px;
+    
+}
+
+.div-busca {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    justify-items: start;
+    color: var(--cor-texto-branco);
+    gap: 30px;
+
+}
+
+#busca {
+    padding: 10px;
+    background-color: var(--preto);
+    color: var(--cor-texto-transparente);
+    border: 1px solid var(--cor-texto-transparente);
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    width: 400px;
+    background-image: ;
+}
+
+.div-nav {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: var(--preto);
+    padding: 15px;
+    width: 100%;
+    justify-content: center;
+    gap: 50px;
+}
+
+#hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px;
+    background-image: url(imgs/Fundo-Hero.png);
+    background-size: cover;
+    font-family: Mina, sans-serif;
+}
+
+#frete-gratis {
+    display: flex;
+    background-color: var(--cor-texto-branco);
+    color: var(--cor-texto-preto);
+    border-radius: 50px;
+    padding: 5px;
+    width: 385px;
+    justify-content: center;
+}
+
+/* parte do corpo da página*/
+
+
+
+/*configurações de usuário*/
+
+.corpo-pagina-config {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-content: center;
+    gap: 20px;
+}
+
+.menu-direita {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border: 1px solid
+}
+
+.menu-esquerda {
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+    padding: 20px;
+    border: 1px solid
+}
+
+.config-topo {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.config-meio {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+#buscar-usuario {
+    padding: 5px;
+    width: 400px;
+}
