@@ -25,6 +25,7 @@ html {
 
 :root {
     --roxo: #851B87;
+    --roxo-escuro: #550b62;
     --preto: #090000;
     --cor-fundo: #ffffff;
     --cor-texto-preto: #000000;
@@ -136,6 +137,7 @@ h1, h2 {
     align-items: center;
     padding: 20px;
     border: 1px solid;
+    gap: 20px;
 }
 
 .menu-config {
@@ -177,6 +179,14 @@ hr {
     height: 40px;
 }
 
+.buscar {
+    display: flex;
+    all: unset;
+    cursor: pointer;
+
+
+}
+
 button {
     cursor: pointer;
     font-family: Jost, sans-serif;
@@ -205,8 +215,10 @@ button {
     width: 200px;
 }
 
-.btn-novo:hover {
-    background-color: var(--cor-texto-preto);
+#btn-novo:hover {
+    background-color: var(--roxo-escuro);
+    transition: 0.3s;
+
 }
 
 .btn-config {
@@ -222,4 +234,24 @@ button {
     background-color: var(--cor-texto-preto);
     color: var(--cor-texto-branco);
     transition: 0.3s;
+}
+
+.config-tabela {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    font-family: Mina, sans serif;
+    gap: 20px;
+}
+
+.tabela-cabecalho {
+    font-size: larger;
+    
+}
+
+table, th, td {
+    border: 1px solid var(--cor-texto-preto);
+    border-collapse: collapse;
+    padding: 10px;
+    text-align: left;
 }

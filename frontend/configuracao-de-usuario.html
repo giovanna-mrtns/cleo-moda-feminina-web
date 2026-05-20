@@ -24,16 +24,47 @@
         <div class="config">
             
             <div class="config-topo">
-                <h2>Configuração do Usuários</h2>
+                <h2>Configuração de Usuários</h2>
                 
                 <button id="btn-novo">+ Novo Usuário</button>
             </div>
 
             <div class="config-meio">
+                <div class="input-buscar">
                 <input id="buscar-usuario" type="text" placeholder="Buscar usuário...">
+                <button class="buscar" type="submit"><img src="imgs/icone-loupe-gris 6.png" alt="" height="30px"></button>
+                </div>
+                
                 <button class="btn-config">Editar</button> 
                 <button class="btn-config">Desativar</button>
+                
             </div>
+
+            <div class="config-tabela">
+            <hr>
+                <table class="tabela-usuarios">
+                    <thead>
+                        <tr >
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>E-mail</th>
+                            <th>Perfil</th>
+                            <th>Situação</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+                        <tr>
+                            <td>1</td>
+                            <td>Karina Pereira</td>
+                            <td>karina4@gmail.com</td>
+                            <td>Usuário</td>
+                            <td>Ativo</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
         </div>
     </div>
 
