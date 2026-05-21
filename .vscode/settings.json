@@ -1,0 +1,8 @@
+{
+    "java.project.sourcePaths": [
+        "."
+    ],
+    "java.project.referencedLibraries": [
+        "c:\\Users\\eimik\\Documents\\GitHub\\sistema-login-java\\lib\\mysql-connector-java-5.1.49.jar"
+    ]
+}
