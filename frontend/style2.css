@@ -29,7 +29,7 @@ body{
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    position: relative; /* adiciona isso */
+    position: relative;
 }
 
 .barra-pesquisa {
@@ -85,6 +85,7 @@ body{
 
 .nome-usuario {
     font-weight: bold;
+    font-family: Mina;
 }
 
 .icone-carrinho {
@@ -111,7 +112,7 @@ body{
     text-decoration: none;
     color: #fff4f4;
     font-size: 16px;
-    font-family: Arial;
+    font-family: Jost;
     padding-bottom: 5px;
 }
 
@@ -178,4 +179,97 @@ body{
     gap: 10px;
     font-size: 15px;
     font-family: Mina;
+}
+.produtos {
+    padding: 40px;
+    font-family: Mina;
+}
+
+.produtos-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.produtos-header h2 {
+    font-size: 20px;
+    font-family: Mina;
+}
+
+.ordenar {
+    padding: 8px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.produtos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 30px;
+}
+
+.produto-card {
+    border-radius: 8px;
+    overflow: hidden;
+    cursor: pointer;
+    font-family: Mina;
+}
+
+.produto-card img {
+    width: 100%;
+    height: 400px; /* altura fixa igual para todas */
+    object-fit: cover;
+    object-position: top; /* foca na parte de cima, não corta a cabeça */
+    display: block;
+    font-family: Mina;
+}
+
+.produto-info {
+    background-color: #6a0f6b;
+    color: white;
+    padding: 10px 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+}
+.mais-vendidos {
+    padding: 40px;
+}
+
+.mais-vendidos h2 {
+    font-size: 20px;
+    font-family: Mina;
+    margin-bottom: 25px;
+}
+
+.mais-vendidos-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
+}
+
+.mais-vendidos-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+}
+
+.mais-vendidos-card img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%; /* deixa a imagem no formato círculo */
+    object-fit: cover;
+}
+
+.mais-vendidos-card span {
+    font-size: 15px;
+    font-family: Mina;
+    color: #333;
 }
