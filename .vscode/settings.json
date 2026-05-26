@@ -3,6 +3,7 @@
         "."
     ],
     "java.project.referencedLibraries": [
-        "c:\\Users\\eimik\\Documents\\GitHub\\sistema-login-java\\lib\\mysql-connector-java-5.1.49.jar"
+        "c:\\Users\\eimik\\Documents\\GitHub\\sistema-login-java\\lib\\mysql-connector-java-5.1.49.jar",
+        "c:\\Users\\eimik\\Downloads\\GitHub\\sistema-login-java\\lib\\gson-2.10.1.jar"
     ]
 }
