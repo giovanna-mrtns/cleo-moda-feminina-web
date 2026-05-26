@@ -11,14 +11,23 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial;
 }
 
 body{
-    background-color: #efefef;
+    background-color: var(--branco);
 }
+
+:root {
+    --roxo: #851B87;
+    --roxo-escuro: #550b62;
+    --preto: #090000;
+    --branco: #ffffff;
+    --cor-texto-preto: #000000;
+    --cor-texto-transparente: #ffffff65;
+}
+
 .topo{
-    background-color: #8e178f;
+    background-color: var(--roxo);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -54,7 +63,7 @@ body{
     border: none;
     outline: none;
 
-    color: white;
+    color: var(--branco);
 
     width: 100%;
 
@@ -79,7 +88,7 @@ body{
 }
 
 .info-conta span {
-    color: white;
+    color: var(--branco);
     font-size: 13px;
 }
 
@@ -93,11 +102,11 @@ body{
     align-items: center;
     gap: 8px;
     cursor: pointer;
-    color: white;
+    color: var(--branco);
     font-size: 14px;
 }
 .menu {
-    background-color: black;;
+    background-color: var(--preto);
     padding: 15px 40px;
 }
 
@@ -117,13 +126,13 @@ body{
 }
 
 .menu ul li a.ativo {
-    border-bottom: 2px solid #8e178f;
-    color: #f5f1f1;
+    border-bottom: 2px solid var(--roxo);
+    color: var(--branco);
     font-weight: bold;
 }
 
 .menu ul li a:hover {
-    color: #8e178f;
+    color: var(--roxo);
 }
 .banner {
     width: 100%;
@@ -231,8 +240,8 @@ body{
 }
 
 .produto-info {
-    background-color: #6a0f6b;
-    color: white;
+    background-color: var(--roxo);
+    color: var(--branco);
     padding: 10px 15px;
     display: flex;
     flex-direction: column;
@@ -275,4 +284,72 @@ body{
     font-size: 15px;
     font-family: Mina;
     color: #333;
+}
+
+.login-container {
+    font-family: Mina;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+}
+
+.login-form {
+    color: var(--roxo);
+    font-family: Jost;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+.login-container h2 {
+    font-size: larger;
+    text-align: center;
+}
+
+.login-form input {
+    padding: 10px;
+    height: 60px;
+    width: 300px;
+    color: var(--roxo);
+    border: 2px solid var(--roxo);
+    font-size: 14px;
+}
+
+.login-form button {
+    padding: 15px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.logar {
+    background-color: var(--roxo);
+    color: var(--branco);
+    border: 2px solid var(--roxo);
+}
+
+.registrar {
+    background-color: var(--branco);
+    color: var(--roxo);
+    border: 2px solid var(--roxo);
+}
+
+.logar:hover {
+    background-color: var(--roxo-escuro);
+    border: 2px solid var(--roxo-escuro);
+    transition: 0.3s;
+}
+
+.registrar:hover {
+    background-color: var(--roxo);
+    color: var(--branco);
+    transition: 0.3s;
+}
+
+.esqueceu-senha {
+    color: var(--roxo);
+    font-size: 14px;
+    text-align: center;
+    cursor: pointer;
 }
