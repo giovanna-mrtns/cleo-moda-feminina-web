@@ -2,13 +2,12 @@ package handler;
 
 import com.google.gson.*;
 import com.sun.net.httpserver.*;
-import controller.ModuloController;
-import model.Modulo;
+import controller.PerfilController;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
-public class ModuloHandler implements HttpHandler {
-    private ModuloController controller = new ModuloController();
+public class PerfilHandler implements HttpHandler {
+    private PerfilController controller = new PerfilController();
     private Gson gson = new Gson();
 
     @Override
@@ -23,39 +22,40 @@ public class ModuloHandler implements HttpHandler {
         }
 
         String method = ex.getRequestMethod();
-        String path   = ex.getRequestURI().getPath();
+        String path   = ex.getRequestURI().getPath(); // ex: /api/perfis/3
 
         try {
             if (method.equals("GET")) {
+                // Lista todos os perfis
                 String json  = gson.toJson(controller.listar());
                 byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
                 ex.sendResponseHeaders(200, bytes.length);
                 ex.getResponseBody().write(bytes);
 
             } else if (method.equals("POST")) {
+                // Cadastra novo perfil — body: { "nome": "..." }
                 String body    = new String(ex.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
                 JsonObject obj = JsonParser.parseString(body).getAsJsonObject();
-                controller.cadastrar(
-                    obj.get("nome").getAsString(),
-                    obj.get("descricao").getAsString()
-                );
+                controller.cadastrar(obj.get("nome").getAsString());
                 ex.sendResponseHeaders(201, -1);
 
             } else if (method.equals("PUT")) {
+                // Altera perfil — body: { "id": 1, "nome": "..." }
                 String body    = new String(ex.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
                 JsonObject obj = JsonParser.parseString(body).getAsJsonObject();
                 controller.alterar(
                     obj.get("id").getAsInt(),
-                    obj.get("nome").getAsString(),
-                    obj.get("descricao").getAsString()
+                    obj.get("nome").getAsString()
                 );
                 ex.sendResponseHeaders(200, -1);
 
             } else if (method.equals("DELETE")) {
-                int id = Integer.parseInt(path.replace("/api/modulos/", ""));
+                // Desativa perfil — URL: /api/perfis/3
+                int id = Integer.parseInt(path.replace("/api/perfis/", ""));
                 controller.desativar(id);
                 ex.sendResponseHeaders(200, -1);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
             ex.sendResponseHeaders(500, -1);

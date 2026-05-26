@@ -335,6 +335,12 @@ body{
     border: 2px solid var(--roxo);
 }
 
+.cadastrar {
+    background-color: var(--roxo);
+    color: var(--branco);
+    border: 2px solid var(--roxo);
+}
+
 .logar:hover {
     background-color: var(--roxo-escuro);
     border: 2px solid var(--roxo-escuro);
@@ -344,6 +350,12 @@ body{
 .registrar:hover {
     background-color: var(--roxo);
     color: var(--branco);
+    transition: 0.3s;
+}
+
+.cadastrar:hover {
+    background-color: var(--roxo-escuro);
+    border: 2px solid var(--roxo-escuro);
     transition: 0.3s;
 }
 

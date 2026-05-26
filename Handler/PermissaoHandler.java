@@ -2,19 +2,18 @@ package handler;
 
 import com.google.gson.*;
 import com.sun.net.httpserver.*;
-import controller.ModuloController;
-import model.Modulo;
+import controller.PermissaoController;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
-public class ModuloHandler implements HttpHandler {
-    private ModuloController controller = new ModuloController();
+public class PermissaoHandler implements HttpHandler {
+    private PermissaoController controller = new PermissaoController();
     private Gson gson = new Gson();
 
     @Override
     public void handle(HttpExchange ex) throws IOException {
         ex.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-        ex.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        ex.getResponseHeaders().add("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
         ex.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
         ex.getResponseHeaders().add("Content-Type", "application/json");
 
@@ -23,39 +22,32 @@ public class ModuloHandler implements HttpHandler {
         }
 
         String method = ex.getRequestMethod();
-        String path   = ex.getRequestURI().getPath();
+        String query  = ex.getRequestURI().getQuery(); // ex: idPerfil=2
 
         try {
             if (method.equals("GET")) {
-                String json  = gson.toJson(controller.listar());
+                // Retorna permissões de um perfil — GET /api/permissoes?idPerfil=2
+                int idPerfil = Integer.parseInt(query.replace("idPerfil=", ""));
+                String json  = gson.toJson(controller.listarPorPerfil(idPerfil));
                 byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
                 ex.sendResponseHeaders(200, bytes.length);
                 ex.getResponseBody().write(bytes);
 
             } else if (method.equals("POST")) {
+                // Salva permissão — body: { "idPerfil":1, "idModulo":2,
+                //                           "visualizar":true, "editar":false, "excluir":false }
                 String body    = new String(ex.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
                 JsonObject obj = JsonParser.parseString(body).getAsJsonObject();
-                controller.cadastrar(
-                    obj.get("nome").getAsString(),
-                    obj.get("descricao").getAsString()
+                controller.salvar(
+                    obj.get("idPerfil").getAsInt(),
+                    obj.get("idModulo").getAsInt(),
+                    obj.get("visualizar").getAsBoolean(),
+                    obj.get("editar").getAsBoolean(),
+                    obj.get("excluir").getAsBoolean()
                 );
-                ex.sendResponseHeaders(201, -1);
-
-            } else if (method.equals("PUT")) {
-                String body    = new String(ex.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
-                JsonObject obj = JsonParser.parseString(body).getAsJsonObject();
-                controller.alterar(
-                    obj.get("id").getAsInt(),
-                    obj.get("nome").getAsString(),
-                    obj.get("descricao").getAsString()
-                );
-                ex.sendResponseHeaders(200, -1);
-
-            } else if (method.equals("DELETE")) {
-                int id = Integer.parseInt(path.replace("/api/modulos/", ""));
-                controller.desativar(id);
                 ex.sendResponseHeaders(200, -1);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
             ex.sendResponseHeaders(500, -1);

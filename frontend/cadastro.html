@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuração de Login</title>
+    <link rel="stylesheet" href="style2.css">
+</head>
+
+<script>
+async function cadastrar() {
+  await fetch('http://localhost:8080/api/usuarios', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      nome: document.getElementById('nome').value,
+      login: document.getElementById('login').value,
+      senha: document.getElementById('senha').value,
+      idPerfil: 2  // perfil padrão, ex: Vendedor
+    })
+  });
+  alert('Conta criada! Faça seu login.');
+  window.location.href = 'pagina-login.html';
+}
+</script>
+
+<body>
+<header class="topo">
+
+   <div id="header-2">
+
+        <div id="logo">
+            <a href="navbar-1.html">
+                <img src="imgs/Logo-cleo.png" alt="Logo Cleo" width="100px">
+            </a>
+        </div>
+
+        <div class="barra-pesquisa">
+
+            <input 
+                type="text" 
+                placeholder="Buscar produtos..."
+            >
+
+            <img src="imgs/icone-loupe-gris 6.png" alt="Buscar" width="30px">
+
+        </div>
+         <div class="icones-header">
+        <div class="icone-conta">
+            <img src="imgs/logo-mulher-minha conta.png" alt="Minha Conta" width="35px">
+            <div class="info-conta">
+                <span class="email-usuario">Minha Conta</span>
+            </div>
+        </div>
+
+        <div class="icone-carrinho">
+            <img src="imgs/carrinho 1.png" alt="Carrinho" width="35px">
+            <span>Carrinho</span>
+        </div>
+    </div>
+
+   </div>
+</header>
+<nav class="menu">
+    <ul>
+        <li><a href="#" class="ativo">Início</a></li>
+        <li><a href="#">Lançamentos</a></li>
+        <li><a href="#">Roupas</a></li>
+        <li><a href="#">Acessórios</a></li>
+        <li><a href="#">Promoções</a></li>
+    </ul>
+</nav>
+<div class="banner">
+    <img src="imgs/lado-esquerdo.png" alt="Modelo Esquerda" class="banner-esquerda">
+
+    <div class="banner-centro">
+        <h2>Seu estilo único aqui!</h2>
+        <div class="frete">
+            <img src="imgs/Coracao (2).png" alt="coração" width="25x">
+            <span>Frete Grátis em todo o Brasil</span>
+            <img src="imgs/Coracao (2).png" alt="coração" width="25px">
+        </div>
+    </div>
+
+    <img src="imgs/lado-direito.png" alt="Modelo Direita" class="banner-direita">
+</div>
+
+<div class="login-container">
+    <h2>CADASTRE-SE JÁ E FIQUE POR DENTRO DE NOVIDADES!</h2>
+    <form action="#" method="post" class="login-form">
+        <input type="text" name="nome" placeholder="Nome Completo" required>
+        <input type="email" name="login" placeholder="Email" required>
+        <input type="password" name="senha" placeholder="Senha" required>
+        <input type="password" name="confirmar-senha" placeholder="Confirmar Senha" required>
+        <button onclick="cadastrar()" class="cadastrar">Criar conta</button>
+        
+    </form>
+
+</div>
+
+</body>
+</html>
+</>

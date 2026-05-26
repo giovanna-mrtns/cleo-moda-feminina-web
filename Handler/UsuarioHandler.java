@@ -33,15 +33,33 @@ public class UsuarioHandler implements HttpHandler {
             ex.getResponseBody().write(bytes);
 
         } else if (method.equals("POST")) {
-            String body = new String(ex.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
-            JsonObject obj = JsonParser.parseString(body).getAsJsonObject();
-            controller.cadastrar(
-                obj.get("nome").getAsString(),
-                obj.get("login").getAsString(),
-                obj.get("senha").getAsString(),
-                obj.get("idPerfil").getAsInt()
-            );
-            ex.sendResponseHeaders(201, -1);
+    String body = new String(ex.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+    JsonObject obj = JsonParser.parseString(body).getAsJsonObject();
+
+    if (path.endsWith("/login")) {
+        // Autenticação
+        Usuario u = controller.login(
+            obj.get("login").getAsString(),
+            obj.get("senha").getAsString()
+        );
+        if (u != null) {
+            byte[] bytes = gson.toJson(u).getBytes(StandardCharsets.UTF_8);
+            ex.sendResponseHeaders(200, bytes.length);
+            ex.getResponseBody().write(bytes);
+        } else {
+            ex.sendResponseHeaders(401, -1);
+        }
+    } else {
+        // Cadastro
+        controller.cadastrar(
+            obj.get("nome").getAsString(),
+            obj.get("login").getAsString(),
+            obj.get("senha").getAsString(),
+            obj.get("idPerfil").getAsInt()
+        );
+        ex.sendResponseHeaders(201, -1);
+    }
+}
 
         } else if (method.equals("PUT")) {
             String body = new String(ex.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
