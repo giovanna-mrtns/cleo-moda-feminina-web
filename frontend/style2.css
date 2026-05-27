@@ -33,7 +33,7 @@ body{
     align-items: center;
     padding: 20px 40px;
 }
-#header-2 {
+#header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -87,9 +87,11 @@ body{
     flex-direction: column;
 }
 
-.info-conta span {
+.icones-header a {
+    font-family: Jost;
+    text-decoration: none;
     color: var(--branco);
-    font-size: 13px;
+    font-size: 15px;
 }
 
 .nome-usuario {
