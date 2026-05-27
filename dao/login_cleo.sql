@@ -62,4 +62,4 @@ INSERT INTO modulo (nome, descricao) VALUES
     ('Atendimento', 'Atendimento ao cliente');
 
 INSERT INTO usuario (nome, login, senha, ativo, id_perfil) VALUES
-    ('Admin', 'admin', '1234', 's', 1);
+    ('Admin', 'admin@gmail.com', '1234', 's', 1);

@@ -1,0 +1,9 @@
+# Banco H2 gerado automaticamente
+data/
+
+# Variáveis de ambiente com senhas
+.env
+
+# Compilados
+*.class
+out/
