@@ -8,25 +8,27 @@
 </head>
 
 <script>
-  document.querySelector('.logar').addEventListener('click', async function(e) {
-    e.preventDefault();
-    const login = document.getElementById('login').value;
-    const senha = document.getElementById('senha').value;
+  document.addEventListener('DOMContentLoaded', function() {
+    document.querySelector('.logar').addEventListener('click', async function(e) {
+      e.preventDefault();
+      const login = document.getElementById('login').value;
+      const senha = document.getElementById('senha').value;
 
-    const resp = await fetch('http://localhost:8080/api/usuarios/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ login, senha })
+      const resp = await fetch('http://localhost:8080/api/usuarios/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ login, senha })
+      });
+
+      if (resp.ok) {
+        const usuario = await resp.json();
+        localStorage.setItem('usuario', JSON.stringify(usuario));
+        alert('Bem-vindo, ' + usuario.nome + '!');
+        window.location.href = 'index.html';
+      } else {
+        alert('Login ou senha incorretos.');
+      }
     });
-
-    if (resp.ok) {
-      const usuario = await resp.json();
-      localStorage.setItem('usuario', JSON.stringify(usuario));
-      alert('Bem-vindo, ' + usuario.nome + '!');
-      window.location.href = 'index.html';
-    } else {
-      alert('Login ou senha incorretos.');
-    }
   });
 </script>
 

@@ -1,5 +1,6 @@
 package dao;
 
+import static util.Conexao.getConexao;
 import model.Perfil;
 import util.Conexao;
 import java.sql.*;

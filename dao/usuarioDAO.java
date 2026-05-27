@@ -1,5 +1,6 @@
 package dao;
 
+import static util.Conexao.getConexao;
 import model.Usuario;
 import util.Conexao;
 import java.sql.*;
@@ -12,7 +13,7 @@ public class UsuarioDAO {
     public Usuario autenticar(String login, String senha) {
         String sql = "SELECT u.*, p.nome AS nome_perfil " +
                      "FROM usuario u " +
-                     "LEFT JOIN perfil p ON u.id_perfil = p.id" +
+                     "LEFT JOIN perfil p ON u.id_perfil = p.id " +
                      "WHERE u.login = ? AND u.senha = ? AND u.ativo = 's'";
         try (Connection conn = getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

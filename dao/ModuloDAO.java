@@ -1,5 +1,6 @@
 package dao;
 
+import static util.Conexao.getConexao;
 import model.Modulo;
 import util.Conexao;
 import java.sql.*;
@@ -63,7 +64,7 @@ public class ModuloDAO {
     // Busca um módulo pelo ID
     public Modulo buscarPorId(int id) {
         String sql = "SELECT * FROM modulo WHERE id_modulo = ?";
-        try (Connection conn = Conexao.conectar();
+        try (Connection conn = Conexao.getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {

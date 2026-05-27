@@ -88,11 +88,12 @@ public class Conexao {
         var rs = conn.createStatement().executeQuery("SELECT COUNT(*) FROM perfil");
         rs.next();
         if (rs.getInt(1) == 0) {
-            conn.createStatement().executeUpdate("INSERT INTO perfil (nome) VALUES ('Administrador')");
+            conn.createStatement().executeUpdate
+            ("INSERT INTO perfil (nome) VALUES ('Administrador')");
             conn.createStatement().executeUpdate("INSERT INTO perfil (nome) VALUES ('Operador')");
             conn.createStatement().executeUpdate("""
                 INSERT INTO usuario (nome, login, senha, id_perfil)
-                VALUES ('Admin', 'admin', '1234', 1)
+                VALUES ('Admin', 'admin@gmail.com', '1234', 1)
             """);
         }
     }
