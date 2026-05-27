@@ -5,26 +5,23 @@ import java.sql.DriverManager;
 
 public class Conexao {
 
-    // Lê as variáveis de ambiente, com valores padrão como fallback
     private static String env(String chave, String padrao) {
-    String val = System.getenv(chave);
-    if (val != null) return val;
-    val = System.getProperty(chave);
-    if (val != null) return val;
-    return padrao;
+        String val = System.getenv(chave);
+        if (val != null) return val;
+        val = System.getProperty(chave);
+        if (val != null) return val;
+        return padrao;
+    }
 
-    
-private static final String MODO       = env("DB_MODO", "h2");
-private static final String MYSQL_URL  = env("DB_URL",  "jdbc:mysql://localhost:3306/login_cleo...");
-private static final String MYSQL_USER = env("DB_USER", "root");
-private static final String MYSQL_PASS = env("DB_PASS", "");
+    private static final String MODO       = env("DB_MODO", "h2");
+    private static final String MYSQL_URL  = env("DB_URL",  "jdbc:mysql://localhost:3306/login_cleo?useSSL=false&serverTimezone=America/Sao_Paulo");
+    private static final String MYSQL_USER = env("DB_USER", "root");
+    private static final String MYSQL_PASS = env("DB_PASS", "");
 
-    // Config MySQL (lida das variáveis de ambiente)
-    private static final String MYSQL_URL  = System.getenv().getOrDefault(
-        "DB_URL", "jdbc:mysql://localhost:3306/login_cleo?useSSL=false&serverTimezone=America/Sao_Paulo"
-    );
-    private static final String MYSQL_USER = System.getenv().getOrDefault("DB_USER", "root");
-    private static final String MYSQL_PASS = System.getenv().getOrDefault("DB_PASS", "");
+    // Config H2 (embutido)
+    private static final String H2_URL  = "jdbc:h2:./data/sistema;AUTO_SERVER=TRUE;DB_CLOSE_DELAY=-1";
+    private static final String H2_USER = "sa";
+    private static final String H2_PASS = "";
 
     public static Connection getConexao() throws Exception {
         if (MODO.equals("mysql")) {

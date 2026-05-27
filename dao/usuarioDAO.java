@@ -12,9 +12,9 @@ public class UsuarioDAO {
     public Usuario autenticar(String login, String senha) {
         String sql = "SELECT u.*, p.nome AS nome_perfil " +
                      "FROM usuario u " +
-                     "LEFT JOIN perfil p ON u.id_perfil = p.id_perfil " +
+                     "LEFT JOIN perfil p ON u.id_perfil = p.id" +
                      "WHERE u.login = ? AND u.senha = ? AND u.ativo = 's'";
-        try (Connection conn = Conexao.conectar();
+        try (Connection conn = getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, login);
             stmt.setString(2, senha);
@@ -33,7 +33,7 @@ public class UsuarioDAO {
         String sql = "SELECT u.*, p.nome AS nome_perfil " +
                      "FROM usuario u " +
                      "LEFT JOIN perfil p ON u.id_perfil = p.id_perfil";
-        try (Connection conn = Conexao.conectar();
+        try (Connection conn = getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
@@ -46,7 +46,7 @@ public class UsuarioDAO {
     // Cadastra um novo usuário
     public void cadastrar(Usuario u) {
         String sql = "INSERT INTO usuario (nome, login, senha, ativo, id_perfil) VALUES (?, ?, ?, 's', ?)";
-        try (Connection conn = Conexao.conectar();
+        try (Connection conn = getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, u.getNome());
             stmt.setString(2, u.getLogin());
@@ -59,7 +59,7 @@ public class UsuarioDAO {
     // Altera os dados de um usuário existente
     public void alterar(Usuario u) {
         String sql = "UPDATE usuario SET nome = ?, login = ?, senha = ?, id_perfil = ? WHERE id_usuario = ?";
-        try (Connection conn = Conexao.conectar();
+        try (Connection conn = getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, u.getNome());
             stmt.setString(2, u.getLogin());
@@ -73,7 +73,7 @@ public class UsuarioDAO {
     // Desativa o usuário (não exclui do banco)
     public void desativar(int id) {
         String sql = "UPDATE usuario SET ativo = 'n' WHERE id_usuario = ?";
-        try (Connection conn = Conexao.conectar();
+        try (Connection conn = getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
@@ -83,7 +83,7 @@ public class UsuarioDAO {
     // Atualiza a data/hora do último acesso
     public void atualizarUltimoAcesso(int id) {
         String sql = "UPDATE usuario SET ultimo_acesso = NOW() WHERE id_usuario = ?";
-        try (Connection conn = Conexao.conectar();
+        try (Connection conn = getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
@@ -93,7 +93,7 @@ public class UsuarioDAO {
     // Altera a senha após confirmar a senha antiga
     public boolean alterarSenha(int id, String senhaAntiga, String senhaNova) {
         String sql = "UPDATE usuario SET senha = ? WHERE id_usuario = ? AND senha = ?";
-        try (Connection conn = Conexao.conectar();
+        try (Connection conn = getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, senhaNova);
             stmt.setInt(2, id);
@@ -105,7 +105,7 @@ public class UsuarioDAO {
     // Converte uma linha do ResultSet em objeto Usuario
     private Usuario mapear(ResultSet rs) throws SQLException {
         Usuario u = new Usuario();
-        u.setId(rs.getInt("id_usuario"));
+        u.setId(rs.getInt("id"));
         u.setNome(rs.getString("nome"));
         u.setLogin(rs.getString("login"));
         u.setAtivo(rs.getString("ativo"));

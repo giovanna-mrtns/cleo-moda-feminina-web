@@ -11,7 +11,7 @@ public class ModuloDAO {
     // Cadastra um novo módulo
     public void cadastrar(Modulo m) {
         String sql = "INSERT INTO modulo (nome, descricao, ativo) VALUES (?, ?, 's')";
-        try (Connection conn = Conexao.conectar();
+        try (Connection conn = getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, m.getNome());
             stmt.setString(2, m.getDescricao());
@@ -22,7 +22,7 @@ public class ModuloDAO {
     // Altera nome e descrição de um módulo existente
     public void alterar(Modulo m) {
         String sql = "UPDATE modulo SET nome = ?, descricao = ? WHERE id_modulo = ?";
-        try (Connection conn = Conexao.conectar();
+        try (Connection conn = getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, m.getNome());
             stmt.setString(2, m.getDescricao());
@@ -34,7 +34,7 @@ public class ModuloDAO {
     // Desativa o módulo (não exclui do banco)
     public void desativar(int id) {
         String sql = "UPDATE modulo SET ativo = 'n' WHERE id_modulo = ?";
-        try (Connection conn = Conexao.conectar();
+        try (Connection conn = getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
@@ -45,7 +45,7 @@ public class ModuloDAO {
     public List<Modulo> listarTodos() {
         List<Modulo> lista = new ArrayList<>();
         String sql = "SELECT * FROM modulo";
-        try (Connection conn = Conexao.conectar();
+        try (Connection conn = getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {

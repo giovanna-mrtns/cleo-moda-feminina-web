@@ -11,7 +11,7 @@ public class PerfilDAO {
     // Cadastra um novo perfil
     public void cadastrar(Perfil p) {
         String sql = "INSERT INTO perfil (nome, ativo) VALUES (?, 's')";
-        try (Connection conn = Conexao.conectar();
+        try (Connection conn = getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, p.getNome());
             stmt.executeUpdate();
@@ -21,7 +21,7 @@ public class PerfilDAO {
     // Altera o nome de um perfil existente
     public void alterar(Perfil p) {
         String sql = "UPDATE perfil SET nome = ? WHERE id_perfil = ?";
-        try (Connection conn = Conexao.conectar();
+        try (Connection conn = getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, p.getNome());
             stmt.setInt(2, p.getId());
@@ -32,7 +32,7 @@ public class PerfilDAO {
     // Desativa o perfil (não exclui do banco)
     public void desativar(int id) {
         String sql = "UPDATE perfil SET ativo = 'n' WHERE id_perfil = ?";
-        try (Connection conn = Conexao.conectar();
+        try (Connection conn = getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             stmt.executeUpdate();
@@ -43,7 +43,7 @@ public class PerfilDAO {
     public List<Perfil> listarTodos() {
         List<Perfil> lista = new ArrayList<>();
         String sql = "SELECT * FROM perfil";
-        try (Connection conn = Conexao.conectar();
+        try (Connection conn = getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
@@ -60,7 +60,7 @@ public class PerfilDAO {
     // Busca um perfil pelo ID
     public Perfil buscarPorId(int id) {
         String sql = "SELECT * FROM perfil WHERE id_perfil = ?";
-        try (Connection conn = Conexao.conectar();
+        try (Connection conn = getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {

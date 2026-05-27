@@ -12,22 +12,29 @@ public class PermissaoDAO {
     // Se já existir uma linha para esse par (id_perfil, id_modulo), atualiza.
     // Se não existir, insere uma nova. Isso funciona graças ao UNIQUE KEY no SQL.
     public void salvar(Permissao p) {
-        String sql = "INSERT INTO permissao (id_perfil, id_modulo, pode_visualizar, pode_editar, pode_excluir) " +
-                     "VALUES (?, ?, ?, ?, ?) " +
-                     "ON DUPLICATE KEY UPDATE " +
-                     "pode_visualizar = VALUES(pode_visualizar), " +
-                     "pode_editar     = VALUES(pode_editar), " +
-                     "pode_excluir    = VALUES(pode_excluir)";
-        try (Connection conn = Conexao.conectar();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, p.getIdPerfil());
-            stmt.setInt(2, p.getIdModulo());
-            stmt.setBoolean(3, p.isPodeVisualizar());
-            stmt.setBoolean(4, p.isPodeEditar());
-            stmt.setBoolean(5, p.isPodeExcluir());
-            stmt.executeUpdate();
-        } catch (Exception e) { e.printStackTrace(); }
-    }
+    String check = "SELECT COUNT(*) FROM permissao WHERE id_perfil = ? AND id_modulo = ?";
+    try (Connection conn = Conexao.getConexao();
+         PreparedStatement stmt = conn.prepareStatement(check)) {
+        stmt.setInt(1, p.getIdPerfil());
+        stmt.setInt(2, p.getIdModulo());
+        ResultSet rs = stmt.executeQuery();
+        rs.next();
+        boolean existe = rs.getInt(1) > 0;
+
+        String sql = existe
+            ? "UPDATE permissao SET pode_visualizar=?, pode_editar=?, pode_excluir=? WHERE id_perfil=? AND id_modulo=?"
+            : "INSERT INTO permissao (pode_visualizar, pode_editar, pode_excluir, id_perfil, id_modulo) VALUES (?,?,?,?,?)";
+
+        try (PreparedStatement s2 = conn.prepareStatement(sql)) {
+            s2.setBoolean(1, p.isPodeVisualizar());
+            s2.setBoolean(2, p.isPodeEditar());
+            s2.setBoolean(3, p.isPodeExcluir());
+            s2.setInt(4, p.getIdPerfil());
+            s2.setInt(5, p.getIdModulo());
+            s2.executeUpdate();
+        }
+    } catch (Exception e) { e.printStackTrace(); }
+}
 
     // Busca todas as permissões de um perfil,
     // fazendo JOIN com a tabela modulo para trazer o nome do módulo
@@ -37,7 +44,7 @@ public class PermissaoDAO {
                      "FROM permissao p " +
                      "JOIN modulo m ON p.id_modulo = m.id_modulo " +
                      "WHERE p.id_perfil = ?";
-        try (Connection conn = Conexao.conectar();
+        try (Connection conn = getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, idPerfil);
             try (ResultSet rs = stmt.executeQuery()) {

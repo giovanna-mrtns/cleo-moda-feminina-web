@@ -59,7 +59,6 @@ public class UsuarioHandler implements HttpHandler {
         );
         ex.sendResponseHeaders(201, -1);
     }
-}
 
         } else if (method.equals("PUT")) {
             String body = new String(ex.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
