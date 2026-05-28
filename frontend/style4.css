@@ -1,0 +1,241 @@
+body{
+    margin: 0;
+    background-color: #f5f5f5;
+    font-family: 'Poppins', sans-serif;
+}
+
+
+
+.topo{
+    background-color: purple;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 20px 30px;
+
+    color: white;
+}
+
+.topo h1{
+    margin: 0;
+    font-weight: 500;
+}
+
+.menu{
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.admin{
+    text-align: right;
+}
+
+.admin p{
+    margin: 0;
+    font-size: 12px;
+}
+
+
+
+.barra{
+    background-color: white;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 20px 30px;
+
+    border-bottom: 1px solid #ccc;
+}
+
+.busca{
+    display: flex;
+}
+
+.busca input{
+    width: 300px;
+    padding: 10px;
+}
+
+.busca button{
+    padding: 10px 15px;
+}
+
+
+
+.cards{
+    width: 92%;
+    margin: 30px auto;
+
+    display: flex;
+    justify-content: space-between;
+}
+
+.card{
+    background-color: white;
+
+    width: 220px;
+
+    border: 1px solid #ccc;
+    border-radius: 20px;
+
+    padding: 20px;
+
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    transition: 0.3s;
+}
+
+.card:hover{
+    transform: translateY(-5px);
+}
+
+.icone{
+    font-size: 45px;
+}
+
+.card p{
+    margin: 0;
+    color: gray;
+}
+
+.card h2{
+    margin: 0;
+    font-size: 40px;
+}
+
+
+
+.filtro{
+    width: 92%;
+    margin: auto auto 20px;
+}
+
+.filtro select{
+    padding: 10px;
+    font-size: 16px;
+}
+
+
+.tabela-container{
+    width: 92%;
+    margin: auto;
+
+    background-color: white;
+
+    border: 1px solid #ccc;
+}
+
+table{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead{
+    background-color: #fafafa;
+}
+
+th{
+    padding: 20px;
+    text-align: left;
+
+    font-size: 24px;
+    font-weight: 500;
+
+    border-bottom: 1px solid #ccc;
+}
+
+td{
+    padding: 20px;
+
+    border-bottom: 1px solid #ddd;
+}
+
+
+
+.produto-info{
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.produto-info img{
+    width: 80px;
+    height: 80px;
+
+    object-fit: cover;
+}
+
+.produto-info h3{
+    margin: 0;
+    font-size: 20px;
+}
+
+.produto-info p{
+    margin: 5px 0 0;
+    color: gray;
+}
+
+
+
+.estoque-ok{
+    color: green;
+    font-weight: 500;
+}
+
+.sem-estoque{
+    color: red;
+    font-weight: 500;
+}
+
+
+
+td button{
+    padding: 8px 12px;
+
+    border: 1px solid #999;
+    background-color: white;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+td button:hover{
+    background-color: purple;
+    color: white;
+}
+
+
+
+.paginacao{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 20px 30px;
+}
+
+.numeros{
+    display: flex;
+    gap: 10px;
+}
+
+.numeros span{
+    width: 30px;
+    height: 30px;
+
+    border: 1px solid #999;
+    border-radius: 50%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    cursor: pointer;
+}
