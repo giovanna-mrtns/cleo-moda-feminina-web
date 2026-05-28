@@ -11,7 +11,7 @@
 <header>
     <div id="header-2">
         <div id="logo">
-            <a href="navbar-1.html">
+            <a href="index.html">
                 <img src="imgs/Logo-cleo.png" alt="Logo Cleo" width="100px">
             </a>
         </div>
@@ -40,9 +40,7 @@
         <div class="config-meio">
             <div class="input-buscar">
                 <input id="buscar-usuario" type="text" placeholder="Buscar usuário..." oninput="filtrarTabela()">
-                <button class="buscar" type="button">
-                    Buscar
-                </button>
+                <button class="buscar" type="button">Buscar</button>
             </div>
             <button class="btn-config" onclick="editarSelecionado()">Editar</button>
             <button class="btn-config" onclick="desativarSelecionado()">Desativar</button>
@@ -88,44 +86,58 @@
         <input type="password" id="campo-senha" placeholder="Senha">
 
         <label>Perfil</label>
-        <select id="campo-perfil">
-            <option value="1">Gerente</option>
-            <option value="2">Vendedor</option>
-            <option value="3">Atendente</option>
-        </select>
+        <!-- CORRIGIDO: select populado dinamicamente pela API -->
+        <select id="campo-perfil"></select>
 
         <div class="modal-botoes">
             <button class="btn-config" onclick="fecharModal()">Cancelar</button>
-            <button id="btn-novo" onclick="salvarUsuario()">Salvar</button>
+            <button onclick="salvarUsuario()">Salvar</button>
         </div>
     </div>
 </div>
 
 <script>
-    // -------------------------------------------------------
-    // Dados simulados – substitua pelas chamadas ao back-end
-    // -------------------------------------------------------
-    let usuarios = [
-        { id: 1, nome: "Karina Pereira",  login: "karina4",  idPerfil: 2, nomePerfil: "Vendedor",  ativo: "s" },
-        { id: 2, nome: "Admin",           login: "admin",    idPerfil: 1, nomePerfil: "Gerente",   ativo: "s" },
-        { id: 3, nome: "Letícia Souza",   login: "leticia",  idPerfil: 3, nomePerfil: "Atendente", ativo: "n" }
-    ];
-
-    let proximoId = 4;
+    const API = 'http://localhost:8080';
+    let usuarios = [];
     let linhaSelecionada = null;
 
+    // CORRIGIDO: carrega usuários reais do banco via API
+    async function carregarUsuarios() {
+        try {
+            const resp = await fetch(`${API}/api/usuarios`);
+            usuarios = await resp.json();
+            renderTabela(usuarios);
+        } catch (e) {
+            alert('Erro ao conectar ao servidor. Verifique se o backend está rodando.');
+        }
+    }
+
+    // CORRIGIDO: carrega perfis reais do banco para o select do modal
+    async function carregarPerfisNoSelect() {
+        try {
+            const resp = await fetch(`${API}/api/perfis`);
+            const perfis = await resp.json();
+            const select = document.getElementById('campo-perfil');
+            select.innerHTML = perfis
+                .map(p => `<option value="${p.id}">${p.nome}</option>`)
+                .join('');
+        } catch (e) {
+            console.error('Erro ao carregar perfis:', e);
+        }
+    }
+
     function renderTabela(lista) {
-        const tbody = document.getElementById("corpo-tabela");
-        tbody.innerHTML = "";
+        const tbody = document.getElementById('corpo-tabela');
+        tbody.innerHTML = '';
         lista.forEach(u => {
-            const tr = document.createElement("tr");
+            const tr = document.createElement('tr');
             tr.dataset.id = u.id;
             tr.innerHTML = `
                 <td><input type="radio" name="sel-usuario" onchange="selecionarLinha(${u.id})"></td>
                 <td>${u.id}</td>
                 <td>${u.nome}</td>
                 <td>${u.login}</td>
-                <td>${u.nomePerfil}</td>
+                <td>${u.nomePerfil || '—'}</td>
                 <td class="${u.ativo === 's' ? 'ativo-status' : 'inativo-status'}">
                     ${u.ativo === 's' ? 'Ativo' : 'Inativo'}
                 </td>`;
@@ -134,7 +146,7 @@
     }
 
     function filtrarTabela() {
-        const termo = document.getElementById("buscar-usuario").value.toLowerCase();
+        const termo = document.getElementById('buscar-usuario').value.toLowerCase();
         const filtrados = usuarios.filter(u =>
             u.nome.toLowerCase().includes(termo) ||
             u.login.toLowerCase().includes(termo)
@@ -147,62 +159,72 @@
     }
 
     function abrirModal(usuario = null) {
-        document.getElementById("modal-titulo").textContent = usuario ? "Editar Usuário" : "Novo Usuário";
-        document.getElementById("campo-id").value    = usuario ? usuario.id    : "";
-        document.getElementById("campo-nome").value  = usuario ? usuario.nome  : "";
-        document.getElementById("campo-login").value = usuario ? usuario.login : "";
-        document.getElementById("campo-senha").value = "";
-        document.getElementById("campo-perfil").value = usuario ? usuario.idPerfil : 1;
-        document.getElementById("modal-overlay").style.display = "flex";
+        document.getElementById('modal-titulo').textContent = usuario ? 'Editar Usuário' : 'Novo Usuário';
+        document.getElementById('campo-id').value    = usuario ? usuario.id    : '';
+        document.getElementById('campo-nome').value  = usuario ? usuario.nome  : '';
+        document.getElementById('campo-login').value = usuario ? usuario.login : '';
+        document.getElementById('campo-senha').value = '';
+        if (usuario) document.getElementById('campo-perfil').value = usuario.idPerfil;
+        document.getElementById('modal-overlay').style.display = 'flex';
     }
 
     function fecharModal() {
-        document.getElementById("modal-overlay").style.display = "none";
+        document.getElementById('modal-overlay').style.display = 'none';
     }
 
-    function salvarUsuario() {
-        const id      = document.getElementById("campo-id").value;
-        const nome    = document.getElementById("campo-nome").value.trim();
-        const login   = document.getElementById("campo-login").value.trim();
-        const senha   = document.getElementById("campo-senha").value.trim();
-        const perfil  = document.getElementById("campo-perfil");
-        const idPerfil   = parseInt(perfil.value);
-        const nomePerfil = perfil.options[perfil.selectedIndex].text;
+    // CORRIGIDO: salva via API real (POST para criar, PUT para editar)
+    async function salvarUsuario() {
+        const id       = document.getElementById('campo-id').value;
+        const nome     = document.getElementById('campo-nome').value.trim();
+        const login    = document.getElementById('campo-login').value.trim();
+        const senha    = document.getElementById('campo-senha').value.trim();
+        const idPerfil = parseInt(document.getElementById('campo-perfil').value);
 
         if (!nome || !login || !senha) {
-            alert("Nome, login e senha são obrigatórios.");
+            alert('Nome, login e senha são obrigatórios.');
             return;
         }
 
+        const body = { nome, login, senha, idPerfil };
+
         if (id) {
-            // Editar existente
-            const u = usuarios.find(u => u.id === parseInt(id));
-            if (u) { u.nome = nome; u.login = login; u.idPerfil = idPerfil; u.nomePerfil = nomePerfil; }
+            await fetch(`${API}/api/usuarios`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: parseInt(id), ...body })
+            });
         } else {
-            // Novo usuário
-            usuarios.push({ id: proximoId++, nome, login, idPerfil, nomePerfil, ativo: "s" });
+            await fetch(`${API}/api/usuarios`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body)
+            });
         }
 
         fecharModal();
-        renderTabela(usuarios);
+        carregarUsuarios();
     }
 
     function editarSelecionado() {
-        if (!linhaSelecionada) { alert("Selecione um usuário."); return; }
+        if (!linhaSelecionada) { alert('Selecione um usuário.'); return; }
         const u = usuarios.find(u => u.id === linhaSelecionada);
         abrirModal(u);
     }
 
-    function desativarSelecionado() {
-        if (!linhaSelecionada) { alert("Selecione um usuário."); return; }
-        if (!confirm("Deseja desativar este usuário?")) return;
-        const u = usuarios.find(u => u.id === linhaSelecionada);
-        if (u) u.ativo = "n";
-        renderTabela(usuarios);
+    // CORRIGIDO: desativa via API real (DELETE)
+    async function desativarSelecionado() {
+        if (!linhaSelecionada) { alert('Selecione um usuário.'); return; }
+        if (!confirm('Deseja desativar este usuário?')) return;
+        await fetch(`${API}/api/usuarios/${linhaSelecionada}`, { method: 'DELETE' });
+        linhaSelecionada = null;
+        carregarUsuarios();
     }
 
-    // Carrega a tabela ao abrir a página
-    renderTabela(usuarios);
+    // Inicializa a página
+    window.onload = () => {
+        carregarPerfisNoSelect();
+        carregarUsuarios();
+    };
 </script>
 
 </body>

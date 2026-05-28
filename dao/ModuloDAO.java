@@ -2,7 +2,6 @@ package dao;
 
 import static util.Conexao.getConexao;
 import model.Modulo;
-import util.Conexao;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +21,7 @@ public class ModuloDAO {
 
     // Altera nome e descrição de um módulo existente
     public void alterar(Modulo m) {
-        String sql = "UPDATE modulo SET nome = ?, descricao = ? WHERE id_modulo = ?";
+        String sql = "UPDATE modulo SET nome = ?, descricao = ? WHERE id = ?";  // CORRIGIDO: era id_modulo
         try (Connection conn = getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, m.getNome());
@@ -34,7 +33,7 @@ public class ModuloDAO {
 
     // Desativa o módulo (não exclui do banco)
     public void desativar(int id) {
-        String sql = "UPDATE modulo SET ativo = 'n' WHERE id_modulo = ?";
+        String sql = "UPDATE modulo SET ativo = 'n' WHERE id = ?";  // CORRIGIDO: era id_modulo
         try (Connection conn = getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
@@ -42,16 +41,16 @@ public class ModuloDAO {
         } catch (Exception e) { e.printStackTrace(); }
     }
 
-    // Lista todos os módulos
+    // Lista todos os módulos ativos
     public List<Modulo> listarTodos() {
         List<Modulo> lista = new ArrayList<>();
-        String sql = "SELECT * FROM modulo";
+        String sql = "SELECT * FROM modulo WHERE ativo = 's'";
         try (Connection conn = getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 Modulo m = new Modulo();
-                m.setId(rs.getInt("id_modulo"));
+                m.setId(rs.getInt("id"));               // CORRIGIDO: era id_modulo
                 m.setNome(rs.getString("nome"));
                 m.setDescricao(rs.getString("descricao"));
                 m.setAtivo(rs.getString("ativo"));
@@ -63,14 +62,14 @@ public class ModuloDAO {
 
     // Busca um módulo pelo ID
     public Modulo buscarPorId(int id) {
-        String sql = "SELECT * FROM modulo WHERE id_modulo = ?";
-        try (Connection conn = Conexao.getConexao();
+        String sql = "SELECT * FROM modulo WHERE id = ?";  // CORRIGIDO: era id_modulo
+        try (Connection conn = getConexao();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
                     Modulo m = new Modulo();
-                    m.setId(rs.getInt("id_modulo"));
+                    m.setId(rs.getInt("id"));           // CORRIGIDO: era id_modulo
                     m.setNome(rs.getString("nome"));
                     m.setDescricao(rs.getString("descricao"));
                     m.setAtivo(rs.getString("ativo"));

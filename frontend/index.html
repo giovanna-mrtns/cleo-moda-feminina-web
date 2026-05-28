@@ -3,69 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configuração de Login</title>
+    <title>Cleo</title>
     <link rel="stylesheet" href="style2.css">
+    <style>
+        /* Toast de notificação */
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: #2e7d32;
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-family: Jost, sans-serif;
+            font-size: 15px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 9999;
+            white-space: nowrap;
+        }
+        .toast.visivel {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Área de conta quando logado */
+        .info-conta {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .nome-usuario {
+            font-family: Jost, sans-serif;
+            font-weight: bold;
+            color: #fff;
+            font-size: 14px;
+            line-height: 1.2;
+        }
+        .btn-sair {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 4px;
+            color: #fff;
+            font-family: Jost, sans-serif;
+            font-size: 12px;
+            padding: 2px 8px;
+            cursor: pointer;
+            text-align: left;
+            transition: background 0.2s;
+        }
+        .btn-sair:hover {
+            background: rgba(255,255,255,0.15);
+        }
+    </style>
 </head>
 <body>
+
+<div id="toast" class="toast"></div>
+
 <header class="topo">
-
    <div id="header">
-
         <div id="logo">
-            <a href="navbar-1.html">
+            <a href="index.html">
                 <img src="imgs/Logo-cleo.png" alt="Logo Cleo" width="100px">
             </a>
         </div>
-
         <div class="barra-pesquisa">
-
-            <input 
-                type="text"
-                placeholder="Buscar produtos..."
-            >
-
+            <input type="text" placeholder="Buscar produtos...">
             <img src="imgs/icone-loupe-gris 6.png" alt="Buscar" width="30px">
-
         </div>
-         <div class="icones-header">
-        <div class="icone-conta">
-            <img src="imgs/logo-mulher-minha conta.png" alt="Minha Conta" width="35px">
-            <div class="info-conta">
-                <a href="login.html" class="email-usuario">Fazer Login</a>
+        <div class="icones-header">
+            <div class="icone-conta">
+                <img src="imgs/logo-mulher-minha conta.png" alt="Minha Conta" width="35px">
+                <!-- Conteúdo trocado pelo JS dependendo do estado de login -->
+                <div class="info-conta" id="info-conta">
+                    <a href="login.html" class="email-usuario">Fazer Login</a>
+                </div>
+            </div>
+            <div class="icone-carrinho">
+                <img src="imgs/carrinho 1.png" alt="Carrinho" width="35px">
+                <a href="Carrinho.html" class="email-usuario">Carrinho</a>
             </div>
         </div>
-
-        <div class="icone-carrinho">
-            <img src="imgs/carrinho 1.png" alt="Carrinho" width="35px">
-            <a href="carrinho.html" class="email-usuario">Carrinho</a>
-        </div>
-    </div>
-
-</div>
+   </div>
 </header>
+
 <nav class="menu">
     <ul>
-        <li><a href="#" class="ativo">Início</a></li>
+        <li><a href="index.html" class="ativo">Início</a></li>
         <li><a href="#">Lançamentos</a></li>
         <li><a href="#">Roupas</a></li>
         <li><a href="#">Acessórios</a></li>
         <li><a href="#">Promoções</a></li>
     </ul>
 </nav>
+
 <div class="banner">
     <img src="imgs/lado-esquerdo.png" alt="Modelo Esquerda" class="banner-esquerda">
-
     <div class="banner-centro">
         <h2>Seu estilo único aqui!</h2>
         <div class="frete">
-            <img src="imgs/Coracao (2).png" alt="coração" width="25x">
+            <img src="imgs/Coracao (2).png" alt="coração" width="25px">
             <span>Frete Grátis em todo o Brasil</span>
             <img src="imgs/Coracao (2).png" alt="coração" width="25px">
         </div>
     </div>
-
     <img src="imgs/lado-direito.png" alt="Modelo Direita" class="banner-direita">
 </div>
+
 <section class="produtos">
     <div class="produtos-header">
         <h2>TODOS OS PRODUTOS</h2>
@@ -75,7 +122,6 @@
             <option>Ordenar por: Maior Preço</option>
         </select>
     </div>
-
     <div class="produtos-grid">
         <div class="produto-card">
             <img src="imgs/cropped-liso-branco.jpg" alt="Cropped Básico Branco">
@@ -84,7 +130,6 @@
                 <span>R$ 55,00</span>
             </div>
         </div>
-
         <div class="produto-card">
             <img src="imgs/vestidoflorido.jpg" alt="Vestido Florido">
             <div class="produto-info">
@@ -92,7 +137,6 @@
                 <span>R$ 70,00</span>
             </div>
         </div>
-
         <div class="produto-card">
             <img src="imgs/bolsadecouro.jpg" alt="Bolsa de Couro">
             <div class="produto-info">
@@ -102,31 +146,72 @@
         </div>
     </div>
 </section>
+
 <section class="mais-vendidos">
     <h2>MAIS VENDIDOS</h2>
-
     <div class="mais-vendidos-grid">
         <div class="mais-vendidos-card">
             <img src="imgs/bolsas.jpg" alt="Bolsas">
             <span>Bolsas</span>
         </div>
-
         <div class="mais-vendidos-card">
             <img src="imgs/blusas.jpg" alt="Blusas">
             <span>Blusas</span>
         </div>
-
         <div class="mais-vendidos-card">
             <img src="imgs/vestidos.jpg" alt="Vestidos">
             <span>Vestidos</span>
         </div>
-
         <div class="mais-vendidos-card">
             <img src="imgs/calças.jpg" alt="Calças">
             <span>Calças</span>
         </div>
     </div>
 </section>
+
+<script>
+    function mostrarToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.classList.add('visivel');
+        setTimeout(() => toast.classList.remove('visivel'), 4000);
+    }
+
+    function sair() {
+        localStorage.removeItem('usuario');
+        window.location.reload();
+    }
+
+    function atualizarHeader() {
+        const dados = localStorage.getItem('usuario');
+        const infoConta = document.getElementById('info-conta');
+
+        if (dados) {
+            const usuario = JSON.parse(dados);
+            // Pega só o primeiro nome para não ficar longo no header
+            const primeiroNome = usuario.nome.split(' ')[0];
+
+            infoConta.innerHTML = `
+                <span class="nome-usuario">Olá, ${primeiroNome}</span>
+                <button class="btn-sair" onclick="sair()">Sair</button>
+            `;
+        } else {
+            infoConta.innerHTML = `<a href="login.html" class="email-usuario">Fazer Login</a>`;
+        }
+    }
+
+    // Ao carregar a página, verifica se acabou de logar
+    window.addEventListener('DOMContentLoaded', () => {
+        atualizarHeader();
+
+        const nomeLogin = sessionStorage.getItem('loginFeito');
+        if (nomeLogin) {
+            sessionStorage.removeItem('loginFeito');
+            const primeiroNome = nomeLogin.split(' ')[0];
+            mostrarToast(`✓ Bem-vindo(a), ${primeiroNome}!`);
+        }
+    });
+</script>
+
 </body>
 </html>
-</>

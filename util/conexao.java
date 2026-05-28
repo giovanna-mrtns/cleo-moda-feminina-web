@@ -18,7 +18,6 @@ public class Conexao {
     private static final String MYSQL_USER = env("DB_USER", "root");
     private static final String MYSQL_PASS = env("DB_PASS", "");
 
-    // Config H2 (embutido)
     private static final String H2_URL  = "jdbc:h2:./data/sistema;AUTO_SERVER=TRUE;DB_CLOSE_DELAY=-1";
     private static final String H2_USER = "sa";
     private static final String H2_PASS = "";
@@ -35,8 +34,8 @@ public class Conexao {
         }
     }
 
-    // Cria as tabelas automaticamente se ainda não existirem
     private static boolean inicializado = false;
+
     private static synchronized void inicializarH2(Connection conn) throws Exception {
         if (inicializado) return;
         inicializado = true;
@@ -88,9 +87,13 @@ public class Conexao {
         var rs = conn.createStatement().executeQuery("SELECT COUNT(*) FROM perfil");
         rs.next();
         if (rs.getInt(1) == 0) {
-            conn.createStatement().executeUpdate
-            ("INSERT INTO perfil (nome) VALUES ('Administrador')");
-            conn.createStatement().executeUpdate("INSERT INTO perfil (nome) VALUES ('Operador')");
+            // Perfis: Gerente, Vendedor, Atendente, Cliente
+            conn.createStatement().executeUpdate("INSERT INTO perfil (nome) VALUES ('Gerente')");
+            conn.createStatement().executeUpdate("INSERT INTO perfil (nome) VALUES ('Vendedor')");
+            conn.createStatement().executeUpdate("INSERT INTO perfil (nome) VALUES ('Atendente')");
+            conn.createStatement().executeUpdate("INSERT INTO perfil (nome) VALUES ('Cliente')");
+
+            // Usuário admin padrão com perfil Gerente (id=1)
             conn.createStatement().executeUpdate("""
                 INSERT INTO usuario (nome, login, senha, id_perfil)
                 VALUES ('Admin', 'admin@gmail.com', '1234', 1)

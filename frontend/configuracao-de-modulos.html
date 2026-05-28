@@ -11,7 +11,7 @@
 <header>
     <div id="header-2">
         <div id="logo">
-            <a href="navbar-1.html">
+            <a href="index.html">
                 <img src="imgs/Logo-cleo.png" alt="Logo Cleo" width="100px">
             </a>
         </div>
@@ -40,9 +40,7 @@
         <div class="config-meio">
             <div class="input-buscar">
                 <input id="buscar-modulo" type="text" placeholder="Buscar módulo..." oninput="filtrarTabela()">
-                <button class="buscar" type="button">
-                    Buscar
-                </button>
+                <button class="buscar" type="button">Buscar</button>
             </div>
             <button class="btn-config" onclick="editarSelecionado()">Editar</button>
             <button class="btn-config" onclick="desativarSelecionado()">Desativar</button>
@@ -85,35 +83,38 @@
 
         <div class="modal-botoes">
             <button class="btn-config" onclick="fecharModal()">Cancelar</button>
-            <button id="btn-novo" onclick="salvarModulo()">Salvar</button>
+            <button onclick="salvarModulo()">Salvar</button>
         </div>
     </div>
 </div>
 
 <script>
-    // -------------------------------------------------------
-    // Dados simulados – substitua pelas chamadas ao back-end
-    // -------------------------------------------------------
-    let modulos = [
-        { id: 1, nome: "Financeiro",  descricao: "Gestão financeira da loja",    ativo: "s" },
-        { id: 2, nome: "Estoque",     descricao: "Controle de produtos e estoque", ativo: "s" },
-        { id: 3, nome: "Atendimento", descricao: "Atendimento ao cliente",        ativo: "s" }
-    ];
-
-    let proximoId = 4;
+    const API = 'http://localhost:8080';
+    let modulos = [];
     let linhaSelecionada = null;
 
+    // CORRIGIDO: carrega módulos reais do banco via API
+    async function carregarModulos() {
+        try {
+            const resp = await fetch(`${API}/api/modulos`);
+            modulos = await resp.json();
+            renderTabela(modulos);
+        } catch (e) {
+            alert('Erro ao conectar ao servidor. Verifique se o backend está rodando.');
+        }
+    }
+
     function renderTabela(lista) {
-        const tbody = document.getElementById("corpo-tabela");
-        tbody.innerHTML = "";
+        const tbody = document.getElementById('corpo-tabela');
+        tbody.innerHTML = '';
         lista.forEach(m => {
-            const tr = document.createElement("tr");
+            const tr = document.createElement('tr');
             tr.dataset.id = m.id;
             tr.innerHTML = `
                 <td><input type="radio" name="sel-modulo" onchange="selecionarLinha(${m.id})"></td>
                 <td>${m.id}</td>
                 <td>${m.nome}</td>
-                <td>${m.descricao}</td>
+                <td>${m.descricao || '—'}</td>
                 <td class="${m.ativo === 's' ? 'ativo-status' : 'inativo-status'}">
                     ${m.ativo === 's' ? 'Ativo' : 'Inativo'}
                 </td>`;
@@ -122,10 +123,10 @@
     }
 
     function filtrarTabela() {
-        const termo = document.getElementById("buscar-modulo").value.toLowerCase();
+        const termo = document.getElementById('buscar-modulo').value.toLowerCase();
         const filtrados = modulos.filter(m =>
             m.nome.toLowerCase().includes(termo) ||
-            m.descricao.toLowerCase().includes(termo)
+            (m.descricao && m.descricao.toLowerCase().includes(termo))
         );
         renderTabela(filtrados);
     }
@@ -135,50 +136,59 @@
     }
 
     function abrirModal(modulo = null) {
-        document.getElementById("modal-titulo").textContent = modulo ? "Editar Módulo" : "Novo Módulo";
-        document.getElementById("campo-id").value        = modulo ? modulo.id        : "";
-        document.getElementById("campo-nome").value      = modulo ? modulo.nome      : "";
-        document.getElementById("campo-descricao").value = modulo ? modulo.descricao : "";
-        document.getElementById("modal-overlay").style.display = "flex";
+        document.getElementById('modal-titulo').textContent    = modulo ? 'Editar Módulo' : 'Novo Módulo';
+        document.getElementById('campo-id').value             = modulo ? modulo.id        : '';
+        document.getElementById('campo-nome').value           = modulo ? modulo.nome      : '';
+        document.getElementById('campo-descricao').value      = modulo ? modulo.descricao : '';
+        document.getElementById('modal-overlay').style.display = 'flex';
     }
 
     function fecharModal() {
-        document.getElementById("modal-overlay").style.display = "none";
+        document.getElementById('modal-overlay').style.display = 'none';
     }
 
-    function salvarModulo() {
-        const id        = document.getElementById("campo-id").value;
-        const nome      = document.getElementById("campo-nome").value.trim();
-        const descricao = document.getElementById("campo-descricao").value.trim();
+    // CORRIGIDO: salva via API real (POST para criar, PUT para editar)
+    async function salvarModulo() {
+        const id        = document.getElementById('campo-id').value;
+        const nome      = document.getElementById('campo-nome').value.trim();
+        const descricao = document.getElementById('campo-descricao').value.trim();
 
-        if (!nome) { alert("O nome do módulo é obrigatório."); return; }
+        if (!nome) { alert('O nome do módulo é obrigatório.'); return; }
 
         if (id) {
-            const m = modulos.find(m => m.id === parseInt(id));
-            if (m) { m.nome = nome; m.descricao = descricao; }
+            await fetch(`${API}/api/modulos`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id: parseInt(id), nome, descricao })
+            });
         } else {
-            modulos.push({ id: proximoId++, nome, descricao, ativo: "s" });
+            await fetch(`${API}/api/modulos`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nome, descricao })
+            });
         }
 
         fecharModal();
-        renderTabela(modulos);
+        carregarModulos();
     }
 
     function editarSelecionado() {
-        if (!linhaSelecionada) { alert("Selecione um módulo."); return; }
+        if (!linhaSelecionada) { alert('Selecione um módulo.'); return; }
         const m = modulos.find(m => m.id === linhaSelecionada);
         abrirModal(m);
     }
 
-    function desativarSelecionado() {
-        if (!linhaSelecionada) { alert("Selecione um módulo."); return; }
-        if (!confirm("Deseja desativar este módulo?")) return;
-        const m = modulos.find(m => m.id === linhaSelecionada);
-        if (m) m.ativo = "n";
-        renderTabela(modulos);
+    // CORRIGIDO: desativa via API real (DELETE)
+    async function desativarSelecionado() {
+        if (!linhaSelecionada) { alert('Selecione um módulo.'); return; }
+        if (!confirm('Deseja desativar este módulo?')) return;
+        await fetch(`${API}/api/modulos/${linhaSelecionada}`, { method: 'DELETE' });
+        linhaSelecionada = null;
+        carregarModulos();
     }
 
-    renderTabela(modulos);
+    window.onload = carregarModulos;
 </script>
 
 </body>

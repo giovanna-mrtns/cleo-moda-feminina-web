@@ -13,6 +13,7 @@ public class Servidor {
         server.createContext("/api/modulos",   new ModuloHandler());
         server.createContext("/api/perfis",    new PerfilHandler());
         server.createContext("/api/permissoes",new PermissaoHandler());
+        server.createContext("/", new StaticHandler());
 
         server.start();
         System.out.println("Servidor rodando em http://localhost:8080");
