@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login – Cleo</title>
+    <link rel="stylesheet" href="style5.css">
+    <style>
+        /* Toast de notificação */
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: #2e7d32;
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-family: Jost, sans-serif;
+            font-size: 15px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 9999;
+            white-space: nowrap;
+        }
+        .toast.visivel {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        .toast.erro {
+            background: #c62828;
+        }
+    </style>
+</head>
+<body>
+
+<div id="toast" class="toast"></div>
+
+<header class="topo">
+   <div id="header">
+        <div id="logo">
+            <a href="index.html">
+                <img src="imgs/Logo-cleo.png" alt="Logo Cleo" width="100px">
+            </a>
+        </div>
+        <div class="barra-pesquisa">
+            <input type="text" placeholder="Buscar produtos...">
+            <img src="imgs/icone-loupe-gris 6.png" alt="Buscar" width="30px">
+        </div>
+        <div class="icones-header">
+            <div class="icone-conta">
+                <img src="imgs/logo-mulher-minha conta.png" alt="Minha Conta" width="35px">
+                <div class="info-conta">
+                    <a href="login.html" class="email-usuario">Fazer Login</a>
+                </div>
+            </div>
+            <div class="icone-carrinho">
+                <img src="imgs/carrinho 1.png" alt="Carrinho" width="35px">
+                <a href="Carrinho.html" class="email-usuario">Carrinho</a>
+            </div>
+        </div>
+   </div>
+</header>
