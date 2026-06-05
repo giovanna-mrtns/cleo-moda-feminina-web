@@ -111,3 +111,88 @@ body{
     background-color: var(--preto);
     padding: 15px 40px;
 }
+
+.menu ul {
+    list-style: none;
+    display: flex;
+    gap: 60px;
+    justify-content: center;
+}
+
+.menu ul li a {
+    text-decoration: none;
+    color: #fff4f4;
+    font-size: 16px;
+    font-family: Jost;
+    padding-bottom: 5px;
+}
+
+.menu ul li a.ativo {
+    border-bottom: 2px solid var(--roxo);
+    color: var(--branco);
+    font-weight: bold;
+}
+
+.menu ul li a:hover {
+    color: var(--roxo);
+}
+.banner {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    background-image:url(imgs/Fundo-Hero.png);
+    background-size: cover;
+    background-position: center;
+    height: 200px; /* altura fixa, o fundo não vai mais crescer */
+    overflow: visible; /* permite as imagens saírem para cima */
+    position: relative;
+
+}
+
+.banner-esquerda {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 450px; /* ajusta o tamanho à vontade */
+}
+
+.banner-direita {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 300px; /* ajusta o tamanho à vontade */
+}
+.banner-centro {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    top: 50px;px;
+}
+
+.banner-centro h2 {
+    color: rgb(2, 2, 2);
+    font-size: 32px;
+    font-family: Mina;
+}
+.frete {
+    background-color: white;
+    border-radius: 25px;
+    border: 2px solid black;
+    padding: 8px 25px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+}
+.frete span {
+    font-family: Mina;
+    font-size: 16px;
+}
+
+
+

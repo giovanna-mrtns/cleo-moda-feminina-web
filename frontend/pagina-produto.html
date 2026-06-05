@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login – Cleo</title>
+    <title>Pagina Produto</title>
     <link rel="stylesheet" href="style5.css">
     <style>
         /* Toast de notificação */
@@ -28,8 +28,34 @@
             opacity: 1;
             transform: translateX(-50%) translateY(0);
         }
-        .toast.erro {
-            background: #c62828;
+
+        /* Área de conta quando logado */
+        .info-conta {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .nome-usuario {
+            font-family: Jost, sans-serif;
+            font-weight: bold;
+            color: #fff;
+            font-size: 14px;
+            line-height: 1.2;
+        }
+        .btn-sair {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 4px;
+            color: #fff;
+            font-family: Jost, sans-serif;
+            font-size: 12px;
+            padding: 2px 8px;
+            cursor: pointer;
+            text-align: left;
+            transition: background 0.2s;
+        }
+        .btn-sair:hover {
+            background: rgba(255,255,255,0.15);
         }
     </style>
 </head>
@@ -51,7 +77,8 @@
         <div class="icones-header">
             <div class="icone-conta">
                 <img src="imgs/logo-mulher-minha conta.png" alt="Minha Conta" width="35px">
-                <div class="info-conta">
+                <!-- Conteúdo trocado pelo JS dependendo do estado de login -->
+                <div class="info-conta" id="info-conta">
                     <a href="login.html" class="email-usuario">Fazer Login</a>
                 </div>
             </div>
@@ -62,3 +89,26 @@
         </div>
    </div>
 </header>
+
+<nav class="menu">
+    <ul>
+        <li><a href="index.html" class="ativo">Início</a></li>
+        <li><a href="#">Lançamentos</a></li>
+        <li><a href="#">Roupas</a></li>
+        <li><a href="#">Acessórios</a></li>
+        <li><a href="#">Promoções</a></li>
+    </ul>
+</nav>
+
+<div class="banner">
+    <img src="imgs/lado-esquerdo.png" alt="Modelo Esquerda" class="banner-esquerda">
+    <div class="banner-centro">
+        <h2>Seu estilo único aqui!</h2>
+        <div class="frete">
+            <img src="imgs/Coracao (2).png" alt="coração" width="25px">
+            <span>Frete Grátis em todo o Brasil</span>
+            <img src="imgs/Coracao (2).png" alt="coração" width="25px">
+        </div>
+    </div>
+    <img src="imgs/lado-direito.png" alt="Modelo Direita" class="banner-direita">
+</div>
