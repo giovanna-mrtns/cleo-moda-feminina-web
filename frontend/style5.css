@@ -468,7 +468,5 @@ body {
     transition: background 0.2s;
     display: flex;
     flex-direction: column;
-    align-items: cente
-
-
-
+    align-items: center;
+    }
