@@ -7,13 +7,14 @@
     font-family: Mina;
     src: url(fonts/Mina-Regular.ttf) format('truetype');
 }
-*{
+
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-body{
+body {
     background-color: var(--branco);
 }
 
@@ -26,13 +27,15 @@ body{
     --cor-texto-transparente: #ffffff65;
 }
 
-.topo{
+/* ===== HEADER ===== */
+.topo {
     background-color: var(--roxo);
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 20px 40px;
 }
+
 #header {
     display: flex;
     align-items: center;
@@ -52,23 +55,20 @@ body{
     justify-content: space-between;
     padding: 0 15px;
     border-radius: 5px;
-
-    /* remove o margin-left e adiciona isso: */
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
 }
-.barra-pesquisa input{
+
+.barra-pesquisa input {
     background: transparent;
     border: none;
     outline: none;
-
     color: var(--branco);
-
     width: 100%;
-
     font-size: 16px;
 }
+
 .icones-header {
     display: flex;
     align-items: center;
@@ -85,6 +85,7 @@ body{
 .info-conta {
     display: flex;
     flex-direction: column;
+    gap: 2px;
 }
 
 .icones-header a {
@@ -92,11 +93,6 @@ body{
     text-decoration: none;
     color: var(--branco);
     font-size: 15px;
-}
-
-.nome-usuario {
-    font-weight: bold;
-    font-family: Mina;
 }
 
 .icone-carrinho {
@@ -107,6 +103,8 @@ body{
     color: var(--branco);
     font-size: 14px;
 }
+
+/* ===== MENU ===== */
 .menu {
     background-color: var(--preto);
     padding: 15px 40px;
@@ -136,33 +134,35 @@ body{
 .menu ul li a:hover {
     color: var(--roxo);
 }
+
+/* ===== BANNER ===== */
 .banner {
     width: 100%;
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    background-image:url(imgs/Fundo-Hero.png);
+    background-image: url(imgs/Fundo-Hero.png);
     background-size: cover;
     background-position: center;
-    height: 200px; /* altura fixa, o fundo não vai mais crescer */
-    overflow: visible; /* permite as imagens saírem para cima */
+    height: 200px;
+    overflow: visible;
     position: relative;
-
 }
 
 .banner-esquerda {
     position: absolute;
     left: 0;
     bottom: 0;
-    width: 450px; /* ajusta o tamanho à vontade */
+    width: 450px;
 }
 
 .banner-direita {
     position: absolute;
     right: 0;
     bottom: 0;
-    width: 300px; /* ajusta o tamanho à vontade */
+    width: 300px;
 }
+
 .banner-centro {
     position: absolute;
     left: 50%;
@@ -171,7 +171,7 @@ body{
     flex-direction: column;
     align-items: center;
     gap: 15px;
-    top: 50px;px;
+    top: 50px;
 }
 
 .banner-centro h2 {
@@ -179,6 +179,7 @@ body{
     font-size: 32px;
     font-family: Mina;
 }
+
 .frete {
     background-color: white;
     border-radius: 25px;
@@ -187,12 +188,287 @@ body{
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 15px;
 }
+
 .frete span {
     font-family: Mina;
     font-size: 16px;
 }
+
+/* ===== PRODUTO ===== */
+.container-produto {
+    max-width: 1100px;
+    margin: 40px auto;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 40px;
+    display: flex;
+    gap: 50px;
+    align-items: flex-start;
+}
+
+.coluna-esquerda {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 300px;
+}
+
+.imagem-produto {
+    width: 300px;
+    height: 320px;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #f5f5f5;
+}
+
+.opcao-grupo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.opcao-grupo label {
+    font-family: Jost, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    color: #000;
+    min-width: 75px;
+}
+
+.opcao-grupo select {
+    font-family: Jost, sans-serif;
+    font-size: 14px;
+    padding: 6px 10px;
+    border: 1px solid #999;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+    min-width: 100px;
+}
+
+.coluna-direita {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.nome-produto {
+    font-family: Jost, sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #111;
+    margin: 0;
+}
+
+.avaliacao {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: Jost, sans-serif;
+    font-size: 14px;
+    color: #444;
+}
+
+.estrelas {
+    color: #f5a623;
+    font-size: 16px;
+    letter-spacing: 2px;
+}
+
+.nota-num {
+    font-weight: 600;
+    color: #111;
+}
+
+.separador {
+    color: #bbb;
+}
+
+.box-preco {
+    background: #f0f0f0;
+    border-radius: 8px;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.preco-principal {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.preco-valor {
+    font-family: Jost, sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #851B87;
+}
+
+.pix-cupom {
+    font-family: Jost, sans-serif;
+    font-size: 13px;
+    color: #851B87;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.preco-sem-cupom {
+    font-family: Jost, sans-serif;
+    font-size: 13px;
+    color: #666;
+}
+
+.info-linha {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-family: Jost, sans-serif;
+    font-size: 14px;
+    color: #444;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.info-label {
+    min-width: 110px;
+    color: #888;
+    font-size: 13px;
+}
+
+.info-valor {
+    color: #111;
+    font-weight: 500;
+}
+
+.link-parcelamento {
+    color: #851B87;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.link-parcelamento:hover {
+    text-decoration: underline;
+}
+
+.frete-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.frete-local {
+    font-size: 13px;
+    color: #111;
+    font-weight: 500;
+}
+
+.frete-preco {
+    font-size: 13px;
+    color: #2e7d32;
+    font-weight: 600;
+}
+
+.linha-quantidade {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.quantidade-label {
+    font-family: Jost, sans-serif;
+    font-size: 14px;
+    color: #444;
+    min-width: 110px;
+}
+
+.controle-quantidade {
+    display: flex;
+    align-items: center;
+    border: 1px solid #555;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.controle-quantidade button {
+    width: 34px;
+    height: 34px;
+    background: #fff;
+    border: none;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    cursor: pointer;
+    transition: background 0.2s;
+    font-family: Jost, sans-serif;
+}
+
+.controle-quantidade button:hover {
+    background: #f0f0f0;
+}
+
+.controle-quantidade span {
+    width: 40px;
+    text-align: center;
+    font-family: Jost, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    border-left: 1px solid #555;
+    border-right: 1px solid #555;
+    line-height: 34px;
+    display: inline-block;
+}
+
+.estoque-tag {
+    font-family: Jost, sans-serif;
+    font-size: 13px;
+    color: #2e7d32;
+    font-weight: 500;
+}
+
+.botoes-acao {
+    display: flex;
+    gap: 16px;
+    margin-top: 6px;
+}
+
+.btn-carrinho {
+    background: #851B87;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 13px 28px;
+    font-family: Jost, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-carrinho:hover {
+    background: #6a146c;
+}
+
+.btn-cupom {
+    background: #d8a0d8;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 13px 22px;
+    font-family: Jost, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    flex-direction: column;
+    align-items: cente
 
 
 
