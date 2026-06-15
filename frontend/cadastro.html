@@ -121,7 +121,7 @@
         }
 
         try {
-            const resp = await fetch('https://cleo-modas-femininas.onrender.com/api/usuarios', {
+            const resp = await fetch('http://localhost:8080/api/usuarios', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ nome, login, senha, idPerfil: 4 })
