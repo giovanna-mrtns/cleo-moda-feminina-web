@@ -1,11 +1,11 @@
 @font-face {
     font-family: Jost;
-    src: url(fonts/Jost-VariableFont_wght.ttf) format('truetype');
+    src: url(../fonts/Jost-VariableFont_wght.ttf) format('truetype');
 }
 
 @font-face {
     font-family: Mina;
-    src: url(fonts/Mina-Regular.ttf) format('truetype');
+    src: url(../fonts/Mina-Regular.ttf) format('truetype');
 }
 
 

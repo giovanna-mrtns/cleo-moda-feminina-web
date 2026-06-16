@@ -1,11 +1,11 @@
 @font-face {
     font-family: Jost;
-    src: url(fonts/Jost-VariableFont_wght.ttf) format('truetype');
+    src: url(../fonts/Jost-VariableFont_wght.ttf) format('truetype');
 }
 
 @font-face {
     font-family: Mina;
-    src: url(fonts/Mina-Regular.ttf) format('truetype');
+    src: url(../fonts/Mina-Regular.ttf) format('truetype');
 }
 
 
@@ -124,7 +124,7 @@ h1, h2 {
     align-items: center;
     justify-content: center;
     padding: 50px;
-    background-image: url(imgs/Fundo-Hero.png);
+    background-image: url(../imgs/Fundo-Hero.png);
     background-size: cover;
     font-family: Mina, sans-serif;
 }
