@@ -64,56 +64,78 @@
     // ============================================================
     //  Carrega produtos do banco e gera os cards automaticamente
     // ============================================================
-    async function carregarProdutos() {
-        const grid = document.getElementById('produtos-grid');
-        grid.innerHTML = '<p style="font-family: Mina;">Carregando produtos...</p>';
+   let todosProdutos = [];
 
-        try {
-            const resposta = await fetch(`${API_BASE}/produtos`);
-            if (!resposta.ok) throw new Error('Falha ao buscar produtos');
-            const produtos = await resposta.json();
+async function carregarProdutos() {
+    const grid = document.getElementById('produtos-grid');
+    grid.innerHTML = '<p style="font-family: Mina;">Carregando produtos...</p>';
 
-            if (produtos.length === 0) {
-                grid.innerHTML = '<p style="font-family: Mina;">Nenhum produto cadastrado ainda.</p>';
-                return;
-            }
+    try {
+        const resposta = await fetch(`${API_BASE}/produtos`);
+        if (!resposta.ok) throw new Error('Falha ao buscar produtos');
+        const produtos = await resposta.json();
+        todosProdutos = produtos;
 
-            grid.innerHTML = ''; // limpa o "carregando..."
-
-            produtos.forEach(produto => {
-                const card = document.createElement('div');
-                card.className = 'produto-card';
-                card.style.cursor = 'pointer';
-
-                // Se não tiver imagem cadastrada, usa uma imagem padrão
-                const imagem = produto.imagemUrl && produto.imagemUrl.trim() !== ''
-                    ? produto.imagemUrl
-                    : 'imgs/cropped-liso-branco.jpg';
-
-                card.innerHTML = `
-                    <img src="${imagem}" alt="${produto.nome}">
-                    <div class="produto-info">
-                        <span>${produto.nome}</span>
-                        <span>${formatarPreco(produto.preco)}</span>
-                    </div>
-                `;
-
-                // Clique no card → vai para a página de detalhes desse produto
-                card.addEventListener('click', () => {
-                    window.location.href = `pagina-produto.html?id=${produto.id}`;
-                });
-
-                grid.appendChild(card);
-            });
-
-        } catch (erro) {
-            console.error(erro);
-            grid.innerHTML = '<p style="font-family: Mina; color: red;">Erro ao carregar produtos.</p>';
+        if (produtos.length === 0) {
+            grid.innerHTML = '<p style="font-family: Mina;">Nenhum produto cadastrado ainda.</p>';
+            return;
         }
-    }
 
-    document.addEventListener('DOMContentLoaded', carregarProdutos);
-</script>
+        renderizarProdutos(todosProdutos); // ← usa função reutilizável
+
+    } catch (erro) {
+        console.error(erro);
+        grid.innerHTML = '<p style="font-family: Mina; color: red;">Erro ao carregar produtos.</p>';
+    }
+}
+
+// Função separada para renderizar cards (evita repetição de código)
+function renderizarProdutos(lista) {
+    const grid = document.getElementById('produtos-grid');
+    grid.innerHTML = '';
+
+    lista.forEach(produto => {
+        const card = document.createElement('div');
+        card.className = 'produto-card';
+        card.style.cursor = 'pointer';
+
+        const imagem = produto.imagemUrl && produto.imagemUrl.trim() !== ''
+            ? produto.imagemUrl
+            : 'imgs/cropped-liso-branco.jpg';
+
+        card.innerHTML = `
+            <img src="${imagem}" alt="${produto.nome}">
+            <div class="produto-info">
+                <span>${produto.nome}</span>
+                <span>${formatarPreco(produto.preco)}</span>
+            </div>
+        `;
+
+        card.addEventListener('click', () => {
+            window.location.href = `pagina-produto.html?id=${produto.id}`;
+        });
+
+        grid.appendChild(card);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    carregarProdutos();
+
+    const campoBusca = document.getElementById('busca-produto');
+
+    campoBusca.addEventListener('input', () => {
+        const texto = campoBusca.value.toLowerCase();
+
+        const filtrados = todosProdutos.filter(produto =>
+            produto.nome.toLowerCase().includes(texto) ||
+            produto.descricao.toLowerCase().includes(texto) ||
+            produto.categoria.toLowerCase().includes(texto)
+        );
+
+        renderizarProdutos(filtrados);
+    });
+});
 
 </head>
 <body>
