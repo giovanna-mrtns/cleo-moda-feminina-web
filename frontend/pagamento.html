@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cléo MF | Pagamento</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style3.css" />
+    <script src="carrinho.js"></script>
+</head>
+<body>
+
+    <header class="topbar">
+        <div class="topbar-avatar" id="avatar-letra">?</div>
+        <div class="topbar-info">
+            <strong id="nome-usuario">Visitante</strong>
+            <span id="email-usuario"></span>
+        </div>
+    </header>
+
+    <div class="breadcrumb">
+        Cléo MF <span>&nbsp;|&nbsp;</span> Pagamento
+    </div>
+
+    <main class="container">
+
+        <!-- Produtos + Pagamento -->
+        <div class="card">
+            <div class="produtos-header">
+                <span>Produtos Pedidos</span>
+                <span>Preço Unitário</span>
+                <span>Quantia</span>
+            </div>
+
+            <!-- Itens do carrinho gerados dinamicamente -->
+            <div id="lista-itens"></div>
+
+            <!-- Método de Pagamento (simulado) -->
+            <div class="pagamento-titulo">Método de Pagamento</div>
+            <div class="metodos">
+                <button class="btn-metodo ativo" onclick="selecionarMetodo(this)">PIX</button>
+                <button class="btn-metodo" onclick="selecionarMetodo(this)">Boleto Bancário</button>
+                <button class="btn-metodo" onclick="selecionarMetodo(this)">Cartão Débito</button>
+            </div>
+
+            <!-- Totais -->
+            <div class="totais">
+                <div class="totais-grid">
+                    <span class="t-label">Total dos Produtos</span>
+                    <span class="t-valor" id="total-produtos">R$ 0,00</span>
+
+                    <span class="t-label">Total do Frete</span>
+                    <span class="t-valor">Grátis</span>
+
+                    <span class="t-total-label">Pagamento Total</span>
+                    <span class="t-total-valor" id="total-final">R$ 0,00</span>
+                </div>
+            </div>
+
+            <!-- Botão -->
+            <div class="card-footer">
+                <button class="btn-pedido" id="btn-finalizar" onclick="finalizarPedido()">Fazer Pedido</button>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        let metodoSelecionado = 'PIX';
+
+        function selecionarMetodo(btn) {
+            document.querySelectorAll('.btn-metodo').forEach(b => b.classList.remove('ativo'));
+            btn.classList.add('ativo');
+            metodoSelecionado = btn.textContent.trim();
+        }
+
+        // Renderiza os itens do carrinho na tela
+        function renderizarItens() {
+            const itens = getCarrinho();
+            const lista = document.getElementById('lista-itens');
+
+            if (itens.length === 0) {
+                lista.innerHTML = '<p style="padding: 20px;">Seu carrinho está vazio.</p>';
+                document.getElementById('btn-finalizar').disabled = true;
+                return;
+            }
+
+            lista.innerHTML = itens.map(item => {
+                const imagem = item.imagemUrl && item.imagemUrl.trim() !== ''
+                    ? item.imagemUrl
+                    : 'imgs/cropped-liso-branco.jpg';
+
+                return `
+                    <div class="produto-row">
+                        <div class="produto-info">
+                            <img class="produto-img" src="${imagem}" alt="${item.nome}" />
+                            <div>
+                                <div class="produto-nome">${item.nome}</div>
+                            </div>
+                        </div>
+                        <div class="produto-preco">${formatarPreco(item.preco)}</div>
+                        <div class="produto-qtd">${item.quantidade}</div>
+                    </div>
+                `;
+            }).join('');
+
+            const total = calcularTotalCarrinho();
+            document.getElementById('total-produtos').textContent = formatarPreco(total);
+            document.getElementById('total-final').textContent = formatarPreco(total);
+        }
+
+        // Mostra dados do usuário logado no topo
+        function carregarUsuario() {
+            const auth = getAuth();
+            if (!auth) {
+                window.location.href = 'login.html';
+                return;
+            }
+            document.getElementById('nome-usuario').textContent = auth.nome;
+            document.getElementById('email-usuario').textContent = auth.login;
+            document.getElementById('avatar-letra').textContent = auth.nome.charAt(0).toUpperCase();
+        }
+
+        // ============================================================
+        //  Cria o pedido no banco via POST /api/pedidos
+        //  e simula a confirmação do pagamento via PUT /api/pedidos/{id}
+        // ============================================================
+        async function finalizarPedido() {
+            const auth = getAuth();
+            const itens = getCarrinho();
+
+            if (!auth || itens.length === 0) return;
+
+            const btn = document.getElementById('btn-finalizar');
+            btn.disabled = true;
+            btn.textContent = 'Processando...';
+
+            try {
+                // 1) Cria o pedido com status "pendente"
+                const respPedido = await fetch(`${API_BASE}/pedidos`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${auth.token}`
+                    },
+                    body: JSON.stringify({
+                        idUsuario: auth.id,
+                        itens: itens.map(i => ({
+                            idProduto: i.idProduto,
+                            quantidade: i.quantidade,
+                            precoUnitario: i.preco
+                        }))
+                    })
+                });
+
+                if (!respPedido.ok) throw new Error('Erro ao criar pedido');
+                const { id: idPedido } = await respPedido.json();
+
+                // 2) Simula a aprovação do pagamento (PIX instantâneo, por ex.)
+                //    Em um sistema real, aqui entraria a integração com um
+                //    gateway de pagamento (Mercado Pago, Stripe, etc.)
+                await fetch(`${API_BASE}/pedidos/${idPedido}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${auth.token}`
+                    },
+                    body: JSON.stringify({ status: 'pago' })
+                });
+
+                // 3) Limpa o carrinho e vai para a tela de acompanhamento
+                limparCarrinho();
+                window.location.href = `caminho-do-pedido.html?id=${idPedido}`;
+
+            } catch (erro) {
+                console.error(erro);
+                alert('Não foi possível finalizar o pedido. Tente novamente.');
+                btn.disabled = false;
+                btn.textContent = 'Fazer Pedido';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            carregarUsuario();
+            renderizarItens();
+        });
+    </script>
+
+</body>
+</html>
