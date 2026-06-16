@@ -1,6 +1,7 @@
 package model;
 
 import java.time.LocalDateTime;
+import com.google.gson.annotations.Expose;
 
 public class Usuario {
 
