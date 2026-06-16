@@ -242,40 +242,40 @@
     // ============================================================
     //  UM ÚNICO DOMContentLoaded — centraliza toda a inicialização
     // ============================================================
-    window.addEventListener('DOMContentLoaded', () => {
+window.onload = function() {
 
-        // 1. Atualiza header (login/logout)
-        atualizarHeader();
+    // 1. Atualiza header (login/logout)
+    atualizarHeader();
 
-        // 2. Toast de boas-vindas após login
-        const nomeLogin = sessionStorage.getItem('loginFeito');
-        if (nomeLogin) {
-            sessionStorage.removeItem('loginFeito');
-            mostrarToast(`✓ Bem-vindo(a), ${nomeLogin.split(' ')[0]}!`);
-        }
+    // 2. Toast de boas-vindas após login
+    const nomeLogin = sessionStorage.getItem('loginFeito');
+    if (nomeLogin) {
+        sessionStorage.removeItem('loginFeito');
+        mostrarToast(`✓ Bem-vindo(a), ${nomeLogin.split(' ')[0]}!`);
+    }
 
-        // 3. Carrega produtos da API
-        carregarProdutos();
+    // 3. Carrega produtos da API
+    carregarProdutos();
 
-        // 4. Busca ao digitar
-        const campoBusca = document.getElementById('busca-produto');
-        campoBusca.addEventListener('input', () => {
-            const texto = campoBusca.value.toLowerCase().trim();
-            const filtrados = todosProdutos.filter(produto =>
-                produto.nome.toLowerCase().includes(texto) ||
-                produto.descricao.toLowerCase().includes(texto) ||
-                produto.categoria.toLowerCase().includes(texto)
-            );
-            renderizarProdutos(filtrados);
-        });
-
-        // 5. Busca ao clicar na lupa
-        const lupa = document.querySelector('.barra-pesquisa img');
-        lupa.style.cursor = 'pointer';
-        lupa.addEventListener('click', () => {
-            campoBusca.dispatchEvent(new Event('input'));
-        });
+    // 4. Busca ao digitar
+    const campoBusca = document.getElementById('busca-produto');
+    campoBusca.addEventListener('input', () => {
+        const texto = campoBusca.value.toLowerCase().trim();
+        const filtrados = todosProdutos.filter(produto =>
+            produto.nome.toLowerCase().includes(texto) ||
+            produto.descricao.toLowerCase().includes(texto) ||
+            produto.categoria.toLowerCase().includes(texto)
+        );
+        renderizarProdutos(filtrados);
     });
+
+    // 5. Busca ao clicar na lupa
+    const lupa = document.querySelector('.barra-pesquisa img');
+    lupa.style.cursor = 'pointer';
+    lupa.addEventListener('click', () => {
+        campoBusca.dispatchEvent(new Event('input'));
+    });
+}
 </script>
 
 <!-- Barra admin -->
