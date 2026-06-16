@@ -64,7 +64,6 @@
     // ============================================================
     //  Carrega produtos do banco e gera os cards automaticamente
     // ============================================================
-    let todosProdutos = [];
     async function carregarProdutos() {
         const grid = document.getElementById('produtos-grid');
         grid.innerHTML = '<p style="font-family: Mina;">Carregando produtos...</p>';
@@ -73,7 +72,6 @@
             const resposta = await fetch(`${API_BASE}/produtos`);
             if (!resposta.ok) throw new Error('Falha ao buscar produtos');
             const produtos = await resposta.json();
-            todosProdutos = produtos;
 
             if (produtos.length === 0) {
                 grid.innerHTML = '<p style="font-family: Mina;">Nenhum produto cadastrado ainda.</p>';
@@ -114,47 +112,6 @@
         }
     }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const campoBusca = document.getElementById('busca-produto');
-
-    campoBusca.addEventListener('input', () => {
-        const texto = campoBusca.value.toLowerCase();
-
-        const filtrados = todosProdutos.filter(produto =>
-            produto.nome.toLowerCase().includes(texto) ||
-            produto.descricao.toLowerCase().includes(texto) ||
-            produto.categoria.toLowerCase().includes(texto)
-        );
-
-        const grid = document.getElementById('produtos-grid');
-        grid.innerHTML = '';
-
-        filtrados.forEach(produto => {
-            const card = document.createElement('div');
-            card.className = 'produto-card';
-            card.style.cursor = 'pointer';
-
-            const imagem = produto.imagemUrl && produto.imagemUrl.trim() !== ''
-                ? produto.imagemUrl
-                : 'imgs/cropped-liso-branco.jpg';
-
-            card.innerHTML = `
-                <img src="${imagem}" alt="${produto.nome}">
-                <div class="produto-info">
-                    <span>${produto.nome}</span>
-                    <span>${formatarPreco(produto.preco)}</span>
-                </div>
-            `;
-
-            card.addEventListener('click', () => {
-                window.location.href = \`pagina-produto.html?id=${produto.id}\`;
-            });
-
-            grid.appendChild(card);
-        });
-    });
-});
-
     document.addEventListener('DOMContentLoaded', carregarProdutos);
 </script>
 
@@ -171,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </a>
         </div>
         <div class="barra-pesquisa">
-           <input type="text" id="busca-produto" placeholder="Buscar produtos...">
+            <input type="text" placeholder="Buscar produtos...">
             <img src="imgs/icone-loupe-gris 6.png" alt="Buscar" width="30px">
         </div>
         <div class="icones-header">
@@ -296,5 +253,31 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 </script>
 
+
+<style>
+.admin-bar{display:none;position:fixed;top:0;left:0;right:0;background:#111;color:#fff;padding:10px;z-index:10000;font-family:Arial,sans-serif}
+.admin-bar a{color:#fff;margin-right:15px;text-decoration:none}
+body.admin-visible{padding-top:45px}
+</style>
+<div id="adminBar" class="admin-bar">
+<strong>Painel Administrativo</strong>
+<a href="configuracao-de-usuario.html">Usuários</a>
+<a href="configuracao-de-perfil.html">Perfis</a>
+<a href="configuracao-de-modulos.html">Módulos</a>
+</div>
+<script>
+(function(){
+try{
+const auth=JSON.parse(localStorage.getItem('auth')||'{}');
+const perfil=(auth.nomePerfil||'').toLowerCase();
+if(perfil.includes('admin')){
+ document.getElementById('adminBar').style.display='block';
+ document.body.classList.add('admin-visible');
+}
+}catch(e){}
+})();
+</script>
+
+<script src="gerente-sidebar.js"></script>
 </body>
 </html>
