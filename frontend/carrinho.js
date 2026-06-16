@@ -119,4 +119,4 @@ function formatarPreco(valor) {
 }
 
 // Atualiza o contador assim que o script carrega em qualquer página
-document.addEventListener('DOMContentLoaded', atualizarContadorCarrinho);
+window.addEventListener('load', atualizarContadorCarrinho);
