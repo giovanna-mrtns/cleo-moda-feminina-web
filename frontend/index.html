@@ -64,6 +64,7 @@
     // ============================================================
     //  Carrega produtos do banco e gera os cards automaticamente
     // ============================================================
+    let todosProdutos = [];
     async function carregarProdutos() {
         const grid = document.getElementById('produtos-grid');
         grid.innerHTML = '<p style="font-family: Mina;">Carregando produtos...</p>';
@@ -72,6 +73,7 @@
             const resposta = await fetch(`${API_BASE}/produtos`);
             if (!resposta.ok) throw new Error('Falha ao buscar produtos');
             const produtos = await resposta.json();
+            todosProdutos = produtos;
 
             if (produtos.length === 0) {
                 grid.innerHTML = '<p style="font-family: Mina;">Nenhum produto cadastrado ainda.</p>';
@@ -128,7 +130,7 @@
             </a>
         </div>
         <div class="barra-pesquisa">
-            <input type="text" placeholder="Buscar produtos...">
+           <input type="text" id="busca-produto" placeholder="Buscar produtos...">
             <img src="imgs/icone-loupe-gris 6.png" alt="Buscar" width="30px">
         </div>
         <div class="icones-header">
