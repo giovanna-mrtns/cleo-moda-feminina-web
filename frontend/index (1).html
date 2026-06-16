@@ -242,8 +242,11 @@
     // ============================================================
     //  UM ÚNICO DOMContentLoaded — centraliza toda a inicialização
     // ============================================================
+    console.log('Script carregado');
+console.log('busca-produto:', document.getElementById('busca-produto'));
 window.onload = function() {
-
+console.log('onload disparou');
+console.log('busca-produto dentro do onload:', document.getElementById('busca-produto'));
     // 1. Atualiza header (login/logout)
     atualizarHeader();
 
