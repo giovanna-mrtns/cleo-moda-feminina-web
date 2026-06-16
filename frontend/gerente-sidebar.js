@@ -11,7 +11,7 @@ if(!perfil.includes('gerente')) return;
 
 const style=document.createElement('style');
 style.textContent=`
-body{margin-left:150px!important;font-family:Jost, sans-serif}
+body{margin-left:150px!important;}
 #gerente-sidebar a{display:block;color:#fff;text-decoration:none;padding:12px 16px}
 #gerente-sidebar a:hover{background:#444}
 #gerente-sidebar h3{padding:0 16px}
