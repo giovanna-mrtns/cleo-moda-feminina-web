@@ -122,7 +122,7 @@
     }
 
     function filtrarTabela() {
-        const termo = document.getElementById('buscar-modulo').value.toLowerCase();
+        const termo = document.getElementById('buscarPorId').value.toLowerCase();
         const filtrados = modulos.filter(m =>
             m.nome.toLowerCase().includes(termo) ||
             (m.descricao && m.descricao.toLowerCase().includes(termo))
