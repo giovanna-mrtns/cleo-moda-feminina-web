@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu Perfil – Cleo</title>
+    <link rel="stylesheet" href="style2.css">
+    <style>
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%) translateY(80px);
+            background: #2e7d32;
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-family: Jost, sans-serif;
+            font-size: 15px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 9999;
+            white-space: nowrap;
+        }
+        .toast.visivel {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+        .toast.erro { background: #c62828; }
+
+        /* Header – estado logado */
+        .nome-usuario {
+            font-family: Jost, sans-serif;
+            font-weight: bold;
+            color: #fff;
+            font-size: 14px;
+            line-height: 1.2;
+        }
+        .btn-sair {
+            background: none;
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 4px;
+            color: #fff;
+            font-family: Jost, sans-serif;
+            font-size: 12px;
+            padding: 2px 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-sair:hover { background: rgba(255,255,255,0.15); }
+
+        /* ── Área principal do perfil ── */
+        .perfil-wrapper {
+            max-width: 860px;
+            margin: 50px auto 80px;
+            padding: 0 20px;
+            font-family: Jost, sans-serif;
+        }
+
+        /* Cartão do topo com avatar + nome */
+        .perfil-card-topo {
+            background: linear-gradient(135deg, #851B87 0%, #550b62 100%);
+            border-radius: 16px;
+            padding: 40px 48px;
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            color: #fff;
+            margin-bottom: 32px;
+            box-shadow: 0 8px 28px rgba(133,27,135,0.30);
+        }
+
+        .avatar-circulo {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.20);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: Mina, sans-serif;
+            font-size: 36px;
+            font-weight: bold;
+            color: #fff;
+            flex-shrink: 0;
+            border: 3px solid rgba(255,255,255,0.50);
+            letter-spacing: 1px;
+        }
+
+        .perfil-card-topo h1 {
+            font-family: Mina, sans-serif;
+            font-size: 26px;
+            margin: 0 0 4px;
+        }
+        .perfil-card-topo p {
+            font-size: 14px;
+            color: rgba(255,255,255,0.80);
+            margin: 0;
+        }
+        .badge-perfil {
+            margin-top: 10px;
+            display: inline-block;
+            background: rgba(255,255,255,0.18);
+            border: 1px solid rgba(255,255,255,0.40);
+            border-radius: 20px;
+            padding: 4px 14px;
+            font-size: 13px;
+            color: #fff;
+        }
+
+        /* Grid de seções */
+        .perfil-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        @media (max-width: 600px) {
+            .perfil-grid { grid-template-columns: 1fr; }
+            .perfil-card-topo { flex-direction: column; text-align: center; }
+        }
+
+        .secao-card {
+            background: #fff;
+            border: 1px solid #e8e0ea;
+            border-radius: 12px;
+            padding: 28px 32px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .secao-card h2 {
+            font-family: Mina, sans-serif;
+            font-size: 16px;
+            color: #851B87;
+            margin: 0 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .secao-card h2::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e8e0ea;
+        }
+
+        .campo-grupo {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .campo-linha {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .campo-linha label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #999;
+            font-family: Jost, sans-serif;
+        }
+
+        .campo-linha span {
+            font-size: 15px;
+            color: #222;
+            font-family: Jost, sans-serif;
+        }
+
+        .campo-linha input {
+            border: 1.5px solid #d8cfe0;
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-size: 15px;
+            font-family: Jost, sans-serif;
+            color: #222;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .campo-linha input:focus {
+            border-color: #851B87;
+        }
+
+        /* Botões de ação */
+        .btn-editar {
+            margin-top: 20px;
+            background: #fff;
+            color: #851B87;
+            border: 2px solid #851B87;
+            border-radius: 6px;
+            padding: 10px 22px;
+            font-family: Jost, sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .btn-editar:hover {
+            background: #851B87;
+            color: #fff;
+        }
+        .btn-salvar {
+            margin-top: 20px;
+            background: #851B87;
+            color: #fff;
+            border: 2px solid #851B87;
+            border-radius: 6px;
+            padding: 10px 22px;
+            font-family: Jost, sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            display: none;
+            transition: background 0.2s;
+        }
+        .btn-salvar:hover { background: #550b62; border-color: #550b62; }
+
+        /* Pedidos recentes */
+        .pedido-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0ebf2;
+            font-size: 14px;
+            color: #444;
+        }
+        .pedido-item:last-child { border-bottom: none; }
+        .pedido-status {
+            font-size: 12px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+        .status-entregue { background: #e8f5e9; color: #2e7d32; }
+        .status-processando { background: #fff3e0; color: #e65100; }
+
+        /* Seção logout */
+        .btn-logout-perfil {
+            width: 100%;
+            background: #fff;
+            color: #c62828;
+            border: 2px solid #c62828;
+            border-radius: 8px;
+            padding: 14px;
+            font-family: Jost, sans-serif;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            margin-top: 8px;
+        }
+        .btn-logout-perfil:hover {
+            background: #c62828;
+            color: #fff;
+        }
+
+        /* Sem login */
+        .sem-login {
+            text-align: center;
+            padding: 80px 20px;
+        }
+        .sem-login h2 {
+            font-family: Mina, sans-serif;
+            color: #851B87;
+            margin-bottom: 16px;
+        }
+        .sem-login p {
+            color: #666;
+            margin-bottom: 28px;
+            font-family: Jost, sans-serif;
+        }
+        .btn-ir-login {
+            background: #851B87;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 14px 32px;
+            font-family: Jost, sans-serif;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-ir-login:hover { background: #550b62; }
+    </style>
+</head>
+<body>
+
+<div id="toast" class="toast"></div>
+
+<!-- ── Header ── -->
+<header class="topo">
+    <div id="header">
+        <div id="logo">
+            <a href="index.html">
+                <img src="imgs/Logo-cleo.png" alt="Logo Cleo" width="100px">
+            </a>
+        </div>
+        <div class="barra-pesquisa">
+            <input type="text" placeholder="Buscar produtos...">
+            <img src="imgs/icone-loupe-gris 6.png" alt="Buscar" width="30px">
+        </div>
+        <div class="icones-header">
+            <div class="icone-conta">
+                <img src="imgs/logo-mulher-minha conta.png" alt="Minha Conta" width="35px">
+                <div class="info-conta" id="info-conta">
+                    <a href="login.html" class="email-usuario">Fazer Login</a>
+                </div>
+            </div>
+            <div class="icone-carrinho" style="position: relative;">
+                <img src="imgs/carrinho 1.png" alt="Carrinho" width="35px">
+                <span id="contador-carrinho" style="
+                    position: absolute; top: -6px; right: -6px;
+                    background: #851B87; color: #fff; font-size: 11px;
+                    font-family: Jost, sans-serif; border-radius: 50%;
+                    min-width: 18px; height: 18px; display: none;
+                    align-items: center; justify-content: center; text-align: center;
+                "></span>
+                <a href="carrinho.html" class="email-usuario">Carrinho</a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- ── Nav ── -->
+<nav class="menu">
+    <ul>
+        <li><a href="index.html">Início</a></li>
+        <li><a href="#">Lançamentos</a></li>
+        <li><a href="#">Roupas</a></li>
+        <li><a href="#">Acessórios</a></li>
+        <li><a href="#">Promoções</a></li>
+    </ul>
+</nav>
+
+<!-- ── Conteúdo principal ── -->
+<main class="perfil-wrapper" id="conteudo-perfil">
+    <!-- Preenchido pelo JS -->
+</main>
+
+<script src="carrinho.js"></script>
+<script>
+    function mostrarToast(msg, erro = false) {
+        const toast = document.getElementById('toast');
+        toast.textContent = msg;
+        toast.classList.toggle('erro', erro);
+        toast.classList.add('visivel');
+        setTimeout(() => toast.classList.remove('visivel'), 3500);
+    }
+
+    // ── Atualiza header com nome do usuário ──
+    function atualizarHeader(auth) {
+        const infoConta = document.getElementById('info-conta');
+        if (auth) {
+            const primeiro = auth.nome.split(' ')[0];
+            infoConta.innerHTML = `
+                <span class="nome-usuario">Olá, ${primeiro}</span>
+                <button class="btn-sair" onclick="logout()">Sair</button>
+            `;
+        } else {
+            infoConta.innerHTML = `<a href="login.html" class="email-usuario">Fazer Login</a>`;
+        }
+    }
+
+    // ── Gera as iniciais para o avatar ──
+    function iniciais(nome) {
+        return nome.split(' ').slice(0, 2).map(p => p[0].toUpperCase()).join('');
+    }
+
+    // ── Renderiza a página de perfil ──
+    function renderizarPerfil(auth) {
+        const container = document.getElementById('conteudo-perfil');
+
+        if (!auth) {
+            container.innerHTML = `
+                <div class="sem-login">
+                    <h2>Você não está logado</h2>
+                    <p>Faça login para acessar seu perfil e acompanhar seus pedidos.</p>
+                    <button class="btn-ir-login" onclick="window.location.href='login.html'">
+                        Fazer Login
+                    </button>
+                </div>
+            `;
+            return;
+        }
+
+        const primeiroNome = auth.nome.split(' ')[0];
+
+        container.innerHTML = `
+            <!-- Cartão de boas-vindas -->
+            <div class="perfil-card-topo">
+                <div class="avatar-circulo">${iniciais(auth.nome)}</div>
+                <div>
+                    <h1>Olá, ${primeiroNome}! 👋</h1>
+                    <p>${auth.login}</p>
+                    <span class="badge-perfil">✦ ${auth.nomePerfil || 'Cliente'}</span>
+                </div>
+            </div>
+
+            <!-- Grid de seções -->
+            <div class="perfil-grid">
+
+                <!-- Dados pessoais -->
+                <div class="secao-card" id="card-dados">
+                    <h2>Dados Pessoais</h2>
+                    <div class="campo-grupo" id="campos-leitura">
+                        <div class="campo-linha">
+                            <label>Nome completo</label>
+                            <span>${auth.nome}</span>
+                        </div>
+                        <div class="campo-linha">
+                            <label>E-mail</label>
+                            <span>${auth.login}</span>
+                        </div>
+                        <div class="campo-linha">
+                            <label>Perfil</label>
+                            <span>${auth.nomePerfil || 'Cliente'}</span>
+                        </div>
+                    </div>
+                    <div class="campo-grupo" id="campos-edicao" style="display:none;">
+                        <div class="campo-linha">
+                            <label>Nome completo</label>
+                            <input type="text" id="edit-nome" value="${auth.nome}">
+                        </div>
+                        <div class="campo-linha">
+                            <label>E-mail</label>
+                            <input type="email" id="edit-email" value="${auth.login}" disabled style="opacity:0.6;cursor:not-allowed;">
+                        </div>
+                    </div>
+                    <button class="btn-editar" id="btn-editar" onclick="modoEdicao(true)">✏️ Editar dados</button>
+                    <button class="btn-salvar" id="btn-salvar" onclick="salvarDados()">💾 Salvar alterações</button>
+                </div>
+
+                <!-- Segurança -->
+                <div class="secao-card">
+                    <h2>Segurança</h2>
+                    <div class="campo-grupo">
+                        <div class="campo-linha">
+                            <label>Senha</label>
+                            <span>••••••••</span>
+                        </div>
+                        <div class="campo-linha">
+                            <label>Último acesso</label>
+                            <span>${new Date().toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' })}</span>
+                        </div>
+                    </div>
+                    <button class="btn-editar" onclick="mostrarToast('Funcionalidade em breve!')">🔒 Alterar senha</button>
+                </div>
+
+                <!-- Meus pedidos -->
+                <div class="secao-card">
+                    <h2>Meus Pedidos</h2>
+                    <div id="lista-pedidos">
+                        <p style="color:#999; font-size:14px; font-family:Jost,sans-serif;">
+                            Nenhum pedido encontrado ainda.
+                        </p>
+                    </div>
+                    <button class="btn-editar" onclick="mostrarToast('Em breve você poderá ver todos os pedidos!')">📦 Ver todos os pedidos</button>
+                </div>
+
+                <!-- Encerrar sessão -->
+                <div class="secao-card">
+                    <h2>Conta</h2>
+                    <p style="font-size:14px; color:#666; margin-bottom:12px; font-family:Jost,sans-serif;">
+                        Ao sair, você precisará fazer login novamente para acessar sua conta.
+                    </p>
+                    <button class="btn-logout-perfil" onclick="confirmarLogout()">
+                        🚪 Sair da conta
+                    </button>
+                </div>
+
+            </div>
+        `;
+
+        carregarPedidos(auth);
+    }
+
+    // ── Carrega pedidos do usuário ──
+    async function carregarPedidos(auth) {
+        try {
+            const resp = await fetch(`${API_BASE}/pedidos`, {
+                headers: { 'Authorization': `Bearer ${auth.token}` }
+            });
+            if (!resp.ok) return;
+            const pedidos = await resp.json();
+            const lista = document.getElementById('lista-pedidos');
+            if (!pedidos.length) return;
+
+            lista.innerHTML = pedidos.slice(0, 3).map(p => `
+                <div class="pedido-item">
+                    <span>Pedido #${p.id}</span>
+                    <span class="pedido-status ${p.status === 'ENTREGUE' ? 'status-entregue' : 'status-processando'}">
+                        ${p.status || 'Em andamento'}
+                    </span>
+                </div>
+            `).join('');
+        } catch (_) { /* servidor offline em dev */ }
+    }
+
+    // ── Modo edição ──
+    function modoEdicao(ativo) {
+        document.getElementById('campos-leitura').style.display = ativo ? 'none' : 'flex';
+        document.getElementById('campos-edicao').style.display  = ativo ? 'flex' : 'none';
+        document.getElementById('btn-editar').style.display  = ativo ? 'none'  : 'inline-block';
+        document.getElementById('btn-salvar').style.display  = ativo ? 'inline-block' : 'none';
+    }
+
+    async function salvarDados() {
+        const auth = getAuth();
+        const novoNome = document.getElementById('edit-nome').value.trim();
+        if (!novoNome) { mostrarToast('O nome não pode ficar vazio.', true); return; }
+
+        try {
+            const resp = await fetch(`${API_BASE}/usuarios/${auth.id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${auth.token}`
+                },
+                body: JSON.stringify({ nome: novoNome })
+            });
+
+            if (resp.ok) {
+                auth.nome = novoNome;
+                salvarAuth(auth);
+                mostrarToast('✓ Dados atualizados com sucesso!');
+                renderizarPerfil(auth);
+                atualizarHeader(auth);
+            } else {
+                mostrarToast('Erro ao salvar. Tente novamente.', true);
+            }
+        } catch (_) {
+            // Modo offline / dev: atualiza só no localStorage
+            auth.nome = novoNome;
+            salvarAuth(auth);
+            mostrarToast('✓ Dados atualizados!');
+            renderizarPerfil(auth);
+            atualizarHeader(auth);
+        }
+    }
+
+    function confirmarLogout() {
+        if (confirm('Deseja realmente sair da sua conta?')) {
+            logout();
+        }
+    }
+
+    // ── Inicialização ──
+    document.addEventListener('DOMContentLoaded', () => {
+        const auth = getAuth();
+        atualizarHeader(auth);
+        renderizarPerfil(auth);
+    });
+</script>
+
+</body>
+</html>

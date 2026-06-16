@@ -226,24 +226,20 @@
         window.location.reload();
     }
 
-    function atualizarHeader() {
-        const dados = localStorage.getItem('usuario');
-        const infoConta = document.getElementById('info-conta');
+   function atualizarHeader() {
+    const auth = getAuth();
+    const infoConta = document.getElementById('info-conta');
 
-        if (dados) {
-            const usuario = JSON.parse(dados);
-            // Pega só o primeiro nome para não ficar longo no header
-            const primeiroNome = usuario.nome.split(' ')[0];
-
-            infoConta.innerHTML = `
-                <span class="nome-usuario">Olá, ${primeiroNome}</span>
-                <button class="btn-sair" onclick="sair()">Sair</button>
-            `;
-        } else {
-            infoConta.innerHTML = `<a href="login.html" class="email-usuario">Fazer Login</a>`;
-        }
+    if (auth) {
+        const primeiroNome = auth.nome.split(' ')[0];
+        infoConta.innerHTML = `
+            <a href="perfil-usuario.html" class="nome-usuario" style="text-decoration:none;">Olá, ${primeiroNome}</a>
+            <button class="btn-sair" onclick="logout()">Sair</button>
+        `;
+    } else {
+        infoConta.innerHTML = `<a href="login.html" class="email-usuario">Fazer Login</a>`;
     }
-
+}
     // Ao carregar a página, verifica se acabou de logar
     window.addEventListener('DOMContentLoaded', () => {
         atualizarHeader();
