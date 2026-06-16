@@ -1,17 +1,20 @@
 package model;
 
 import java.time.LocalDateTime;
+import com.google.gson.annotations.Expose;
 
 public class Usuario {
 
-    private int id;
-    private String nome;
-    private String login;
-    private String senha;
-    private LocalDateTime ultimoAcesso;
-    private String ativo;    // "s" ou "n"
-    private int idPerfil;    // FK para a tabela perfil
-    private String nomePerfil; // para exibir na tela (preenchido via JOIN)
+    @Expose private int id;
+    @Expose private String nome;
+    @Expose private String login;
+
+    private String senha; // NÃO expor a senha no JSON!
+
+    @Expose private LocalDateTime ultimoAcesso;
+    @Expose private String ativo;    // "s" ou "n"
+    @Expose private int idPerfil;    // FK para a tabela perfil
+    @Expose private String nomePerfil; // para exibir na tela (preenchido via JOIN)
 
     public Usuario() {}
 
