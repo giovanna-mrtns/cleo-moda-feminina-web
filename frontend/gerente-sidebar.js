@@ -1,3 +1,4 @@
+
 (function(){
 function getAuth(){
  try{
@@ -10,11 +11,11 @@ if(!perfil.includes('gerente')) return;
 
 const style=document.createElement('style');
 style.textContent=`
-body{margin-left:220px!important;}
-#gerente-sidebar{position:fixed;left:0;top:0;width:220px;height:100vh;background:#222;color:#fff;z-index:99999;padding-top:20px}
-#gerente-sidebar a{display:block;color:#fff;text-decoration:none;padding:12px 16px}
+body{margin-top:60px!important;}
+#gerente-sidebar{position:fixed;left:0;top:0;width:100%;height:60px;background:#222;color:#fff;z-index:99999;padding:0 16px;box-sizing:border-box;font-family:Arial,sans-serif;display:flex;align-items:center}
+#gerente-sidebar a{display:inline-block;color:#fff;text-decoration:none;padding:8px 12px;margin-right:8px}
 #gerente-sidebar a:hover{background:#444}
-#gerente-sidebar h3{padding:0 16px}
+#gerente-sidebar h3{margin:0 16px 0 0;font-size:16px}
 `;
 document.head.appendChild(style);
 
