@@ -97,6 +97,7 @@
     </form>
 </div>
 
+<script src="carrinho.js"></script>
 <script>
     function mostrarToast(msg, erro = false) {
         const toast = document.getElementById('toast');
@@ -122,7 +123,7 @@
         }
 
         try {
-            const resp = await fetch('http://localhost:8080/api/usuarios', {
+            const resp = await fetch(`${API_BASE}/usuarios`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ nome, login, senha, idPerfil: 4 })

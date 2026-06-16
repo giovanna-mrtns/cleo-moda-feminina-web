@@ -102,9 +102,10 @@
     <p><a href="#" class="esqueceu-senha">Esqueci minha senha</a></p>
 </div>
 
+<script src="carrinho.js"></script>
 <script>
     // Se já estiver logado, redireciona direto para o início
-    if (localStorage.getItem('usuario')) {
+    if (getAuth()) {
         window.location.href = 'index.html';
     }
 
@@ -134,17 +135,18 @@
             }
 
             try {
-                const resp = await fetch('http://localhost:8080/api/usuarios/login', {
+                const resp = await fetch(`${API_BASE}/auth/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ login, senha })
                 });
 
                 if (resp.ok) {
-                    const usuario = await resp.json();
-                    localStorage.setItem('usuario', JSON.stringify(usuario));
+                    const dados = await resp.json();
+                    // dados = { token, id, nome, login, nomePerfil }
+                    salvarAuth(dados);
                     // Sinaliza para o index mostrar o toast de boas-vindas
-                    sessionStorage.setItem('loginFeito', usuario.nome);
+                    sessionStorage.setItem('loginFeito', dados.nome);
                     window.location.href = 'index.html';
                 } else {
                     mostrarToast('E-mail ou senha incorretos.', true);
