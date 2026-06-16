@@ -6,10 +6,17 @@ import controller.UsuarioController;
 import model.Usuario;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import util.LocalDateTimeAdapter;
+import java.time.LocalDateTime;
+
 
 public class UsuarioHandler implements HttpHandler {
-    private UsuarioController controller = new UsuarioController();
-    private Gson gson = new Gson();
+
+private UsuarioController controller = new UsuarioController();
+private Gson gson = new GsonBuilder()
+        .registerTypeAdapter(LocalDateTime.class, new LocalDateTimeAdapter())
+        .excludeFieldsWithoutExposeAnnotation()
+        .create();
 
     @Override
     public void handle(HttpExchange ex) throws IOException {
