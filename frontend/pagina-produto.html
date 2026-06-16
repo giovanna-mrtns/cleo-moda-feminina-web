@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pagina Produto</title>
+    <title>Cleo | Produto</title>
     <link rel="stylesheet" href="style5.css">
+    <script src="carrinho.js"></script>
 </head>
 <body>
 
@@ -28,9 +29,16 @@
                     <a href="login.html" class="email-usuario">Fazer Login</a>
                 </div>
             </div>
-            <div class="icone-carrinho">
+            <div class="icone-carrinho" style="position: relative;">
                 <img src="imgs/carrinho 1.png" alt="Carrinho" width="35px">
-                <a href="Carrinho.html" class="email-usuario">Carrinho</a>
+                <span id="contador-carrinho" style="
+                    position: absolute; top: -6px; right: -6px;
+                    background: #851B87; color: #fff; font-size: 11px;
+                    font-family: Jost, sans-serif; border-radius: 50%;
+                    min-width: 18px; height: 18px; display: none;
+                    align-items: center; justify-content: center; text-align: center;
+                "></span>
+                <a href="carrinho.html" class="email-usuario">Carrinho</a>
             </div>
         </div>
    </div>
@@ -38,7 +46,7 @@
 
 <nav class="menu">
     <ul>
-        <li><a href="index.html" class="ativo">Início</a></li>
+        <li><a href="index.html">Início</a></li>
         <li><a href="#">Lançamentos</a></li>
         <li><a href="#">Roupas</a></li>
         <li><a href="#">Acessórios</a></li>
@@ -46,118 +54,116 @@
     </ul>
 </nav>
 
-<div class="banner">
-    <img src="imgs/lado-esquerdo.png" alt="Modelo Esquerda" class="banner-esquerda">
-    <div class="banner-centro">
-        <h2>Seu estilo único aqui!</h2>
-        <div class="frete">
-            <img src="imgs/Coracao (2).png" alt="coração" width="25px">
-            <span>Frete Grátis em todo o Brasil</span>
-            <img src="imgs/Coracao (2).png" alt="coração" width="25px">
-        </div>
-    </div>
-    <img src="imgs/lado-direito.png" alt="Modelo Direita" class="banner-direita">
-</div>
-
-<div class="container-produto">
-
-    <div class="coluna-esquerda">
-        <img src="imgs/cropped-liso-branco.jpg" alt="Cropped Básico Branco" class="imagem-produto">
-
-        <div class="opcao-grupo">
-            <label>Tamanho:</label>
-            <select id="select-tamanho">
-                <option value="PP">PP</option>
-                <option value="P">P</option>
-                <option value="M" selected>M</option>
-                <option value="G">G</option>
-                <option value="GG">GG</option>
-            </select>
-        </div>
-
-        <div class="opcao-grupo">
-            <label>Cor:</label>
-            <select id="select-cor">
-                <option value="Branco" selected>Branco</option>
-                <option value="Preto">Preto</option>
-                <option value="Rosa">Rosa</option>
-            </select>
-        </div>
-    </div>
-
-    <div class="coluna-direita">
-
-        <h1 class="nome-produto">Cropped Básico Branco</h1>
-
-        <div class="avaliacao">
-            <span class="nota-num">5.0</span>
-            <span class="estrelas">★★★★★</span>
-            <span class="separador">|</span>
-            <span>200 Avaliações</span>
-            <span class="separador">|</span>
-            <span>350 Vendidos</span>
-        </div>
-
-        <div class="box-preco">
-            <div class="preco-principal">
-                <span class="preco-valor">R$ 55,00</span>
-                <span class="pix-cupom">No Pix com cupom &gt;</span>
-            </div>
-            <span class="preco-sem-cupom">Ou R$ 70,00 sem cupom e em outros métodos de pagamento</span>
-        </div>
-
-        <div class="info-linha">
-            <span class="info-label">Cartão de Crédito</span>
-            <span class="info-valor">7x de R$ 10,00</span>
-            <a href="#" class="link-parcelamento">Opções de Parcelamento &gt;</a>
-        </div>
-
-        <div class="info-linha">
-            <span class="info-label">Frete</span>
-            <div class="frete-info">
-                <span class="frete-local">Taguatinga SAMDU N</span>
-                <span class="frete-preco">R$ 00,00</span>
-            </div>
-        </div>
-
-        <div class="linha-quantidade">
-            <span class="quantidade-label">Quantidade:</span>
-            <div class="controle-quantidade">
-                <button onclick="alterarQtd(-1)">−</button>
-                <span id="qtd">1</span>
-                <button onclick="alterarQtd(1)">+</button>
-            </div>
-            <span class="estoque-tag">✔ Estoque Disponível</span>
-        </div>
-
-        <div class="botoes-acao">
-            <button class="btn-carrinho" onclick="adicionarCarrinho()">Adicionar ao Carrinho</button>
-            <button class="btn-cupom">
-                Compre com Cupom
-                <span class="preco-cupom">R$ 55,00</span>
-            </button>
-        </div>
-
-    </div>
+<!-- ============================================================
+     CONTAINER DO PRODUTO
+     Tudo aqui dentro é preenchido dinamicamente pelo JavaScript
+     com base no ?id= da URL
+     ============================================================ -->
+<div class="container-produto" id="container-produto">
+    <p style="font-family: Jost, sans-serif; padding: 40px;">Carregando produto...</p>
 </div>
 
 <script>
+    let produtoAtual = null;
+
+    // Lê o ?id= da URL, ex: pagina-produto.html?id=5
+    function obterIdProduto() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('id');
+    }
+
+    async function carregarProduto() {
+        const container = document.getElementById('container-produto');
+        const id = obterIdProduto();
+
+        if (!id) {
+            container.innerHTML = '<p style="padding:40px;">Produto não especificado.</p>';
+            return;
+        }
+
+        try {
+            const resposta = await fetch(`${API_BASE}/produtos/${id}`);
+            if (!resposta.ok) {
+                container.innerHTML = '<p style="padding:40px;">Produto não encontrado.</p>';
+                return;
+            }
+            produtoAtual = await resposta.json();
+            renderizarProduto(produtoAtual);
+        } catch (erro) {
+            console.error(erro);
+            container.innerHTML = '<p style="padding:40px; color:red;">Erro ao carregar produto.</p>';
+        }
+    }
+
+    function renderizarProduto(produto) {
+        const container = document.getElementById('container-produto');
+
+        const imagem = produto.imagemUrl && produto.imagemUrl.trim() !== ''
+            ? produto.imagemUrl
+            : 'imgs/cropped-liso-branco.jpg';
+
+        const temEstoque = produto.estoque > 0;
+
+        // Atualiza o título da aba do navegador
+        document.title = `Cleo | ${produto.nome}`;
+
+        container.innerHTML = `
+            <div class="coluna-esquerda">
+                <img src="${imagem}" alt="${produto.nome}" class="imagem-produto">
+            </div>
+
+            <div class="coluna-direita">
+                <h1 class="nome-produto">${produto.nome}</h1>
+
+                ${produto.categoria ? `<p style="font-family: Jost, sans-serif; color: #777;">Categoria: ${produto.categoria}</p>` : ''}
+
+                <div class="box-preco">
+                    <div class="preco-principal">
+                        <span class="preco-valor">${formatarPreco(produto.preco)}</span>
+                    </div>
+                </div>
+
+                ${produto.descricao ? `<p style="font-family: Jost, sans-serif; margin: 16px 0;">${produto.descricao}</p>` : ''}
+
+                <div class="linha-quantidade">
+                    <span class="quantidade-label">Quantidade:</span>
+                    <div class="controle-quantidade">
+                        <button onclick="alterarQtd(-1)">−</button>
+                        <span id="qtd">1</span>
+                        <button onclick="alterarQtd(1)">+</button>
+                    </div>
+                    <span class="estoque-tag" style="${temEstoque ? '' : 'color:#c62828;'}">
+                        ${temEstoque ? `✔ ${produto.estoque} em estoque` : '✘ Fora de estoque'}
+                    </span>
+                </div>
+
+                <div class="botoes-acao">
+                    <button class="btn-carrinho" onclick="adicionarCarrinhoEFeedback()" ${temEstoque ? '' : 'disabled'}>
+                        ${temEstoque ? 'Adicionar ao Carrinho' : 'Indisponível'}
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
     function alterarQtd(valor) {
         const qtdEl = document.getElementById('qtd');
         let atual = parseInt(qtdEl.textContent);
-        atual = Math.max(1, atual + valor);
+        atual = Math.max(1, Math.min(atual + valor, produtoAtual.estoque));
         qtdEl.textContent = atual;
     }
 
-    function adicionarCarrinho() {
+    function adicionarCarrinhoEFeedback() {
+        const qtd = parseInt(document.getElementById('qtd').textContent);
+        adicionarAoCarrinho(produtoAtual, qtd);
+
         const toast = document.getElementById('toast');
-        const tamanho = document.getElementById('select-tamanho').value;
-        const cor = document.getElementById('select-cor').value;
-        const qtd = document.getElementById('qtd').textContent;
-        toast.textContent = `✔ ${qtd}x Cropped Básico ${cor} (${tamanho}) adicionado ao carrinho!`;
+        toast.textContent = `✔ ${qtd}x ${produtoAtual.nome} adicionado ao carrinho!`;
         toast.classList.add('visivel');
         setTimeout(() => toast.classList.remove('visivel'), 3000);
     }
+
+    document.addEventListener('DOMContentLoaded', carregarProduto);
 </script>
 
 </body>
