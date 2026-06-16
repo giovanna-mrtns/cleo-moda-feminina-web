@@ -63,8 +63,7 @@
 <script>
     // ============================================================
     //  Carrega produtos do banco e gera os cards automaticamente
-    // ============================================================
-   let todosProdutos = [];
+    let todosProdutos = [];
 
 async function carregarProdutos() {
     const grid = document.getElementById('produtos-grid');
@@ -81,7 +80,7 @@ async function carregarProdutos() {
             return;
         }
 
-        renderizarProdutos(todosProdutos); // ← usa função reutilizável
+        renderizarProdutos(todosProdutos);
 
     } catch (erro) {
         console.error(erro);
@@ -89,7 +88,6 @@ async function carregarProdutos() {
     }
 }
 
-// Função separada para renderizar cards (evita repetição de código)
 function renderizarProdutos(lista) {
     const grid = document.getElementById('produtos-grid');
     grid.innerHTML = '';
@@ -119,22 +117,37 @@ function renderizarProdutos(lista) {
     });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+// ← TUDO num único DOMContentLoaded
+window.addEventListener('DOMContentLoaded', () => {
     carregarProdutos();
 
+    // Busca ao digitar
     const campoBusca = document.getElementById('busca-produto');
-
     campoBusca.addEventListener('input', () => {
         const texto = campoBusca.value.toLowerCase();
-
         const filtrados = todosProdutos.filter(produto =>
             produto.nome.toLowerCase().includes(texto) ||
             produto.descricao.toLowerCase().includes(texto) ||
             produto.categoria.toLowerCase().includes(texto)
         );
-
         renderizarProdutos(filtrados);
     });
+
+    // Busca ao clicar na lupa
+    const lupa = document.querySelector('.barra-pesquisa img');
+    lupa.style.cursor = 'pointer';
+    lupa.addEventListener('click', () => {
+        campoBusca.dispatchEvent(new Event('input'));
+    });
+
+    // Header e toast
+    atualizarHeader();
+    const nomeLogin = sessionStorage.getItem('loginFeito');
+    if (nomeLogin) {
+        sessionStorage.removeItem('loginFeito');
+        const primeiroNome = nomeLogin.split(' ')[0];
+        mostrarToast(`✓ Bem-vindo(a), ${primeiroNome}!`);
+    }
 });
 </script>
 </head>
