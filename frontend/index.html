@@ -314,5 +314,12 @@ if(perfil.includes('admin')){
 </script>
 
 <script src="gerente-sidebar.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const campo = document.getElementById('busca-produto');
+        console.log('Campo busca encontrado?', campo);
+        console.log('todosProdutos:', todosProdutos);
+    });
+</script>
 </body>
 </html>
