@@ -253,11 +253,13 @@
         ul.appendChild(indicator);
 
         function moverBarraPara(el) {
-            const li = el.closest('li');
-            const ulRect = ul.getBoundingClientRect();
-            const liRect = li.getBoundingClientRect();
-            indicator.style.left  = (liRect.left - ulRect.left) + 'px';
-            indicator.style.width = liRect.width + 'px';
+            const linkRect = el.getBoundingClientRect();
+
+        indicator.style.left =
+        (linkRect.left - ulRect.left) + 'px';
+
+        indicator.style.width =
+        linkRect.width + 'px';
         }
 
         const ativo = ul.querySelector('a.ativo');

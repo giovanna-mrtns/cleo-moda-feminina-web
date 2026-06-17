@@ -128,12 +128,25 @@ body{
 /* Barra deslizante */
 .menu ul .nav-indicator {
     position: absolute;
-    bottom: 0;          /* rente à base do ul */
-    height: 3px;
-    background-color: var(--roxo);
-    border-radius: 2px;
-    transition: left 0.3s ease, width 0.3s ease;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 4px;
+
+    background: #ff7ac3;
+    border-radius: 50px;
+
+    box-shadow: 0 0 10px rgba(255, 122, 195, 0.8);
+
+    transition:
+        left 0.35s ease,
+        width 0.35s ease;
+
     pointer-events: none;
+    z-index: 999;
+}
+.menu ul li {
+    position: relative;
 }
 
 .menu ul li a {
