@@ -125,10 +125,10 @@
 <section class="produtos">
     <div class="produtos-header">
         <h2>TODOS OS PRODUTOS</h2>
-        <select class="ordenar">
-            <option>Ordenar por: Mais Recentes</option>
-            <option>Ordenar por: Menor Preço</option>
-            <option>Ordenar por: Maior Preço</option>
+        <select class="ordenar" id="ordenar-select">
+            <option value="recentes">Ordenar por: Mais Recentes</option>
+            <option value="menor-preco">Ordenar por: Menor Preço</option>
+            <option value="maior-preco">Ordenar por: Maior Preço</option>
         </select>
     </div>
     <div class="produtos-grid" id="produtos-grid"></div>
@@ -182,6 +182,7 @@
     }
 
     let todosProdutos = [];
+    let listaAtual = [];
 
     async function carregarProdutos() {
         const grid = document.getElementById('produtos-grid');
@@ -192,18 +193,34 @@
             if (!resposta.ok) throw new Error('Falha ao buscar produtos');
             const produtos = await resposta.json();
             todosProdutos = produtos;
+            listaAtual = produtos;
 
             if (produtos.length === 0) {
                 grid.innerHTML = '<p style="font-family: Mina;">Nenhum produto cadastrado ainda.</p>';
                 return;
             }
 
-            renderizarProdutos(todosProdutos);
+            const selectOrdenar = document.getElementById('ordenar-select');
+            renderizarProdutos(ordenarProdutos(listaAtual, selectOrdenar.value));
 
         } catch (erro) {
             console.error(erro);
             grid.innerHTML = '<p style="font-family: Mina; color: red;">Erro ao carregar produtos.</p>';
         }
+    }
+
+    function ordenarProdutos(lista, criterio) {
+        const copia = [...lista];
+
+        if (criterio === 'menor-preco') {
+            copia.sort((a, b) => a.preco - b.preco);
+        } else if (criterio === 'maior-preco') {
+            copia.sort((a, b) => b.preco - a.preco);
+        } else if (criterio === 'recentes') {
+            copia.sort((a, b) => b.id - a.id);
+        }
+
+        return copia;
     }
 
     function renderizarProdutos(lista) {
@@ -302,14 +319,16 @@
 
         // 4. Busca ao digitar
         const campoBusca = document.getElementById('busca-produto');
+        const selectOrdenar = document.getElementById('ordenar-select');
+
         campoBusca.addEventListener('input', () => {
             const texto = campoBusca.value.toLowerCase().trim();
-            const filtrados = todosProdutos.filter(produto =>
+            listaAtual = todosProdutos.filter(produto =>
                 produto.nome.toLowerCase().includes(texto) ||
                 produto.descricao.toLowerCase().includes(texto) ||
                 produto.categoria.toLowerCase().includes(texto)
             );
-            renderizarProdutos(filtrados);
+            renderizarProdutos(ordenarProdutos(listaAtual, selectOrdenar.value));
         });
 
         // 5. Busca ao clicar na lupa
@@ -319,7 +338,12 @@
             campoBusca.dispatchEvent(new Event('input'));
         });
 
-        // 6. Barra deslizante do menu
+        // 6. Ordenação ao trocar a opção do select
+        selectOrdenar.addEventListener('change', () => {
+            renderizarProdutos(ordenarProdutos(listaAtual, selectOrdenar.value));
+        });
+
+        // 7. Barra deslizante do menu
         iniciarBarraDeslizante();
     };
 </script>
