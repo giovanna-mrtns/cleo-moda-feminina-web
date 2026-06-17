@@ -7,6 +7,8 @@ import java.net.InetSocketAddress;
 
 public class Servidor {
     public static void iniciar() throws Exception {
+        util.Conexao.testarConexao();
+
         // O Render define a variável PORT automaticamente.
         // Em ambiente local (sem essa variável), usamos 8080.
         String portaEnv = System.getenv("PORT");

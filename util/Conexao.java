@@ -36,6 +36,35 @@ public class Conexao {
     private static final String H2_PASS = "";
 
     // -----------------------------------------------------------------
+    // DIAGNÓSTICO: imprime no log, no momento em que o servidor sobe,
+    // qual banco está realmente sendo usado. Aparece junto do log de
+    // start, sem precisar pegar o erro em tempo real.
+    // -----------------------------------------------------------------
+    // -----------------------------------------------------------------
+    // DIAGNÓSTICO: chamado explicitamente no Servidor.iniciar(), pra
+    // garantir que rode no momento do start (e não só na primeira
+    // requisição, que é quando a classe seria carregada de forma
+    // automática se isso ficasse num bloco static).
+    // -----------------------------------------------------------------
+    public static void testarConexao() {
+        System.out.println("=== Conexao: DB_MODO lido como -> [" + MODO + "] ===");
+        if (MODO.equals("postgres")) {
+            System.out.println("=== Conexao: usando PostgreSQL, URL = " + PG_URL + " ===");
+        } else if (MODO.equals("mysql")) {
+            System.out.println("=== Conexao: usando MySQL, URL = " + MYSQL_URL + " ===");
+        } else {
+            System.out.println("=== Conexao: ATENÇÃO - usando H2 local (não é o Postgres do DBeaver!) ===");
+        }
+
+        try (Connection testeConn = getConexao()) {
+            System.out.println("=== Conexao: TESTE DE CONEXÃO COM O BANCO -> SUCESSO ===");
+        } catch (Exception e) {
+            System.out.println("=== Conexao: TESTE DE CONEXÃO COM O BANCO -> FALHOU ===");
+            e.printStackTrace();
+        }
+    }
+
+    // -----------------------------------------------------------------
     // Ponto central de conexão — escolhe o banco pelo DB_MODO
     // -----------------------------------------------------------------
     public static Connection getConexao() throws Exception {
