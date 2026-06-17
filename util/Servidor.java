@@ -1,6 +1,17 @@
 package util;
 
 import com.sun.net.httpserver.*;
+
+import Handler.AuthHandler;
+import Handler.EnderecoHandler;
+import Handler.ModuloHandler;
+import Handler.PedidoHandler;
+import Handler.PerfilHandler;
+import Handler.PermissaoHandler;
+import Handler.ProdutoHandler;
+import Handler.StaticHandler;
+import Handler.UsuarioHandler;
+
 import com.google.gson.Gson;
 import handler.*;
 import java.net.InetSocketAddress;
@@ -24,7 +35,8 @@ public class Servidor {
         server.createContext("/api/pedidos",    new PedidoHandler());
         server.createContext("/api/auth",       new AuthHandler());
         server.createContext("/", new StaticHandler());
-
+        server.createContext("/api/enderecos",  new EnderecoHandler());
+        
         server.start();
         System.out.println("Servidor rodando na porta " + porta);
     }

@@ -257,6 +257,8 @@
                 </svg>
                 Endereço de Entrega
             </div>
+            
+            <div class="enderecos-salvos" id="enderecos-salvos" style="display:none;"></div>
 
             <div class="endereco-form">
                 <div class="col-span-2">
@@ -301,6 +303,13 @@
                     <input type="text" id="end-telefone" placeholder="(61) 99999-9999" />
                 </div>
             </div>
+         
+            <div id="linha-salvar-endereco" style="margin-top:.75rem; display:none; align-items:center; gap:.5rem;">
+    <input type="checkbox" id="chk-salvar-endereco" style="width:16px;height:16px;">
+    <label for="chk-salvar-endereco" style="font-size:.85rem; color:var(--cinza-texto); margin:0; text-transform:none; letter-spacing:normal;">
+        Salvar este endereço no meu perfil
+    </label>
+</div>
         </div>
     </div>
 
@@ -482,6 +491,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderizarItens();
     preencherEnderecoUsuario();
     mascaraCep();
+    carregarEnderecosSalvos();
 });
 
 function carregarUsuario() {
@@ -712,6 +722,12 @@ async function confirmarPagamento() {
             body: JSON.stringify({ status: 'pago' })
         });
 
+        // 2.5) Salva o endereço no perfil, se o usuário marcou a opção
+const chkSalvar = document.getElementById('chk-salvar-endereco');
+if (enderecoSelecionadoId === null && chkSalvar && chkSalvar.checked) {
+    await salvarEnderecoNoPerfil(auth);
+}
+
         // 3) Limpa o carrinho e itens de sessão
         limparCarrinho();
         sessionStorage.removeItem('cleo_itens_pagamento');
@@ -792,6 +808,83 @@ function preencherEnderecoUsuario() {
     } catch(e) {}
 }
 </script>
+
+let enderecosCarregados = [];
+let enderecoSelecionadoId = null;
+
+async function carregarEnderecosSalvos() {
+    const auth = getAuth();
+    if (!auth) return;
+    try {
+        const resp = await fetch(`${API_BASE}/enderecos?idUsuario=${auth.id}`);
+        if (!resp.ok) return;
+        enderecosCarregados = await resp.json();
+        if (!enderecosCarregados.length) return;
+
+        const container = document.getElementById('enderecos-salvos');
+        container.innerHTML = enderecosCarregados.map(e => `
+            <div class="endereco-opcao" data-id="${e.id}" onclick="selecionarEnderecoSalvo(${e.id})">
+                <strong>${e.apelido || 'Endereço'}</strong> ${e.principal ? '<span class="endereco-tag-principal">Principal</span>' : ''}
+                <p>${e.rua}, ${e.numero} – ${e.bairro}, ${e.cidade}/${e.estado}</p>
+            </div>
+        `).join('') + `
+            <div class="endereco-opcao" data-id="novo" onclick="selecionarEnderecoSalvo(null)">
+                <strong>+ Usar um novo endereço</strong>
+            </div>
+        `;
+        container.style.display = 'flex';
+
+        const principal = enderecosCarregados.find(e => e.principal) || enderecosCarregados[0];
+        selecionarEnderecoSalvo(principal.id);
+    } catch (_) { /* sem endereços salvos ou servidor offline */ }
+}
+
+function selecionarEnderecoSalvo(id) {
+    enderecoSelecionadoId = id;
+    document.querySelectorAll('.endereco-opcao').forEach(el => {
+        el.classList.toggle('selecionado', el.dataset.id === String(id ?? 'novo'));
+    });
+
+    const checkboxLinha = document.getElementById('linha-salvar-endereco');
+    if (id === null) {
+        ['end-rua','end-numero','end-bairro','end-cidade','end-cep','end-telefone'].forEach(c => document.getElementById(c).value = '');
+        document.getElementById('end-estado').value = '';
+        checkboxLinha.style.display = 'flex';
+    } else {
+        const dados = enderecosCarregados.find(e => e.id === id);
+        if (!dados) return;
+        document.getElementById('end-nome').value     = dados.nomeDestinatario || '';
+        document.getElementById('end-rua').value      = dados.rua || '';
+        document.getElementById('end-numero').value   = dados.numero || '';
+        document.getElementById('end-bairro').value   = dados.bairro || '';
+        document.getElementById('end-cidade').value   = dados.cidade || '';
+        document.getElementById('end-estado').value   = dados.estado || '';
+        document.getElementById('end-cep').value      = dados.cep || '';
+        document.getElementById('end-telefone').value = dados.telefone || '';
+        checkboxLinha.style.display = 'none';
+    }
+}
+
+async function salvarEnderecoNoPerfil(auth) {
+    try {
+        await fetch(`${API_BASE}/enderecos`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${auth.token}` },
+            body: JSON.stringify({
+                idUsuario: auth.id,
+                apelido: 'Endereço de entrega',
+                nomeDestinatario: document.getElementById('end-nome').value.trim(),
+                rua:      document.getElementById('end-rua').value.trim(),
+                numero:   document.getElementById('end-numero').value.trim(),
+                bairro:   document.getElementById('end-bairro').value.trim(),
+                cidade:   document.getElementById('end-cidade').value.trim(),
+                estado:   document.getElementById('end-estado').value,
+                cep:      document.getElementById('end-cep').value.trim(),
+                telefone: document.getElementById('end-telefone').value.trim()
+            })
+        });
+    } catch (_) { /* não bloqueia o fluxo de pagamento se isso falhar */ }
+}
 
 <script src="gerente-sidebar.js"></script>
 </body>
