@@ -9,7 +9,7 @@ const auth=getAuth();
 const perfil=(auth.nomePerfil||'').toLowerCase();
 if(!perfil.includes('gerente')) return;
 
-const style=document.createE\flement('style');
+const style=document.createElement('style');
 style.textContent=`
 body{margin-top:60px!important;}
 #gerente-sidebar{position:fixed;left:0;top:0;width:100%;height:60px;background:#222;color:#fff;z-index:99999;padding:0 16px;box-sizing:border-box;font-family:Arial,sans-serif;display:flex;align-items:center}
