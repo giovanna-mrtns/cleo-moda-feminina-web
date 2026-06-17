@@ -279,6 +279,9 @@ console.log('busca-produto dentro do onload:', document.getElementById('busca-pr
     lupa.addEventListener('click', () => {
         campoBusca.dispatchEvent(new Event('input'));
     });
+
+    // 6. Barra deslizante do menu
+    iniciarBarraDeslizante();
 }
 </script>
 
@@ -313,11 +316,11 @@ console.log('busca-produto dentro do onload:', document.getElementById('busca-pr
     // =============================================
     //  Barra deslizante do menu de navegação
     // =============================================
-    window.addEventListener('load', function () {
+    function iniciarBarraDeslizante() {
         const ul = document.querySelector('.menu ul');
+        if (!ul) return;
         const links = ul.querySelectorAll('li a');
 
-        // Cria o elemento da barra
         const indicator = document.createElement('span');
         indicator.classList.add('nav-indicator');
         ul.appendChild(indicator);
@@ -329,27 +332,22 @@ console.log('busca-produto dentro do onload:', document.getElementById('busca-pr
             indicator.style.width = elRect.width + 'px';
         }
 
-        // Posiciona na página ativa sem animação
         const ativo = ul.querySelector('a.ativo');
         if (ativo) {
             indicator.style.transition = 'none';
             moverBarraPara(ativo);
-            setTimeout(() => {
-                indicator.style.transition = '';
-            }, 50);
+            setTimeout(() => { indicator.style.transition = ''; }, 100);
         }
 
-        // Move com o mouse
         links.forEach(link => {
             link.addEventListener('mouseenter', () => moverBarraPara(link));
         });
 
-        // Volta para o item ativo ao tirar o mouse do menu
         ul.addEventListener('mouseleave', () => {
             const atual = ul.querySelector('a.ativo');
             if (atual) moverBarraPara(atual);
         });
-    });
+    }
 </script>
 </body>
 </html>

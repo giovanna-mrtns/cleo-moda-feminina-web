@@ -107,16 +107,23 @@ body{
     color: var(--branco);
     font-size: 14px;
 }
-.menu {
-    background-color: var(--preto);
-    padding: 15px 40px;
-}
-
 .menu ul {
     list-style: none;
     display: flex;
     gap: 60px;
     justify-content: center;
+    position: relative;
+}
+
+/* Barra deslizante */
+.menu ul .nav-indicator {
+    position: absolute;
+    bottom: -4px;
+    height: 2px;
+    background-color: var(--roxo);
+    border-radius: 2px;
+    transition: left 0.3s ease, width 0.3s ease;
+    pointer-events: none;
 }
 
 .menu ul li a {
@@ -128,7 +135,6 @@ body{
 }
 
 .menu ul li a.ativo {
-    border-bottom: 2px solid var(--roxo);
     color: var(--branco);
     font-weight: bold;
 }
