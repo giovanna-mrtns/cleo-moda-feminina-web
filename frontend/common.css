@@ -1,0 +1,16 @@
+
+@font-face{font-family:Jost;src:url(fonts/Jost-VariableFont_wght.ttf) format("truetype");}
+@font-face{font-family:Mina;src:url(fonts/Mina-Regular.ttf) format("truetype");}
+:root{
+--roxo:#851B87;
+--roxo-escuro:#550b62;
+--preto:#090000;
+--branco:#ffffff;
+--cinza-bg:#f7f5f8;
+--cinza-borda:#e2dde6;
+--cinza-texto:#6b6275;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body,html{font-family:Jost,sans-serif}
+.topo,.topbar,#header,#header-2,.menu{background-color:var(--roxo)}
+.logo-home img{max-height:80px}
