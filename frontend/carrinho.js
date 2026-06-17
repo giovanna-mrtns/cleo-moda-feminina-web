@@ -1,249 +1,128 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carrinho – Cléo MF</title>
+// ============================================================
+//  carrinho.js
+//  Lógica compartilhada do carrinho de compras (localStorage)
+//  Incluir esse script em TODAS as páginas que usam o carrinho:
+//  index.html, pagina-produto.html, carrinho.html, tela-de-pagamento.html
+// ============================================================
 
-    <link rel="stylesheet" href="style3.css">
-    <script src="carrinho.js"></script>
-</head>
-<body>
+const CARRINHO_KEY = 'cleo_carrinho';
+const AUTH_KEY     = 'cleo_auth'; // { token, id, nome, login }
 
-<header class="topbar">
-    <div class="topbar-avatar" id="topbar-avatar">?</div>
-    <div class="topbar-info">
-        <strong id="topbar-nome">Visitante</strong>
-        <span id="topbar-login"></span>
-    </div>
-</header>
+// ------------------------------------------------------------
+// API base — funciona tanto local quanto em produção,
+// porque o frontend é servido pelo mesmo servidor da API.
+// ------------------------------------------------------------
+const API_BASE = '/api';
 
-<div class="breadcrumb">
-    Cléo MF <span>&nbsp;|&nbsp;</span> Carrinho
-</div>
+// ------------------------------------------------------------
+// Leitura e escrita do carrinho no localStorage
+// Estrutura: [{ idProduto, idVariacao, nome, tamanho, cor, preco, imagemUrl, quantidade, estoque }]
+// Cada combinação de tamanho/cor é um item separado no carrinho,
+// mesmo que seja do mesmo produto.
+// ------------------------------------------------------------
+function getCarrinho() {
+    const raw = localStorage.getItem(CARRINHO_KEY);
+    return raw ? JSON.parse(raw) : [];
+}
 
-<main class="carrinho-container">
+function salvarCarrinho(itens) {
+    localStorage.setItem(CARRINHO_KEY, JSON.stringify(itens));
+    atualizarContadorCarrinho();
+}
 
-    <div class="topo-carrinho">
-        <h1 id="titulo-carrinho">Cléo MF | Carrinho</h1>
+// Adiciona uma variação (tamanho/cor) de um produto ao carrinho
+// (ou aumenta a quantidade se essa mesma combinação já estiver lá)
+function adicionarAoCarrinho(produto, variacao, quantidade = 1) {
+    const itens = getCarrinho();
+    const existente = itens.find(i => i.idVariacao === variacao.id);
 
-        <div class="busca">
-            <input type="text" placeholder="Buscar...">
-            <button>🔍</button>
-        </div>
-    </div>
-
-    <!-- Barra de ações em lote -->
-    <div class="acoes-lote" style="display:flex; align-items:center; gap:12px; padding:8px 0">
-        <label style="display:flex; align-items:center; gap:6px; cursor:pointer">
-            <input type="checkbox" id="checkbox-todos" onchange="alternarTodos(this.checked)">
-            Selecionar todos
-        </label>
-        <button id="btn-remover-selecionados" style="display:none" onclick="removerSelecionados()">Remover selecionados</button>
-    </div>
-
-    <!-- Itens do carrinho são inseridos aqui pelo JavaScript -->
-    <div id="lista-carrinho"></div>
-
-</main>
-
-<footer class="footer-carrinho">
-
-    <div class="cupom">
-        <p>CUPOM DE DESCONTO:</p>
-        <input type="text" placeholder="PROMOAQUI">
-    </div>
-
-    <div class="finalizar">
-        <p>Total (<span id="total-itens">0</span> <span id="total-itens-label">itens</span>): <span id="total-valor">R$ 0,00</span></p>
-        <button id="btn-continuar" onclick="irParaPagamento()">CONTINUAR</button>
-    </div>
-
-</footer>
-
-<script>
-    // -----------------------------------------------------------------
-    // Cabeçalho — mostra o nome/login de quem está logado (via carrinho.js)
-    // -----------------------------------------------------------------
-    function atualizarTopbar() {
-        const auth = getAuth();
-        const avatar = document.getElementById('topbar-avatar');
-        const nome   = document.getElementById('topbar-nome');
-        const login  = document.getElementById('topbar-login');
-
-        if (auth) {
-            avatar.textContent = auth.nome ? auth.nome.charAt(0).toUpperCase() : '?';
-            nome.textContent   = auth.nome || 'Usuário';
-            login.textContent  = auth.login || '';
-        } else {
-            avatar.textContent = '?';
-            nome.textContent   = 'Visitante';
-            login.textContent  = '';
-        }
+    if (existente) {
+        existente.quantidade = Math.min(existente.quantidade + quantidade, variacao.estoque);
+    } else {
+        itens.push({
+            idProduto: produto.id,
+            idVariacao: variacao.id,
+            nome: produto.nome,
+            tamanho: variacao.tamanho,
+            cor: variacao.cor,
+            preco: produto.preco,
+            imagemUrl: produto.imagemUrl,
+            quantidade: Math.min(quantidade, variacao.estoque),
+            estoque: variacao.estoque
+        });
     }
 
-    // -----------------------------------------------------------------
-    // Estado de seleção dos itens (checkbox de cada item / "selecionar todos")
-    // -----------------------------------------------------------------
-    let selecionados = new Set();
-    let selecaoInicializada = false;
+    salvarCarrinho(itens);
+}
 
-    function sincronizarSelecao(itens) {
-        const idsAtuais = new Set(itens.map(i => i.idVariacao));
-        // Remove da seleção qualquer item que não exista mais no carrinho
-        [...selecionados].forEach(id => { if (!idsAtuais.has(id)) selecionados.delete(id); });
-        // Na primeira renderização da página, todos os itens começam marcados
-        if (!selecaoInicializada) {
-            itens.forEach(i => selecionados.add(i.idVariacao));
-            selecaoInicializada = true;
-        }
+// Atualiza a quantidade de um item pelo idVariacao (remove se chegar a 0)
+function atualizarQuantidade(idVariacao, novaQtd) {
+    let itens = getCarrinho();
+    if (novaQtd <= 0) {
+        itens = itens.filter(i => i.idVariacao !== idVariacao);
+    } else {
+        const item = itens.find(i => i.idVariacao === idVariacao);
+        if (item) item.quantidade = Math.min(novaQtd, item.estoque);
     }
+    salvarCarrinho(itens);
+}
 
-    function alternarItem(idVariacao, marcado) {
-        if (marcado) selecionados.add(idVariacao);
-        else selecionados.delete(idVariacao);
-        renderCarrinho();
+// Remove um item do carrinho pelo idVariacao
+function removerDoCarrinho(idVariacao) {
+    const itens = getCarrinho().filter(i => i.idVariacao !== idVariacao);
+    salvarCarrinho(itens);
+}
+
+// Esvazia o carrinho (usado após finalizar o pedido)
+function limparCarrinho() {
+    localStorage.removeItem(CARRINHO_KEY);
+    atualizarContadorCarrinho();
+}
+
+// Calcula o total do carrinho
+function calcularTotalCarrinho() {
+    return getCarrinho().reduce((soma, item) => soma + item.preco * item.quantidade, 0);
+}
+
+// Atualiza o número exibido no ícone do carrinho (se existir na página)
+function atualizarContadorCarrinho() {
+    const el = document.getElementById('contador-carrinho');
+    if (!el) return;
+    const totalItens = getCarrinho().reduce((soma, i) => soma + i.quantidade, 0);
+    el.textContent = totalItens > 0 ? totalItens : '';
+    el.style.display = totalItens > 0 ? 'inline-block' : 'none';
+}
+
+// ------------------------------------------------------------
+// Autenticação — token salvo após login (ver login.html)
+// ------------------------------------------------------------
+function getAuth() {
+    const raw = localStorage.getItem(AUTH_KEY);
+    return raw ? JSON.parse(raw) : null;
+}
+
+function salvarAuth(dados) {
+    localStorage.setItem(AUTH_KEY, JSON.stringify(dados));
+}
+
+function logout() {
+    const auth = getAuth();
+    if (auth) {
+        fetch(`${API_BASE}/auth/logout`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${auth.token}` }
+        }).catch(() => {});
     }
+    localStorage.removeItem(AUTH_KEY);
+    window.location.href = 'login.html';
+}
 
-    function alternarTodos(marcado) {
-        const itens = getCarrinho();
-        selecionados = new Set(marcado ? itens.map(i => i.idVariacao) : []);
-        renderCarrinho();
-    }
+// ------------------------------------------------------------
+// Util: formatar número como moeda brasileira
+// ------------------------------------------------------------
+function formatarPreco(valor) {
+    return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
 
-    function removerSelecionados() {
-        if (selecionados.size === 0) return;
-        if (!confirm(`Remover ${selecionados.size} item(ns) selecionado(s) do carrinho?`)) return;
-        [...selecionados].forEach(id => removerDoCarrinho(id));
-        selecionados.clear();
-        renderCarrinho();
-    }
-
-    function atualizarControlesLote(itens) {
-        const checkboxTodos = document.getElementById('checkbox-todos');
-        const btnRemover    = document.getElementById('btn-remover-selecionados');
-
-        if (itens.length === 0) {
-            checkboxTodos.checked = false;
-            checkboxTodos.indeterminate = false;
-        } else {
-            const todosMarcados  = itens.every(i => selecionados.has(i.idVariacao));
-            const algumMarcado   = itens.some(i => selecionados.has(i.idVariacao));
-            checkboxTodos.checked = todosMarcados;
-            checkboxTodos.indeterminate = algumMarcado && !todosMarcados;
-        }
-
-        btnRemover.style.display = selecionados.size > 0 ? 'inline-block' : 'none';
-    }
-
-    // -----------------------------------------------------------------
-    // Renderiza a lista de itens do carrinho a partir do localStorage
-    // -----------------------------------------------------------------
-    function renderCarrinho() {
-        const itens = getCarrinho();
-        sincronizarSelecao(itens);
-
-        const lista = document.getElementById('lista-carrinho');
-
-        document.getElementById('titulo-carrinho').textContent = `Cléo MF | Carrinho (${itens.length})`;
-        atualizarControlesLote(itens);
-
-        if (itens.length === 0) {
-            lista.innerHTML = '<p style="padding:24px; font-family:inherit;">Seu carrinho está vazio.</p>';
-            atualizarRodape(itens);
-            return;
-        }
-
-        lista.innerHTML = itens.map(item => {
-            const imagem = item.imagemUrl && item.imagemUrl.trim() !== ''
-                ? item.imagemUrl
-                : 'imgs/cropped-liso-branco.jpg';
-            const subtotal = item.preco * item.quantidade;
-
-            return `
-                <div class="produto-carrinho" data-id-variacao="${item.idVariacao}">
-
-                    <input type="checkbox"
-                           ${selecionados.has(item.idVariacao) ? 'checked' : ''}
-                           onchange="alternarItem(${item.idVariacao}, this.checked)">
-
-                    <img src="${imagem}" alt="${item.nome}">
-
-                    <div class="info-produto">
-                        <h2>${item.nome}</h2>
-                        <p>Tamanho: ${item.tamanho} &nbsp;|&nbsp; Cor: ${item.cor}</p>
-                        <span>${formatarPreco(item.preco)}</span>
-                    </div>
-
-                    <div class="quantidade">
-                        <button onclick="decrementarItem(${item.idVariacao})">−</button>
-                        <span>${item.quantidade}</span>
-                        <button onclick="incrementarItem(${item.idVariacao})">+</button>
-                    </div>
-
-                    <div class="preco-total">
-                        <p>${formatarPreco(subtotal)}</p>
-                    </div>
-
-                    <div class="acoes">
-                        <a href="#" onclick="removerItem(${item.idVariacao}); return false;">Excluir</a>
-                    </div>
-
-                </div>`;
-        }).join('');
-
-        atualizarRodape(itens);
-    }
-
-    function atualizarRodape(itens) {
-        const selecionadosNoCarrinho = itens.filter(i => selecionados.has(i.idVariacao));
-        const totalItens = selecionadosNoCarrinho.reduce((soma, i) => soma + i.quantidade, 0);
-        const totalValor = selecionadosNoCarrinho.reduce((soma, i) => soma + i.preco * i.quantidade, 0);
-
-        document.getElementById('total-itens').textContent = totalItens;
-        document.getElementById('total-itens-label').textContent = 'selecionado' + (totalItens === 1 ? '' : 's');
-        document.getElementById('total-valor').textContent = formatarPreco(totalValor);
-        document.getElementById('btn-continuar').disabled = selecionadosNoCarrinho.length === 0;
-    }
-
-    // -----------------------------------------------------------------
-    // Ações dos botões de cada item
-    // -----------------------------------------------------------------
-    function incrementarItem(idVariacao) {
-        const item = getCarrinho().find(i => i.idVariacao === idVariacao);
-        if (!item) return;
-        atualizarQuantidade(idVariacao, item.quantidade + 1); // já respeita o limite de estoque
-        renderCarrinho();
-    }
-
-    function decrementarItem(idVariacao) {
-        const item = getCarrinho().find(i => i.idVariacao === idVariacao);
-        if (!item) return;
-        atualizarQuantidade(idVariacao, item.quantidade - 1); // remove o item se chegar a 0
-        renderCarrinho();
-    }
-
-    function removerItem(idVariacao) {
-        if (!confirm('Remover este item do carrinho?')) return;
-        removerDoCarrinho(idVariacao);
-        renderCarrinho();
-    }
-
-    function irParaPagamento() {
-        const itensSelecionados = getCarrinho().filter(i => selecionados.has(i.idVariacao));
-        if (itensSelecionados.length === 0) return;
-        // A tela de pagamento deve ler esses itens (só os marcados), não o carrinho inteiro
-        sessionStorage.setItem('cleo_itens_pagamento', JSON.stringify(itensSelecionados));
-        window.location.href = 'tela-de-pagamento.html';
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-        atualizarTopbar();
-        renderCarrinho();
-    });
-</script>
-
-<link rel="stylesheet" href="style.css">
-<script src="gerente-sidebar.js"></script>
-</body>
-</html>
+// Atualiza o contador assim que o script carrega em qualquer página
+document.addEventListener('DOMContentLoaded', atualizarContadorCarrinho);
