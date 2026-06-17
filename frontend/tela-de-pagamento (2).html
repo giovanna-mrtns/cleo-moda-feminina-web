@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cléo MF | Pagamento</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style3.css" />
+    <link rel="stylesheet" href="common.css">
+</head>
+<body>
+
+    <header class="topbar">
+    <div class="topbar-avatar">K</div>
+    <div class="topbar-info">
+    <!-- th:text="${usuario.nome}" -->
+    <strong>Karina</strong>
+    <!-- th:text="${usuario.email}" -->
+    <span>karina4@gmail.com</span>
+    </div>
+    </header>
+
+    <div class="breadcrumb">
+    Cléo MF <span>&nbsp;|&nbsp;</span> Pagamento
+    </div>
+
+    <main class="container">
+
+    <!-- Endereço -->
+    <div class="card">
+    <div class="endereco">
+        <div class="endereco-titulo">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--vermelho)">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+        </svg>
+        Endereço de Entrega
+        </div>
+        <!-- th:text="${usuario.nome + ' (' + usuario.telefone + ')'}" -->
+        <p class="endereco-nome">Karina (+55) 6199999-9999</p>
+        <!-- th:text="${endereco.logradouro + ', ' + endereco.bairro + ', ' + endereco.cidade}" -->
+        <p>Quadra 4, rua 17, Residencial BE, Jardins Bonitos</p>
+    </div>
+    </div>
+
+    <!-- Produtos + Pagamento -->
+    <div class="card">
+    <div class="produtos-header">
+        <span>Produtos Pedidos</span>
+        <span>Preço Unitário</span>
+        <span>Quantia</span>
+    </div>
+
+    <!-- th:each="item : ${carrinho.itens}" -->
+    <div class="produto-row">
+        <div class="produto-info">
+        <!-- th:src="${item.produto.imagemUrl}" th:alt="${item.produto.nome}" -->
+    <img class="produto-img" src="imgs/bolsadecouro.jpg" alt="Bolsa de Couro" />
+        <div>
+            <!-- th:text="${item.produto.nome}" -->
+            <div class="produto-nome">Bolsa de Couro</div>
+            <div class="produto-detalhe">
+            Variação: Marrom<br/>
+            Tamanho: 15cm x 15cm
+            </div>
+        </div>
+        </div>
+        <!-- th:text="'R$ ' + ${item.precoUnitario}" -->
+        <div class="produto-preco">R$ 350</div>
+        <!-- th:text="${item.quantidade}" -->
+        <div class="produto-qtd">1</div>
+    </div>
+
+    <!-- Cupom -->
+    <div class="linha-secao">
+        <label>Cupom de Desconto</label>
+        <div class="cupom-wrapper">
+        <!-- th:text="${carrinho.cupom.codigo}" -->
+        <span class="cupom-aplicado">PROMOAQUI</span>
+        </div>
+    </div>
+
+    <!-- Envio -->
+    <div class="linha-secao">
+        <label>Opções de Envio</label>
+        <div class="envio-info">
+        Entrega Padrão &nbsp;/&nbsp;
+        <!-- th:text="${frete.prazoFormatado}" -->
+        <strong>Chega dia 21 a 25 de Maio</strong>
+        </div>
+    </div>
+
+    <!-- Método de Pagamento -->
+    <div class="pagamento-titulo">Método de Pagamento</div>
+    <div class="metodos">
+        <button class="btn-metodo ativo" onclick="selecionarMetodo(this)">PIX</button>
+        <button class="btn-metodo" onclick="selecionarMetodo(this)">Boleto Bancário</button>
+        <button class="btn-metodo" onclick="selecionarMetodo(this)">Cartão Débito</button>
+        <button class="btn-metodo" onclick="selecionarMetodo(this)">Combinar 2 Cartões</button>
+    </div>
+
+    <!-- Totais -->
+    <div class="totais">
+        <div class="totais-grid">
+    <span class="t-label">Total dos Produtos</span>
+        <!-- th:text="'R$ ' + ${carrinho.subtotal}" -->
+        <span class="t-valor">R$ 350,00</span>
+
+        <span class="t-label">Total do Frete</span>
+        <!-- th:text="${carrinho.frete}" -->
+        <span class="t-valor">R$ 0</span>
+
+        <span class="t-label">Cupom de Desconto</span>
+        <!-- th:text="'-R$ ' + ${carrinho.desconto}" -->
+        <span class="t-valor t-desconto">- R$ 50,00</span>
+
+        <span class="t-total-label">Pagamento Total</span>
+        <!-- th:text="'R$ ' + ${carrinho.total}" -->
+    <span class="t-total-valor">R$ 300,00</span>
+        </div>
+    </div>
+
+    <!-- Botão -->
+    <div class="card-footer">
+        <button class="btn-pedido">Fazer Pedido</button>
+    </div>
+
+    </div>
+    </main>
+
+    <script>
+    function selecionarMetodo(btn) {
+    document.querySelectorAll('.btn-metodo').forEach(b => b.classList.remove('ativo'));
+    btn.classList.add('ativo');
+    }
+    </script>
+
+<script src="gerente-sidebar.js"></script>
+</body>
+</html>
