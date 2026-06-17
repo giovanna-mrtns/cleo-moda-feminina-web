@@ -107,6 +107,15 @@ body{
     color: var(--branco);
     font-size: 14px;
 }
+.menu {
+    background-color: var(--preto);
+    padding: 15px 40px;
+}
+
+.menu ul {
+    list-style: none;
+    
+}
 .menu ul {
     list-style: none;
     display: flex;
@@ -177,7 +186,7 @@ body{
     flex-direction: column;
     align-items: center;
     gap: 15px;
-    top: 50px;px;
+    top: 50px;
 }
 
 .banner-centro h2 {
