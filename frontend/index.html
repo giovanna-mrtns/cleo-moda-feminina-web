@@ -316,38 +316,42 @@ console.log('busca-produto dentro do onload:', document.getElementById('busca-pr
     // =============================================
     //  Barra deslizante do menu de navegação
     // =============================================
-    function iniciarBarraDeslizante() {
-        const ul = document.querySelector('.menu ul');
-        if (!ul) return;
-        const links = ul.querySelectorAll('li a');
+  function iniciarBarraDeslizante() {
+    const ul = document.querySelector('.menu ul');
+    if (!ul) return;
+    const links = ul.querySelectorAll('li a');
 
-        const indicator = document.createElement('span');
-        indicator.classList.add('nav-indicator');
-        ul.appendChild(indicator);
+    const indicator = document.createElement('span');
+    indicator.classList.add('nav-indicator');
+    ul.appendChild(indicator);
 
-        function moverBarraPara(el) {
-            const ulRect = ul.getBoundingClientRect();
-            const elRect = el.getBoundingClientRect();
-            indicator.style.left  = (elRect.left - ulRect.left) + 'px';
-            indicator.style.width = elRect.width + 'px';
-        }
+    function moverBarraPara(el) {
+        // Pega o <li> pai do link
+        const li = el.closest('li');
+        const ulRect = ul.getBoundingClientRect();
+        const liRect = li.getBoundingClientRect();
 
-        const ativo = ul.querySelector('a.ativo');
-        if (ativo) {
-            indicator.style.transition = 'none';
-            moverBarraPara(ativo);
-            setTimeout(() => { indicator.style.transition = ''; }, 100);
-        }
-
-        links.forEach(link => {
-            link.addEventListener('mouseenter', () => moverBarraPara(link));
-        });
-
-        ul.addEventListener('mouseleave', () => {
-            const atual = ul.querySelector('a.ativo');
-            if (atual) moverBarraPara(atual);
-        });
+        indicator.style.left  = (liRect.left - ulRect.left) + 'px';
+        indicator.style.width = liRect.width + 'px';
     }
+
+    // Posiciona na inicial sem animação
+    const ativo = ul.querySelector('a.ativo');
+    if (ativo) {
+        indicator.style.transition = 'none';
+        moverBarraPara(ativo);
+        setTimeout(() => { indicator.style.transition = 'left 0.3s ease, width 0.3s ease'; }, 100);
+    }
+
+    links.forEach(link => {
+        link.addEventListener('mouseenter', () => moverBarraPara(link));
+    });
+
+    ul.addEventListener('mouseleave', () => {
+        const atual = ul.querySelector('a.ativo');
+        if (atual) moverBarraPara(atual);
+    });
+}
 </script>
 </body>
 </html>
