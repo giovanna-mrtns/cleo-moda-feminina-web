@@ -156,10 +156,10 @@
     </div>
 </section>
 
-<!-- ============================================================
-     Funções auxiliares (definidas antes do DOMContentLoaded)
-     ============================================================ -->
 <script>
+    /* ============================================================
+       FUNÇÕES AUXILIARES
+       ============================================================ */
     function mostrarToast(msg) {
         const toast = document.getElementById('toast');
         toast.textContent = msg;
@@ -240,49 +240,84 @@
         });
     }
 
-    // ============================================================
-    //  UM ÚNICO DOMContentLoaded — centraliza toda a inicialização
-    // ============================================================
-    console.log('Script carregado');
-console.log('busca-produto:', document.getElementById('busca-produto'));
-window.onload = function() {
-console.log('onload disparou');
-console.log('busca-produto dentro do onload:', document.getElementById('busca-produto'));
-    // 1. Atualiza header (login/logout)
-    atualizarHeader();
+    /* ============================================================
+       BARRA DESLIZANTE — definida ANTES do window.onload
+       ============================================================ */
+    function iniciarBarraDeslizante() {
+        const ul = document.querySelector('.menu ul');
+        if (!ul) return;
+        const links = ul.querySelectorAll('li a');
 
-    // 2. Toast de boas-vindas após login
-    const nomeLogin = sessionStorage.getItem('loginFeito');
-    if (nomeLogin) {
-        sessionStorage.removeItem('loginFeito');
-        mostrarToast(`✓ Bem-vindo(a), ${nomeLogin.split(' ')[0]}!`);
+        const indicator = document.createElement('span');
+        indicator.classList.add('nav-indicator');
+        ul.appendChild(indicator);
+
+        function moverBarraPara(el) {
+            const li = el.closest('li');
+            const ulRect = ul.getBoundingClientRect();
+            const liRect = li.getBoundingClientRect();
+            indicator.style.left  = (liRect.left - ulRect.left) + 'px';
+            indicator.style.width = liRect.width + 'px';
+        }
+
+        const ativo = ul.querySelector('a.ativo');
+        if (ativo) {
+            indicator.style.transition = 'none';
+            moverBarraPara(ativo);
+            setTimeout(() => {
+                indicator.style.transition = 'left 0.3s ease, width 0.3s ease';
+            }, 100);
+        }
+
+        links.forEach(link => {
+            link.addEventListener('mouseenter', () => moverBarraPara(link));
+        });
+
+        ul.addEventListener('mouseleave', () => {
+            const atual = ul.querySelector('a.ativo');
+            if (atual) moverBarraPara(atual);
+        });
     }
 
-    // 3. Carrega produtos da API
-    carregarProdutos();
+    /* ============================================================
+       INICIALIZAÇÃO — window.onload
+       ============================================================ */
+    window.onload = function () {
+        // 1. Atualiza header (login/logout)
+        atualizarHeader();
 
-    // 4. Busca ao digitar
-    const campoBusca = document.getElementById('busca-produto');
-    campoBusca.addEventListener('input', () => {
-        const texto = campoBusca.value.toLowerCase().trim();
-        const filtrados = todosProdutos.filter(produto =>
-            produto.nome.toLowerCase().includes(texto) ||
-            produto.descricao.toLowerCase().includes(texto) ||
-            produto.categoria.toLowerCase().includes(texto)
-        );
-        renderizarProdutos(filtrados);
-    });
+        // 2. Toast de boas-vindas após login
+        const nomeLogin = sessionStorage.getItem('loginFeito');
+        if (nomeLogin) {
+            sessionStorage.removeItem('loginFeito');
+            mostrarToast(`✓ Bem-vindo(a), ${nomeLogin.split(' ')[0]}!`);
+        }
 
-    // 5. Busca ao clicar na lupa
-    const lupa = document.querySelector('.barra-pesquisa img');
-    lupa.style.cursor = 'pointer';
-    lupa.addEventListener('click', () => {
-        campoBusca.dispatchEvent(new Event('input'));
-    });
+        // 3. Carrega produtos da API
+        carregarProdutos();
 
-    // 6. Barra deslizante do menu
-    iniciarBarraDeslizante();
-}
+        // 4. Busca ao digitar
+        const campoBusca = document.getElementById('busca-produto');
+        campoBusca.addEventListener('input', () => {
+            const texto = campoBusca.value.toLowerCase().trim();
+            const filtrados = todosProdutos.filter(produto =>
+                produto.nome.toLowerCase().includes(texto) ||
+                produto.descricao.toLowerCase().includes(texto) ||
+                produto.categoria.toLowerCase().includes(texto)
+            );
+            renderizarProdutos(filtrados);
+        });
+
+        // 5. Busca ao clicar na lupa
+        const lupa = document.querySelector('.barra-pesquisa img');
+        lupa.style.cursor = 'pointer';
+        lupa.addEventListener('click', () => {
+            campoBusca.dispatchEvent(new Event('input'));
+        });
+
+        // 6. Barra deslizante do menu
+        iniciarBarraDeslizante();
+    };
 </script>
 
 <!-- Barra admin -->
@@ -312,46 +347,5 @@ console.log('busca-produto dentro do onload:', document.getElementById('busca-pr
 
 <script src="gerente-sidebar.js"></script>
 
-<script>
-    // =============================================
-    //  Barra deslizante do menu de navegação
-    // =============================================
-  function iniciarBarraDeslizante() {
-    const ul = document.querySelector('.menu ul');
-    if (!ul) return;
-    const links = ul.querySelectorAll('li a');
-
-    const indicator = document.createElement('span');
-    indicator.classList.add('nav-indicator');
-    ul.appendChild(indicator);
-
-    function moverBarraPara(el) {
-        // Pega o <li> pai do link
-        const li = el.closest('li');
-        const ulRect = ul.getBoundingClientRect();
-        const liRect = li.getBoundingClientRect();
-
-        indicator.style.left  = (liRect.left - ulRect.left) + 'px';
-        indicator.style.width = liRect.width + 'px';
-    }
-
-    // Posiciona na inicial sem animação
-    const ativo = ul.querySelector('a.ativo');
-    if (ativo) {
-        indicator.style.transition = 'none';
-        moverBarraPara(ativo);
-        setTimeout(() => { indicator.style.transition = 'left 0.3s ease, width 0.3s ease'; }, 100);
-    }
-
-    links.forEach(link => {
-        link.addEventListener('mouseenter', () => moverBarraPara(link));
-    });
-
-    ul.addEventListener('mouseleave', () => {
-        const atual = ul.querySelector('a.ativo');
-        if (atual) moverBarraPara(atual);
-    });
-}
-</script>
 </body>
 </html>
