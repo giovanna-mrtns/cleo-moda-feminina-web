@@ -313,7 +313,7 @@ console.log('busca-produto dentro do onload:', document.getElementById('busca-pr
     // =============================================
     //  Barra deslizante do menu de navegação
     // =============================================
-    (function () {
+    window.addEventListener('load', function () {
         const ul = document.querySelector('.menu ul');
         const links = ul.querySelectorAll('li a');
 
@@ -329,18 +329,14 @@ console.log('busca-produto dentro do onload:', document.getElementById('busca-pr
             indicator.style.width = elRect.width + 'px';
         }
 
-        // Posiciona na página ativa ao carregar
+        // Posiciona na página ativa sem animação
         const ativo = ul.querySelector('a.ativo');
         if (ativo) {
-            // Aguarda o layout estabilizar para pegar as posições corretas
-            requestAnimationFrame(() => {
-                indicator.style.transition = 'none';
-                moverBarraPara(ativo);
-                // Reativa a transição após posicionar
-                requestAnimationFrame(() => {
-                    indicator.style.transition = '';
-                });
-            });
+            indicator.style.transition = 'none';
+            moverBarraPara(ativo);
+            setTimeout(() => {
+                indicator.style.transition = '';
+            }, 50);
         }
 
         // Move com o mouse
@@ -353,7 +349,7 @@ console.log('busca-produto dentro do onload:', document.getElementById('busca-pr
             const atual = ul.querySelector('a.ativo');
             if (atual) moverBarraPara(atual);
         });
-    })();
+    });
 </script>
 </body>
 </html>
