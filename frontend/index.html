@@ -243,6 +243,7 @@
     /* ============================================================
        BARRA DESLIZANTE — definida ANTES do window.onload
        ============================================================ */
+    console.log("FUNÇÃO DA BARRA CARREGADA");
     function iniciarBarraDeslizante() {
         const ul = document.querySelector('.menu ul');
         if (!ul) return;
@@ -253,7 +254,8 @@
         ul.appendChild(indicator);
 
         function moverBarraPara(el) {
-            const linkRect = el.getBoundingClientRect();
+        const ulRect = ul.getBoundingClientRect();
+        const linkRect = el.getBoundingClientRect();
 
         indicator.style.left =
         (linkRect.left - ulRect.left) + 'px';
