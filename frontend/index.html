@@ -59,7 +59,84 @@
         }
     </style>
 
-    <script src="carrinho.js"></script>
+<script src="carrinho.js"></script>
+<script>
+    // ============================================================
+    //  Carrega produtos do banco e gera os cards automaticamente
+    // ============================================================
+   let todosProdutos = [];
+
+async function carregarProdutos() {
+    const grid = document.getElementById('produtos-grid');
+    grid.innerHTML = '<p style="font-family: Mina;">Carregando produtos...</p>';
+
+    try {
+        const resposta = await fetch(`${API_BASE}/produtos`);
+        if (!resposta.ok) throw new Error('Falha ao buscar produtos');
+        const produtos = await resposta.json();
+        todosProdutos = produtos;
+
+        if (produtos.length === 0) {
+            grid.innerHTML = '<p style="font-family: Mina;">Nenhum produto cadastrado ainda.</p>';
+            return;
+        }
+
+        renderizarProdutos(todosProdutos); // ← usa função reutilizável
+
+    } catch (erro) {
+        console.error(erro);
+        grid.innerHTML = '<p style="font-family: Mina; color: red;">Erro ao carregar produtos.</p>';
+    }
+}
+
+// Função separada para renderizar cards (evita repetição de código)
+function renderizarProdutos(lista) {
+    const grid = document.getElementById('produtos-grid');
+    grid.innerHTML = '';
+
+    lista.forEach(produto => {
+        const card = document.createElement('div');
+        card.className = 'produto-card';
+        card.style.cursor = 'pointer';
+
+        const imagem = produto.imagemUrl && produto.imagemUrl.trim() !== ''
+            ? produto.imagemUrl
+            : 'imgs/cropped-liso-branco.jpg';
+
+        card.innerHTML = `
+            <img src="${imagem}" alt="${produto.nome}">
+            <div class="produto-info">
+                <span>${produto.nome}</span>
+                <span>${formatarPreco(produto.preco)}</span>
+            </div>
+        `;
+
+        card.addEventListener('click', () => {
+            window.location.href = `pagina-produto.html?id=${produto.id}`;
+        });
+
+        grid.appendChild(card);
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    carregarProdutos();
+
+    const campoBusca = document.getElementById('busca-produto');
+
+    campoBusca.addEventListener('input', () => {
+        const texto = campoBusca.value.toLowerCase();
+
+        const filtrados = todosProdutos.filter(produto =>
+            produto.nome.toLowerCase().includes(texto) ||
+            produto.descricao.toLowerCase().includes(texto) ||
+            produto.categoria.toLowerCase().includes(texto)
+        );
+
+        renderizarProdutos(filtrados);
+    });
+});
+</script>
 </head>
 <body>
 
@@ -73,27 +150,28 @@
             </a>
         </div>
         <div class="barra-pesquisa">
-            <input type="text" id="busca-produto" placeholder="Buscar produtos...">
+            <input type="text" placeholder="Buscar produtos...">
             <img src="imgs/icone-loupe-gris 6.png" alt="Buscar" width="30px">
         </div>
         <div class="icones-header">
             <div class="icone-conta">
                 <img src="imgs/logo-mulher-minha conta.png" alt="Minha Conta" width="35px">
+                <!-- Conteúdo trocado pelo JS dependendo do estado de login -->
                 <div class="info-conta" id="info-conta">
                     <a href="login.html" class="email-usuario">Fazer Login</a>
                 </div>
             </div>
             <div class="icone-carrinho" style="position: relative;">
-                <img src="imgs/carrinho 1.png" alt="Carrinho" width="35px">
-                <span id="contador-carrinho" style="
-                    position: absolute; top: -6px; right: -6px;
-                    background: #851B87; color: #fff; font-size: 11px;
-                    font-family: Jost, sans-serif; border-radius: 50%;
-                    min-width: 18px; height: 18px; display: none;
-                    align-items: center; justify-content: center; text-align: center;
-                "></span>
-                <a href="carrinho.html" class="email-usuario">Carrinho</a>
-            </div>
+         <img src="imgs/carrinho 1.png" alt="Carrinho" width="35px">
+         <span id="contador-carrinho" style="
+             position: absolute; top: -6px; right: -6px;
+             background: #851B87; color: #fff; font-size: 11px;
+             font-family: Jost, sans-serif; border-radius: 50%;
+             min-width: 18px; height: 18px; display: none;
+             align-items: center; justify-content: center; text-align: center;
+         "></span>
+         <a href="carrinho.html" class="email-usuario">Carrinho</a>
+     </div>
         </div>
    </div>
 </header>
@@ -130,7 +208,9 @@
             <option>Ordenar por: Maior Preço</option>
         </select>
     </div>
-    <div class="produtos-grid" id="produtos-grid"></div>
+    <div class="produtos-grid" id="produtos-grid">
+         
+     </div>
 </section>
 
 <section class="mais-vendidos">
@@ -155,9 +235,6 @@
     </div>
 </section>
 
-<!-- ============================================================
-     Funções auxiliares (definidas antes do DOMContentLoaded)
-     ============================================================ -->
 <script>
     function mostrarToast(msg) {
         const toast = document.getElementById('toast');
@@ -166,144 +243,61 @@
         setTimeout(() => toast.classList.remove('visivel'), 4000);
     }
 
+    function sair() {
+        localStorage.removeItem('usuario');
+        window.location.reload();
+    }
+
     function atualizarHeader() {
-        const auth = getAuth();
-        const infoConta = document.getElementById('info-conta');
-        if (auth) {
-            const primeiroNome = auth.nome.split(' ')[0];
-            infoConta.innerHTML = `
-                <a href="perfil-usuario.html" class="nome-usuario" style="text-decoration:none;">Olá, ${primeiroNome}</a>
-                <button class="btn-sair" onclick="logout()">Sair</button>
-            `;
-        } else {
-            infoConta.innerHTML = `<a href="login.html" class="email-usuario">Fazer Login</a>`;
-        }
+    const auth = getAuth();
+    const infoConta = document.getElementById('info-conta');
+
+    if (auth) {
+        const primeiroNome = auth.nome.split(' ')[0];
+        infoConta.innerHTML = `
+            <a href="perfil-usuario.html" class="nome-usuario" style="text-decoration:none;">Olá, ${primeiroNome}</a>
+            <button class="btn-sair" onclick="logout()">Sair</button>
+        `;
+    } else {
+        infoConta.innerHTML = `<a href="login.html" class="email-usuario">Fazer Login</a>`;
     }
-
-    let todosProdutos = [];
-
-    async function carregarProdutos() {
-        const grid = document.getElementById('produtos-grid');
-        grid.innerHTML = '<p style="font-family: Mina;">Carregando produtos...</p>';
-
-        try {
-            const resposta = await fetch(`${API_BASE}/produtos`);
-            if (!resposta.ok) throw new Error('Falha ao buscar produtos');
-            const produtos = await resposta.json();
-            todosProdutos = produtos;
-
-            if (produtos.length === 0) {
-                grid.innerHTML = '<p style="font-family: Mina;">Nenhum produto cadastrado ainda.</p>';
-                return;
-            }
-
-            renderizarProdutos(todosProdutos);
-
-        } catch (erro) {
-            console.error(erro);
-            grid.innerHTML = '<p style="font-family: Mina; color: red;">Erro ao carregar produtos.</p>';
-        }
-    }
-
-    function renderizarProdutos(lista) {
-        const grid = document.getElementById('produtos-grid');
-        grid.innerHTML = '';
-
-        if (lista.length === 0) {
-            grid.innerHTML = '<p style="font-family: Mina;">Nenhum produto encontrado.</p>';
-            return;
-        }
-
-        lista.forEach(produto => {
-            const card = document.createElement('div');
-            card.className = 'produto-card';
-            card.style.cursor = 'pointer';
-
-            const imagem = produto.imagemUrl && produto.imagemUrl.trim() !== ''
-                ? produto.imagemUrl
-                : 'imgs/cropped-liso-branco.jpg';
-
-            card.innerHTML = `
-                <img src="${imagem}" alt="${produto.nome}">
-                <div class="produto-info">
-                    <span>${produto.nome}</span>
-                    <span>${formatarPreco(produto.preco)}</span>
-                </div>
-            `;
-
-            card.addEventListener('click', () => {
-                window.location.href = `pagina-produto.html?id=${produto.id}`;
-            });
-
-            grid.appendChild(card);
-        });
-    }
-
-    // ============================================================
-    //  UM ÚNICO DOMContentLoaded — centraliza toda a inicialização
-    // ============================================================
-    console.log('Script carregado');
-console.log('busca-produto:', document.getElementById('busca-produto'));
-window.onload = function() {
-console.log('onload disparou');
-console.log('busca-produto dentro do onload:', document.getElementById('busca-produto'));
-    // 1. Atualiza header (login/logout)
-    atualizarHeader();
-
-    // 2. Toast de boas-vindas após login
-    const nomeLogin = sessionStorage.getItem('loginFeito');
-    if (nomeLogin) {
-        sessionStorage.removeItem('loginFeito');
-        mostrarToast(`✓ Bem-vindo(a), ${nomeLogin.split(' ')[0]}!`);
-    }
-
-    // 3. Carrega produtos da API
-    carregarProdutos();
-
-    // 4. Busca ao digitar
-    const campoBusca = document.getElementById('busca-produto');
-    campoBusca.addEventListener('input', () => {
-        const texto = campoBusca.value.toLowerCase().trim();
-        const filtrados = todosProdutos.filter(produto =>
-            produto.nome.toLowerCase().includes(texto) ||
-            produto.descricao.toLowerCase().includes(texto) ||
-            produto.categoria.toLowerCase().includes(texto)
-        );
-        renderizarProdutos(filtrados);
-    });
-
-    // 5. Busca ao clicar na lupa
-    const lupa = document.querySelector('.barra-pesquisa img');
-    lupa.style.cursor = 'pointer';
-    lupa.addEventListener('click', () => {
-        campoBusca.dispatchEvent(new Event('input'));
-    });
 }
+    // Ao carregar a página, verifica se acabou de logar
+    window.addEventListener('DOMContentLoaded', () => {
+        atualizarHeader();
+
+        const nomeLogin = sessionStorage.getItem('loginFeito');
+        if (nomeLogin) {
+            sessionStorage.removeItem('loginFeito');
+            const primeiroNome = nomeLogin.split(' ')[0];
+            mostrarToast(`✓ Bem-vindo(a), ${primeiroNome}!`);
+        }
+    });
 </script>
 
-<!-- Barra admin -->
+
 <style>
-    .admin-bar { display: none; position: fixed; top: 0; left: 0; right: 0; background: #111; color: #fff; padding: 10px; z-index: 10000; font-family: Arial, sans-serif; }
-    .admin-bar a { color: #fff; margin-right: 15px; text-decoration: none; }
-    body.admin-visible { padding-top: 45px; }
+.admin-bar{display:none;position:fixed;top:0;left:0;right:0;background:#111;color:#fff;padding:10px;z-index:10000;font-family:Arial,sans-serif}
+.admin-bar a{color:#fff;margin-right:15px;text-decoration:none}
+body.admin-visible{padding-top:45px}
 </style>
 <div id="adminBar" class="admin-bar">
-    <strong>Painel Administrativo</strong>
-    <a href="configuracao-de-usuario.html">Usuários</a>
-    <a href="configuracao-de-perfil.html">Perfis</a>
-    <a href="configuracao-de-modulos.html">Módulos</a>
+<strong>Painel Administrativo</strong>
+<a href="configuracao-de-usuario.html">Usuários</a>
+<a href="configuracao-de-perfil.html">Perfis</a>
+<a href="configuracao-de-modulos.html">Módulos</a>
 </div>
 <script>
-    (function () {
-        try {
-            const auth = JSON.parse(localStorage.getItem('auth') || '{}');
-            const perfil = (auth.nomePerfil || '').toLowerCase();
-            if (perfil.includes('admin')) {
-                document.getElementById('adminBar').style.display = 'block';
-                document.body.classList.add('admin-visible');
-            }
-        } catch (e) {}
-    })();
+(function(){
+try{
+const auth=JSON.parse(localStorage.getItem('auth')||'{}');
+const perfil=(auth.nomePerfil||'').toLowerCase();
+if(perfil.includes('admin')){
+ document.getElementById('adminBar').style.display='block';
+ document.body.classList.add('admin-visible');
+}
+}catch(e){}
+})();
 </script>
 
 <script src="gerente-sidebar.js"></script>
