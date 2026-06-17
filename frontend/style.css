@@ -385,10 +385,11 @@ table, th, td {
     flex-direction: column;
     gap: 10px;
     box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-        overflow-y: auto;
+    overflow-y: auto;
     height: 80%;
     max-height: fit-content;
 }
+
 
 .modal h3 {
     font-family: Mina, sans-serif;
@@ -401,15 +402,14 @@ table, th, td {
     margin-top: 4px;
 }
 
-.modal input[type="text"],
-.modal input[type="password"],
-.modal select {
+.modal input {
     padding: 8px;
     font-family: Jost, sans-serif;
     font-size: medium;
     border: 1px solid #aaa;
     width: 100%;
 }
+
 
 .modal-botoes {
     display: flex;
