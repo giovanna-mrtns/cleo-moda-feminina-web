@@ -308,5 +308,52 @@ console.log('busca-produto dentro do onload:', document.getElementById('busca-pr
 </script>
 
 <script src="gerente-sidebar.js"></script>
+
+<script>
+    // =============================================
+    //  Barra deslizante do menu de navegação
+    // =============================================
+    (function () {
+        const ul = document.querySelector('.menu ul');
+        const links = ul.querySelectorAll('li a');
+
+        // Cria o elemento da barra
+        const indicator = document.createElement('span');
+        indicator.classList.add('nav-indicator');
+        ul.appendChild(indicator);
+
+        function moverBarraPara(el) {
+            const ulRect = ul.getBoundingClientRect();
+            const elRect = el.getBoundingClientRect();
+            indicator.style.left  = (elRect.left - ulRect.left) + 'px';
+            indicator.style.width = elRect.width + 'px';
+        }
+
+        // Posiciona na página ativa ao carregar
+        const ativo = ul.querySelector('a.ativo');
+        if (ativo) {
+            // Aguarda o layout estabilizar para pegar as posições corretas
+            requestAnimationFrame(() => {
+                indicator.style.transition = 'none';
+                moverBarraPara(ativo);
+                // Reativa a transição após posicionar
+                requestAnimationFrame(() => {
+                    indicator.style.transition = '';
+                });
+            });
+        }
+
+        // Move com o mouse
+        links.forEach(link => {
+            link.addEventListener('mouseenter', () => moverBarraPara(link));
+        });
+
+        // Volta para o item ativo ao tirar o mouse do menu
+        ul.addEventListener('mouseleave', () => {
+            const atual = ul.querySelector('a.ativo');
+            if (atual) moverBarraPara(atual);
+        });
+    })();
+</script>
 </body>
 </html>
