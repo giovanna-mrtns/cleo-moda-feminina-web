@@ -122,13 +122,14 @@ body{
     gap: 60px;
     justify-content: center;
     position: relative;
+    padding-bottom: 6px;
 }
 
 /* Barra deslizante */
 .menu ul .nav-indicator {
     position: absolute;
-    bottom: -4px;
-    height: 2px;
+    bottom: 0;          /* rente à base do ul */
+    height: 3px;
     background-color: var(--roxo);
     border-radius: 2px;
     transition: left 0.3s ease, width 0.3s ease;
