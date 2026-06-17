@@ -101,3 +101,14 @@ WHERE NOT EXISTS (SELECT 1 FROM perfil);
 INSERT INTO usuario (nome, login, senha, id_perfil)
 SELECT 'Admin', 'admin@gmail.com', '1234', 1
 WHERE NOT EXISTS (SELECT 1 FROM usuario);
+
+
+
+CREATE TABLE IF NOT EXISTS variacao_produto (
+    id          SERIAL PRIMARY KEY,
+    id_produto  INT NOT NULL,
+    tamanho     VARCHAR(20) NOT NULL,
+    cor         VARCHAR(50) NOT NULL,
+    estoque     INT DEFAULT 0,
+    FOREIGN KEY (id_produto) REFERENCES produto(id)
+);

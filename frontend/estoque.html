@@ -33,113 +33,195 @@
     <div class="config">
 
         <div class="config-topo">
-            <h2>Configuração de Módulos</h2>
-            <button id="btn-novo" onclick="abrirModal()">+ Novo Módulo</button>
+            <h2>Estoque de Produtos</h2>
+            <button id="btn-novo" onclick="abrirModalNovoProduto()">+ Novo Produto</button>
         </div>
 
+        <!-- Busca e ações -->
         <div class="config-meio">
             <div class="input-buscar">
-                <input id="buscar-modulo" type="text" placeholder="Buscar módulo..." oninput="filtrarTabela()">
+                <input id="buscar-produto" type="text" placeholder="Buscar produto..." oninput="filtrarProdutos()">
                 <button class="buscar" type="button">Buscar</button>
             </div>
-            <button class="btn-config" onclick="editarSelecionado()">Editar</button>
-            <button class="btn-config" onclick="desativarSelecionado()">Desativar</button>
+            <button class="btn-config" onclick="abrirModalEditarProduto()">Editar Produto</button>
+            <button class="btn-config" onclick="desativarProdutoSelecionado()">Desativar Produto</button>
         </div>
 
+        <!-- Tabela de produtos -->
         <div class="config-tabela">
             <hr>
-            <table class="tabela-usuarios" id="tabela-modulos">
+            <table class="tabela-usuarios" id="tabela-produtos">
                 <thead>
                     <tr>
                         <th></th>
                         <th>ID</th>
                         <th>Nome</th>
-                        <th>Descrição</th>
+                        <th>Categoria</th>
+                        <th>Preço</th>
                         <th>Situação</th>
                     </tr>
                 </thead>
-                <tbody id="corpo-tabela">
+                <tbody id="corpo-produtos">
                     <!-- Linhas carregadas pelo JavaScript -->
                 </tbody>
             </table>
         </div>
 
+        <!-- Variações (tamanho/cor/estoque) do produto selecionado -->
+        <div class="config-tabela" id="secao-variacoes" style="display:none; margin-top:24px">
+            <hr>
+            <h3 id="titulo-variacoes" style="margin-bottom:12px">Variações</h3>
+            <p style="margin:6px 0; color:#555; font-size:small">
+                Edite tamanho, cor ou estoque diretamente nos campos e clique em "Salvar" na linha correspondente.
+            </p>
+            <table class="tabela-usuarios">
+                <thead>
+                    <tr>
+                        <th>Tamanho</th>
+                        <th>Cor</th>
+                        <th>Estoque</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="corpo-variacoes">
+                    <!-- Linhas carregadas pelo JavaScript -->
+                </tbody>
+            </table>
+
+            <div style="display:flex; gap:8px; align-items:center; margin-top:16px; flex-wrap:wrap">
+                <input type="text" id="nova-var-tamanho" placeholder="Tamanho (Ex: M)" style="width:120px">
+                <input type="text" id="nova-var-cor" placeholder="Cor (Ex: Azul)" style="width:140px">
+                <input type="number" id="nova-var-estoque" placeholder="Estoque" style="width:100px">
+                <button onclick="adicionarVariacaoExistente()">+ Adicionar Variação</button>
+            </div>
+        </div>
+
     </div>
 </div>
 
-<!-- Modal de cadastro / edição -->
+<!-- Modal novo/editar produto -->
 <div id="modal-overlay" class="modal-overlay" style="display:none">
     <div class="modal">
-        <h3 id="modal-titulo">Novo Módulo</h3>
+        <h3 id="modal-titulo">Novo Produto</h3>
         <hr style="margin-bottom:16px">
 
-        <input type="hidden" id="campo-id">
+        <input type="hidden" id="campo-id-produto">
 
-        <label>Nome do Módulo</label>
-        <input type="text" id="campo-nome" placeholder="Ex: Financeiro">
+        <label>Nome do Produto</label>
+        <input type="text" id="campo-nome-produto" placeholder="Ex: Vestido Floral">
 
         <label>Descrição</label>
-        <input type="text" id="campo-descricao" placeholder="Descrição do módulo">
+        <input type="text" id="campo-descricao-produto" placeholder="Descrição do produto">
+
+        <label>Preço (R$)</label>
+        <input type="number" step="0.01" id="campo-preco-produto" placeholder="Ex: 129.90">
+
+        <label>Categoria</label>
+        <input type="text" id="campo-categoria-produto" placeholder="Ex: Vestidos">
+
+        <label>URL da Imagem</label>
+        <input type="text" id="campo-imagem-produto" placeholder="Ex: imgs/vestido-floral.jpg">
+
+        <!-- Variações iniciais — só aparece no cadastro de produto novo -->
+        <div id="bloco-variacoes-novo" style="margin-top:16px">
+            <hr>
+            <label style="font-weight:bold">Variações (tamanho/cor) — obrigatório ao menos uma</label>
+            <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap">
+                <input type="text" id="temp-tamanho" placeholder="Tamanho" style="width:90px">
+                <input type="text" id="temp-cor" placeholder="Cor" style="width:110px">
+                <input type="number" id="temp-estoque" placeholder="Estoque" style="width:90px">
+                <button type="button" onclick="adicionarVariacaoTemp()">Adicionar</button>
+            </div>
+            <div id="lista-variacoes-novo" style="margin-top:10px"></div>
+        </div>
 
         <div class="modal-botoes">
             <button class="btn-config" onclick="fecharModal()">Cancelar</button>
-            <button onclick="salvarModulo()">Salvar</button>
+            <button onclick="salvarProduto()">Salvar</button>
         </div>
     </div>
 </div>
 
 <script>
-    const API = 'https://cleo-modas-femininas.onrender.com';
-    let modulos = [];
-    let linhaSelecionada = null;
+    const API = '/api';
+    let produtos = [];
+    let produtoSelecionado = null;
+    let variacoesNovoProduto = []; // usado só no formulário de cadastro
 
-    // CORRIGIDO: carrega módulos reais do banco via API
-    async function carregarModulos() {
+    // -----------------------------------------------------------------
+    // Carrega produtos do banco
+    // -----------------------------------------------------------------
+    async function carregarProdutos() {
         try {
-            const resp = await fetch(`${API}/api/modulos`);
-            modulos = await resp.json();
-            renderTabela(modulos);
+            const resp = await fetch(`${API}/produtos`);
+            produtos = await resp.json();
+            renderTabelaProdutos(produtos);
         } catch (e) {
             alert('Erro ao conectar ao servidor. Verifique se o backend está rodando.');
         }
     }
 
-    function renderTabela(lista) {
-        const tbody = document.getElementById('corpo-tabela');
+    function formatarPreco(valor) {
+        return Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function renderTabelaProdutos(lista) {
+        const tbody = document.getElementById('corpo-produtos');
         tbody.innerHTML = '';
-        lista.forEach(m => {
+        lista.forEach(p => {
             const tr = document.createElement('tr');
-            tr.dataset.id = m.id;
             tr.innerHTML = `
-                <td><input type="radio" name="sel-modulo" onchange="selecionarLinha(${m.id})"></td>
-                <td>${m.id}</td>
-                <td>${m.nome}</td>
-                <td>${m.descricao || '—'}</td>
-                <td class="${m.ativo === 's' ? 'ativo-status' : 'inativo-status'}">
-                    ${m.ativo === 's' ? 'Ativo' : 'Inativo'}
+                <td><input type="radio" name="sel-produto" onchange="selecionarProduto(${p.id})"></td>
+                <td>${p.id}</td>
+                <td>${p.nome}</td>
+                <td>${p.categoria || '—'}</td>
+                <td>${formatarPreco(p.preco)}</td>
+                <td class="${p.ativo === 's' ? 'ativo-status' : 'inativo-status'}">
+                    ${p.ativo === 's' ? 'Ativo' : 'Inativo'}
                 </td>`;
             tbody.appendChild(tr);
         });
     }
 
-    function filtrarTabela() {
-        const termo = document.getElementById('buscarPorId').value.toLowerCase();
-        const filtrados = modulos.filter(m =>
-            m.nome.toLowerCase().includes(termo) ||
-            (m.descricao && m.descricao.toLowerCase().includes(termo))
-        );
-        renderTabela(filtrados);
+    function filtrarProdutos() {
+        const termo = document.getElementById('buscar-produto').value.toLowerCase();
+        const filtrados = produtos.filter(p => p.nome.toLowerCase().includes(termo));
+        renderTabelaProdutos(filtrados);
     }
 
-    function selecionarLinha(id) {
-        linhaSelecionada = id;
+    function selecionarProduto(id) {
+        produtoSelecionado = produtos.find(p => p.id === id);
+        carregarVariacoes();
     }
 
-    function abrirModal(modulo = null) {
-        document.getElementById('modal-titulo').textContent    = modulo ? 'Editar Módulo' : 'Novo Módulo';
-        document.getElementById('campo-id').value             = modulo ? modulo.id        : '';
-        document.getElementById('campo-nome').value           = modulo ? modulo.nome      : '';
-        document.getElementById('campo-descricao').value      = modulo ? modulo.descricao : '';
+    // -----------------------------------------------------------------
+    // Modal novo/editar produto
+    // -----------------------------------------------------------------
+    function abrirModalNovoProduto() {
+        document.getElementById('modal-titulo').textContent = 'Novo Produto';
+        document.getElementById('campo-id-produto').value = '';
+        document.getElementById('campo-nome-produto').value = '';
+        document.getElementById('campo-descricao-produto').value = '';
+        document.getElementById('campo-preco-produto').value = '';
+        document.getElementById('campo-categoria-produto').value = '';
+        document.getElementById('campo-imagem-produto').value = '';
+        variacoesNovoProduto = [];
+        renderVariacoesNovoProduto();
+        document.getElementById('bloco-variacoes-novo').style.display = 'block';
+        document.getElementById('modal-overlay').style.display = 'flex';
+    }
+
+    function abrirModalEditarProduto() {
+        if (!produtoSelecionado) { alert('Selecione um produto.'); return; }
+        document.getElementById('modal-titulo').textContent = 'Editar Produto';
+        document.getElementById('campo-id-produto').value = produtoSelecionado.id;
+        document.getElementById('campo-nome-produto').value = produtoSelecionado.nome;
+        document.getElementById('campo-descricao-produto').value = produtoSelecionado.descricao || '';
+        document.getElementById('campo-preco-produto').value = produtoSelecionado.preco;
+        document.getElementById('campo-categoria-produto').value = produtoSelecionado.categoria || '';
+        document.getElementById('campo-imagem-produto').value = produtoSelecionado.imagemUrl || '';
+        // Variações de produto existente são geridas na seção abaixo da tabela, não aqui
+        document.getElementById('bloco-variacoes-novo').style.display = 'none';
         document.getElementById('modal-overlay').style.display = 'flex';
     }
 
@@ -147,48 +229,150 @@
         document.getElementById('modal-overlay').style.display = 'none';
     }
 
-    // CORRIGIDO: salva via API real (POST para criar, PUT para editar)
-    async function salvarModulo() {
-        const id        = document.getElementById('campo-id').value;
-        const nome      = document.getElementById('campo-nome').value.trim();
-        const descricao = document.getElementById('campo-descricao').value.trim();
+    // Adiciona uma variação temporária à lista do formulário de cadastro
+    function adicionarVariacaoTemp() {
+        const tamanho = document.getElementById('temp-tamanho').value.trim();
+        const cor     = document.getElementById('temp-cor').value.trim();
+        const estoque = parseInt(document.getElementById('temp-estoque').value);
 
-        if (!nome) { alert('O nome do módulo é obrigatório.'); return; }
+        if (!tamanho || !cor || isNaN(estoque)) {
+            alert('Preencha tamanho, cor e estoque da variação.');
+            return;
+        }
+        variacoesNovoProduto.push({ tamanho, cor, estoque });
+        document.getElementById('temp-tamanho').value = '';
+        document.getElementById('temp-cor').value = '';
+        document.getElementById('temp-estoque').value = '';
+        renderVariacoesNovoProduto();
+    }
+
+    function removerVariacaoTemp(index) {
+        variacoesNovoProduto.splice(index, 1);
+        renderVariacoesNovoProduto();
+    }
+
+    function renderVariacoesNovoProduto() {
+        const div = document.getElementById('lista-variacoes-novo');
+        div.innerHTML = variacoesNovoProduto.map((v, i) => `
+            <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #eee">
+                <span>${v.tamanho} — ${v.cor} (${v.estoque} un.)</span>
+                <button type="button" onclick="removerVariacaoTemp(${i})">Remover</button>
+            </div>
+        `).join('') || '<p style="color:#888; font-size:small">Nenhuma variação adicionada ainda.</p>';
+    }
+
+    // Salva produto novo (com variações) ou edição de produto existente (sem variações)
+    async function salvarProduto() {
+        const id        = document.getElementById('campo-id-produto').value;
+        const nome      = document.getElementById('campo-nome-produto').value.trim();
+        const descricao = document.getElementById('campo-descricao-produto').value.trim();
+        const preco     = parseFloat(document.getElementById('campo-preco-produto').value);
+        const categoria = document.getElementById('campo-categoria-produto').value.trim();
+        const imagemUrl = document.getElementById('campo-imagem-produto').value.trim();
+
+        if (!nome) { alert('O nome do produto é obrigatório.'); return; }
+        if (isNaN(preco)) { alert('Informe um preço válido.'); return; }
 
         if (id) {
-            await fetch(`${API}/api/modulos`, {
+            await fetch(`${API}/produtos`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id: parseInt(id), nome, descricao })
+                body: JSON.stringify({ id: parseInt(id), nome, descricao, preco, categoria, imagemUrl })
             });
         } else {
-            await fetch(`${API}/api/modulos`, {
+            if (variacoesNovoProduto.length === 0) {
+                alert('Adicione ao menos uma variação (tamanho/cor) antes de salvar.');
+                return;
+            }
+            await fetch(`${API}/produtos`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nome, descricao })
+                body: JSON.stringify({ nome, descricao, preco, categoria, imagemUrl, variacoes: variacoesNovoProduto })
             });
         }
 
         fecharModal();
-        carregarModulos();
+        await carregarProdutos();
     }
 
-    function editarSelecionado() {
-        if (!linhaSelecionada) { alert('Selecione um módulo.'); return; }
-        const m = modulos.find(m => m.id === linhaSelecionada);
-        abrirModal(m);
+    async function desativarProdutoSelecionado() {
+        if (!produtoSelecionado) { alert('Selecione um produto.'); return; }
+        if (!confirm(`Deseja desativar o produto "${produtoSelecionado.nome}"?`)) return;
+        await fetch(`${API}/produtos/${produtoSelecionado.id}`, { method: 'DELETE' });
+        produtoSelecionado = null;
+        document.getElementById('secao-variacoes').style.display = 'none';
+        await carregarProdutos();
     }
 
-    // CORRIGIDO: desativa via API real (DELETE)
-    async function desativarSelecionado() {
-        if (!linhaSelecionada) { alert('Selecione um módulo.'); return; }
-        if (!confirm('Deseja desativar este módulo?')) return;
-        await fetch(`${API}/api/modulos/${linhaSelecionada}`, { method: 'DELETE' });
-        linhaSelecionada = null;
-        carregarModulos();
+    // -----------------------------------------------------------------
+    // Variações (tamanho/cor/estoque) do produto selecionado
+    // -----------------------------------------------------------------
+    async function carregarVariacoes() {
+        if (!produtoSelecionado) return;
+        const resp = await fetch(`${API}/produtos/${produtoSelecionado.id}/variacoes`);
+        const variacoes = await resp.json();
+        renderTabelaVariacoes(variacoes);
+        document.getElementById('secao-variacoes').style.display = 'block';
+        document.getElementById('titulo-variacoes').textContent = `Variações de "${produtoSelecionado.nome}"`;
     }
 
-    window.onload = carregarModulos;
+    function renderTabelaVariacoes(lista) {
+        const tbody = document.getElementById('corpo-variacoes');
+        tbody.innerHTML = lista.map(v => `
+            <tr>
+                <td><input type="text" value="${v.tamanho}" style="width:80px" id="tam-${v.id}"></td>
+                <td><input type="text" value="${v.cor}" style="width:120px" id="cor-${v.id}"></td>
+                <td><input type="number" value="${v.estoque}" style="width:80px" id="est-${v.id}"></td>
+                <td>
+                    <button type="button" onclick="salvarVariacao(${v.id})">Salvar</button>
+                    <button type="button" onclick="removerVariacao(${v.id})">Remover</button>
+                </td>
+            </tr>
+        `).join('') || '<tr><td colspan="4" style="color:#888">Nenhuma variação cadastrada.</td></tr>';
+    }
+
+    async function salvarVariacao(id) {
+        const tamanho = document.getElementById(`tam-${id}`).value.trim();
+        const cor     = document.getElementById(`cor-${id}`).value.trim();
+        const estoque = parseInt(document.getElementById(`est-${id}`).value);
+
+        await fetch(`${API}/produtos/${produtoSelecionado.id}/variacoes/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tamanho, cor, estoque })
+        });
+        await carregarVariacoes();
+    }
+
+    async function removerVariacao(id) {
+        if (!confirm('Remover esta variação?')) return;
+        await fetch(`${API}/produtos/${produtoSelecionado.id}/variacoes/${id}`, { method: 'DELETE' });
+        await carregarVariacoes();
+    }
+
+    async function adicionarVariacaoExistente() {
+        const tamanho = document.getElementById('nova-var-tamanho').value.trim();
+        const cor     = document.getElementById('nova-var-cor').value.trim();
+        const estoque = parseInt(document.getElementById('nova-var-estoque').value);
+
+        if (!tamanho || !cor || isNaN(estoque)) {
+            alert('Preencha tamanho, cor e estoque.');
+            return;
+        }
+
+        await fetch(`${API}/produtos/${produtoSelecionado.id}/variacoes`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tamanho, cor, estoque })
+        });
+
+        document.getElementById('nova-var-tamanho').value = '';
+        document.getElementById('nova-var-cor').value = '';
+        document.getElementById('nova-var-estoque').value = '';
+        await carregarVariacoes();
+    }
+
+    window.onload = carregarProdutos;
 </script>
 
 <script src="gerente-sidebar.js"></script>

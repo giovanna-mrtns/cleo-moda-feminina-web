@@ -6,28 +6,26 @@
     <title>Carrinho – Cléo MF</title>
 
     <link rel="stylesheet" href="style3.css">
+    <script src="carrinho.js"></script>
 </head>
 <body>
 
 <header class="topbar">
-    <div class="topbar-avatar">K</div>
+    <div class="topbar-avatar" id="topbar-avatar">?</div>
     <div class="topbar-info">
-    <!-- th:text="${usuario.nome}" -->
-    <strong>Karina</strong>
-    <!-- th:text="${usuario.email}" -->
-    <span>karina4@gmail.com</span>
+        <strong id="topbar-nome">Visitante</strong>
+        <span id="topbar-login"></span>
     </div>
-    </header>
+</header>
 
-    <div class="breadcrumb">
-    Cléo MF <span>&nbsp;|&nbsp;</span> Pagamento
-    </div>
-
+<div class="breadcrumb">
+    Cléo MF <span>&nbsp;|&nbsp;</span> Carrinho
+</div>
 
 <main class="carrinho-container">
 
     <div class="topo-carrinho">
-        <h1>Cléo MF | Carrinho (3)</h1>
+        <h1 id="titulo-carrinho">Cléo MF | Carrinho</h1>
 
         <div class="busca">
             <input type="text" placeholder="Buscar...">
@@ -35,39 +33,17 @@
         </div>
     </div>
 
-    <!-- PRODUTO -->
-
-    <div class="produto-carrinho">
-
-        <input type="checkbox">
-
-        <img src="imgs/bolsadecouro.png" alt="Bolsa de couro">
-
-        <div class="info-produto">
-            <h2>Bolsa de Couro</h2>
-            <p>Cor: Marrom</p>
-            <span>R$ 350</span>
-        </div>
-
-        <div class="quantidade">
-            <button>+</button>
-            <span>1</span>
-            <button>-</button>
-
-            <select>
-                <option>15cm x 15cm</option>
-            </select>
-        </div>
-
-        <div class="preco-total">
-            <p>R$ 350</p>
-        </div>
-
-        <div class="acoes">
-            <a href="#">Excluir</a>
-        </div>
-
+    <!-- Barra de ações em lote -->
+    <div class="acoes-lote" style="display:flex; align-items:center; gap:12px; padding:8px 0">
+        <label style="display:flex; align-items:center; gap:6px; cursor:pointer">
+            <input type="checkbox" id="checkbox-todos" onchange="alternarTodos(this.checked)">
+            Selecionar todos
+        </label>
+        <button id="btn-remover-selecionados" style="display:none" onclick="removerSelecionados()">Remover selecionados</button>
     </div>
+
+    <!-- Itens do carrinho são inseridos aqui pelo JavaScript -->
+    <div id="lista-carrinho"></div>
 
 </main>
 
@@ -79,11 +55,193 @@
     </div>
 
     <div class="finalizar">
-        <p>Total (1 item): <span>R$ 350</span></p>
-        <button>CONTINUAR</button>
+        <p>Total (<span id="total-itens">0</span> <span id="total-itens-label">itens</span>): <span id="total-valor">R$ 0,00</span></p>
+        <button id="btn-continuar" onclick="irParaPagamento()">CONTINUAR</button>
     </div>
 
 </footer>
+
+<script>
+    // -----------------------------------------------------------------
+    // Cabeçalho — mostra o nome/login de quem está logado (via carrinho.js)
+    // -----------------------------------------------------------------
+    function atualizarTopbar() {
+        const auth = getAuth();
+        const avatar = document.getElementById('topbar-avatar');
+        const nome   = document.getElementById('topbar-nome');
+        const login  = document.getElementById('topbar-login');
+
+        if (auth) {
+            avatar.textContent = auth.nome ? auth.nome.charAt(0).toUpperCase() : '?';
+            nome.textContent   = auth.nome || 'Usuário';
+            login.textContent  = auth.login || '';
+        } else {
+            avatar.textContent = '?';
+            nome.textContent   = 'Visitante';
+            login.textContent  = '';
+        }
+    }
+
+    // -----------------------------------------------------------------
+    // Estado de seleção dos itens (checkbox de cada item / "selecionar todos")
+    // -----------------------------------------------------------------
+    let selecionados = new Set();
+    let selecaoInicializada = false;
+
+    function sincronizarSelecao(itens) {
+        const idsAtuais = new Set(itens.map(i => i.idVariacao));
+        // Remove da seleção qualquer item que não exista mais no carrinho
+        [...selecionados].forEach(id => { if (!idsAtuais.has(id)) selecionados.delete(id); });
+        // Na primeira renderização da página, todos os itens começam marcados
+        if (!selecaoInicializada) {
+            itens.forEach(i => selecionados.add(i.idVariacao));
+            selecaoInicializada = true;
+        }
+    }
+
+    function alternarItem(idVariacao, marcado) {
+        if (marcado) selecionados.add(idVariacao);
+        else selecionados.delete(idVariacao);
+        renderCarrinho();
+    }
+
+    function alternarTodos(marcado) {
+        const itens = getCarrinho();
+        selecionados = new Set(marcado ? itens.map(i => i.idVariacao) : []);
+        renderCarrinho();
+    }
+
+    function removerSelecionados() {
+        if (selecionados.size === 0) return;
+        if (!confirm(`Remover ${selecionados.size} item(ns) selecionado(s) do carrinho?`)) return;
+        [...selecionados].forEach(id => removerDoCarrinho(id));
+        selecionados.clear();
+        renderCarrinho();
+    }
+
+    function atualizarControlesLote(itens) {
+        const checkboxTodos = document.getElementById('checkbox-todos');
+        const btnRemover    = document.getElementById('btn-remover-selecionados');
+
+        if (itens.length === 0) {
+            checkboxTodos.checked = false;
+            checkboxTodos.indeterminate = false;
+        } else {
+            const todosMarcados  = itens.every(i => selecionados.has(i.idVariacao));
+            const algumMarcado   = itens.some(i => selecionados.has(i.idVariacao));
+            checkboxTodos.checked = todosMarcados;
+            checkboxTodos.indeterminate = algumMarcado && !todosMarcados;
+        }
+
+        btnRemover.style.display = selecionados.size > 0 ? 'inline-block' : 'none';
+    }
+
+    // -----------------------------------------------------------------
+    // Renderiza a lista de itens do carrinho a partir do localStorage
+    // -----------------------------------------------------------------
+    function renderCarrinho() {
+        const itens = getCarrinho();
+        sincronizarSelecao(itens);
+
+        const lista = document.getElementById('lista-carrinho');
+
+        document.getElementById('titulo-carrinho').textContent = `Cléo MF | Carrinho (${itens.length})`;
+        atualizarControlesLote(itens);
+
+        if (itens.length === 0) {
+            lista.innerHTML = '<p style="padding:24px; font-family:inherit;">Seu carrinho está vazio.</p>';
+            atualizarRodape(itens);
+            return;
+        }
+
+        lista.innerHTML = itens.map(item => {
+            const imagem = item.imagemUrl && item.imagemUrl.trim() !== ''
+                ? item.imagemUrl
+                : 'imgs/cropped-liso-branco.jpg';
+            const subtotal = item.preco * item.quantidade;
+
+            return `
+                <div class="produto-carrinho" data-id-variacao="${item.idVariacao}">
+
+                    <input type="checkbox"
+                           ${selecionados.has(item.idVariacao) ? 'checked' : ''}
+                           onchange="alternarItem(${item.idVariacao}, this.checked)">
+
+                    <img src="${imagem}" alt="${item.nome}">
+
+                    <div class="info-produto">
+                        <h2>${item.nome}</h2>
+                        <p>Tamanho: ${item.tamanho} &nbsp;|&nbsp; Cor: ${item.cor}</p>
+                        <span>${formatarPreco(item.preco)}</span>
+                    </div>
+
+                    <div class="quantidade">
+                        <button onclick="decrementarItem(${item.idVariacao})">−</button>
+                        <span>${item.quantidade}</span>
+                        <button onclick="incrementarItem(${item.idVariacao})">+</button>
+                    </div>
+
+                    <div class="preco-total">
+                        <p>${formatarPreco(subtotal)}</p>
+                    </div>
+
+                    <div class="acoes">
+                        <a href="#" onclick="removerItem(${item.idVariacao}); return false;">Excluir</a>
+                    </div>
+
+                </div>`;
+        }).join('');
+
+        atualizarRodape(itens);
+    }
+
+    function atualizarRodape(itens) {
+        const selecionadosNoCarrinho = itens.filter(i => selecionados.has(i.idVariacao));
+        const totalItens = selecionadosNoCarrinho.reduce((soma, i) => soma + i.quantidade, 0);
+        const totalValor = selecionadosNoCarrinho.reduce((soma, i) => soma + i.preco * i.quantidade, 0);
+
+        document.getElementById('total-itens').textContent = totalItens;
+        document.getElementById('total-itens-label').textContent = 'selecionado' + (totalItens === 1 ? '' : 's');
+        document.getElementById('total-valor').textContent = formatarPreco(totalValor);
+        document.getElementById('btn-continuar').disabled = selecionadosNoCarrinho.length === 0;
+    }
+
+    // -----------------------------------------------------------------
+    // Ações dos botões de cada item
+    // -----------------------------------------------------------------
+    function incrementarItem(idVariacao) {
+        const item = getCarrinho().find(i => i.idVariacao === idVariacao);
+        if (!item) return;
+        atualizarQuantidade(idVariacao, item.quantidade + 1); // já respeita o limite de estoque
+        renderCarrinho();
+    }
+
+    function decrementarItem(idVariacao) {
+        const item = getCarrinho().find(i => i.idVariacao === idVariacao);
+        if (!item) return;
+        atualizarQuantidade(idVariacao, item.quantidade - 1); // remove o item se chegar a 0
+        renderCarrinho();
+    }
+
+    function removerItem(idVariacao) {
+        if (!confirm('Remover este item do carrinho?')) return;
+        removerDoCarrinho(idVariacao);
+        renderCarrinho();
+    }
+
+    function irParaPagamento() {
+        const itensSelecionados = getCarrinho().filter(i => selecionados.has(i.idVariacao));
+        if (itensSelecionados.length === 0) return;
+        // A tela de pagamento deve ler esses itens (só os marcados), não o carrinho inteiro
+        sessionStorage.setItem('cleo_itens_pagamento', JSON.stringify(itensSelecionados));
+        window.location.href = 'tela-de-pagamento.html';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        atualizarTopbar();
+        renderCarrinho();
+    });
+</script>
 
 <link rel="stylesheet" href="style.css">
 <script src="gerente-sidebar.js"></script>

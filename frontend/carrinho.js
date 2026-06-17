@@ -16,7 +16,9 @@ const API_BASE = '/api';
 
 // ------------------------------------------------------------
 // Leitura e escrita do carrinho no localStorage
-// Estrutura: [{ idProduto, nome, preco, imagemUrl, quantidade, estoque }]
+// Estrutura: [{ idProduto, idVariacao, nome, tamanho, cor, preco, imagemUrl, quantidade, estoque }]
+// Cada combinação de tamanho/cor é um item separado no carrinho,
+// mesmo que seja do mesmo produto.
 // ------------------------------------------------------------
 function getCarrinho() {
     const raw = localStorage.getItem(CARRINHO_KEY);
@@ -28,42 +30,46 @@ function salvarCarrinho(itens) {
     atualizarContadorCarrinho();
 }
 
-// Adiciona um produto ao carrinho (ou aumenta a quantidade se já existir)
-function adicionarAoCarrinho(produto, quantidade = 1) {
+// Adiciona uma variação (tamanho/cor) de um produto ao carrinho
+// (ou aumenta a quantidade se essa mesma combinação já estiver lá)
+function adicionarAoCarrinho(produto, variacao, quantidade = 1) {
     const itens = getCarrinho();
-    const existente = itens.find(i => i.idProduto === produto.id);
+    const existente = itens.find(i => i.idVariacao === variacao.id);
 
     if (existente) {
-        existente.quantidade = Math.min(existente.quantidade + quantidade, produto.estoque);
+        existente.quantidade = Math.min(existente.quantidade + quantidade, variacao.estoque);
     } else {
         itens.push({
             idProduto: produto.id,
+            idVariacao: variacao.id,
             nome: produto.nome,
+            tamanho: variacao.tamanho,
+            cor: variacao.cor,
             preco: produto.preco,
             imagemUrl: produto.imagemUrl,
-            quantidade: Math.min(quantidade, produto.estoque),
-            estoque: produto.estoque
+            quantidade: Math.min(quantidade, variacao.estoque),
+            estoque: variacao.estoque
         });
     }
 
     salvarCarrinho(itens);
 }
 
-// Atualiza a quantidade de um item (remove se chegar a 0)
-function atualizarQuantidade(idProduto, novaQtd) {
+// Atualiza a quantidade de um item pelo idVariacao (remove se chegar a 0)
+function atualizarQuantidade(idVariacao, novaQtd) {
     let itens = getCarrinho();
     if (novaQtd <= 0) {
-        itens = itens.filter(i => i.idProduto !== idProduto);
+        itens = itens.filter(i => i.idVariacao !== idVariacao);
     } else {
-        const item = itens.find(i => i.idProduto === idProduto);
+        const item = itens.find(i => i.idVariacao === idVariacao);
         if (item) item.quantidade = Math.min(novaQtd, item.estoque);
     }
     salvarCarrinho(itens);
 }
 
-// Remove um item do carrinho
-function removerDoCarrinho(idProduto) {
-    const itens = getCarrinho().filter(i => i.idProduto !== idProduto);
+// Remove um item do carrinho pelo idVariacao
+function removerDoCarrinho(idVariacao) {
+    const itens = getCarrinho().filter(i => i.idVariacao !== idVariacao);
     salvarCarrinho(itens);
 }
 
@@ -119,4 +125,4 @@ function formatarPreco(valor) {
 }
 
 // Atualiza o contador assim que o script carrega em qualquer página
-window.addEventListener('load', atualizarContadorCarrinho);
+document.addEventListener('DOMContentLoaded', atualizarContadorCarrinho);

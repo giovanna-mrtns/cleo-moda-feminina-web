@@ -65,6 +65,7 @@
 
 <script>
     let produtoAtual = null;
+    let variacaoSelecionada = null;
 
     // Lê o ?id= da URL, ex: pagina-produto.html?id=5
     function obterIdProduto() {
@@ -102,7 +103,9 @@
             ? produto.imagemUrl
             : 'imgs/cropped-liso-branco.jpg';
 
-        const temEstoque = produto.estoque > 0;
+        const variacoes = produto.variacoes || [];
+        const tamanhos = [...new Set(variacoes.map(v => v.tamanho))];
+        const cores    = [...new Set(variacoes.map(v => v.cor))];
 
         // Atualiza o título da aba do navegador
         document.title = `Cleo | ${produto.nome}`;
@@ -125,6 +128,23 @@
 
                 ${produto.descricao ? `<p style="font-family: Jost, sans-serif; margin: 16px 0;">${produto.descricao}</p>` : ''}
 
+                <div class="linha-opcoes" style="display:flex; gap:16px; margin:16px 0; flex-wrap:wrap">
+                    <div>
+                        <label style="display:block; font-family:Jost, sans-serif; margin-bottom:4px">Tamanho:</label>
+                        <select id="select-tamanho" onchange="atualizarVariacaoSelecionada()">
+                            <option value="">Selecione</option>
+                            ${tamanhos.map(t => `<option value="${t}">${t}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display:block; font-family:Jost, sans-serif; margin-bottom:4px">Cor:</label>
+                        <select id="select-cor" onchange="atualizarVariacaoSelecionada()">
+                            <option value="">Selecione</option>
+                            ${cores.map(c => `<option value="${c}">${c}</option>`).join('')}
+                        </select>
+                    </div>
+                </div>
+
                 <div class="linha-quantidade">
                     <span class="quantidade-label">Quantidade:</span>
                     <div class="controle-quantidade">
@@ -132,33 +152,66 @@
                         <span id="qtd">1</span>
                         <button onclick="alterarQtd(1)">+</button>
                     </div>
-                    <span class="estoque-tag" style="${temEstoque ? '' : 'color:#c62828;'}">
-                        ${temEstoque ? `✔ ${produto.estoque} em estoque` : '✘ Fora de estoque'}
-                    </span>
+                    <span class="estoque-tag" id="estoque-tag">Selecione tamanho e cor</span>
                 </div>
 
                 <div class="botoes-acao">
-                    <button class="btn-carrinho" onclick="adicionarCarrinhoEFeedback()" ${temEstoque ? '' : 'disabled'}>
-                        ${temEstoque ? 'Adicionar ao Carrinho' : 'Indisponível'}
+                    <button class="btn-carrinho" id="btn-adicionar" onclick="adicionarCarrinhoEFeedback()" disabled>
+                        Selecione tamanho e cor
                     </button>
                 </div>
             </div>
         `;
     }
 
+    // Chamado quando o tamanho ou a cor é alterado nos selects
+    function atualizarVariacaoSelecionada() {
+        const tamanho = document.getElementById('select-tamanho').value;
+        const cor     = document.getElementById('select-cor').value;
+        const tag     = document.getElementById('estoque-tag');
+        const botao   = document.getElementById('btn-adicionar');
+
+        variacaoSelecionada = (produtoAtual.variacoes || [])
+            .find(v => v.tamanho === tamanho && v.cor === cor);
+
+        if (!tamanho || !cor) {
+            tag.textContent = 'Selecione tamanho e cor';
+            tag.style.color = '';
+            botao.disabled = true;
+            botao.textContent = 'Selecione tamanho e cor';
+            return;
+        }
+
+        if (!variacaoSelecionada || variacaoSelecionada.estoque <= 0) {
+            tag.textContent = '✘ Fora de estoque nessa combinação';
+            tag.style.color = '#c62828';
+            botao.disabled = true;
+            botao.textContent = 'Indisponível';
+            return;
+        }
+
+        tag.textContent = `✔ ${variacaoSelecionada.estoque} em estoque`;
+        tag.style.color = '';
+        botao.disabled = false;
+        botao.textContent = 'Adicionar ao Carrinho';
+        document.getElementById('qtd').textContent = '1';
+    }
+
     function alterarQtd(valor) {
+        if (!variacaoSelecionada) return;
         const qtdEl = document.getElementById('qtd');
         let atual = parseInt(qtdEl.textContent);
-        atual = Math.max(1, Math.min(atual + valor, produtoAtual.estoque));
+        atual = Math.max(1, Math.min(atual + valor, variacaoSelecionada.estoque));
         qtdEl.textContent = atual;
     }
 
     function adicionarCarrinhoEFeedback() {
+        if (!variacaoSelecionada) return;
         const qtd = parseInt(document.getElementById('qtd').textContent);
-        adicionarAoCarrinho(produtoAtual, qtd);
+        adicionarAoCarrinho(produtoAtual, variacaoSelecionada, qtd);
 
         const toast = document.getElementById('toast');
-        toast.textContent = `✔ ${qtd}x ${produtoAtual.nome} adicionado ao carrinho!`;
+        toast.textContent = `✔ ${qtd}x ${produtoAtual.nome} (${variacaoSelecionada.tamanho}/${variacaoSelecionada.cor}) adicionado ao carrinho!`;
         toast.classList.add('visivel');
         setTimeout(() => toast.classList.remove('visivel'), 3000);
     }
