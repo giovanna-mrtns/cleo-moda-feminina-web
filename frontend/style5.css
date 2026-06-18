@@ -104,6 +104,41 @@ body {
     font-size: 14px;
 }
 
+/* Botão hambúrguer — escondido no desktop, exibido apenas no mobile (ver media queries) */
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    width: 32px;
+    height: 32px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.menu-toggle span {
+    display: block;
+    width: 100%;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--branco);
+    transition: transform 0.25s ease, opacity 0.2s ease;
+}
+
+.menu-toggle.ativo span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+}
+.menu-toggle.ativo span:nth-child(2) {
+    opacity: 0;
+}
+.menu-toggle.ativo span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+}
+
 /* ===== MENU ===== */
 .menu {
     background-color: var(--preto);
@@ -470,3 +505,202 @@ body {
     flex-direction: column;
     align-items: center;
     }
+
+/* ============================================================
+   RESPONSIVIDADE
+   ============================================================ */
+
+/* ---- Tablets (≤ 1024px) ---- */
+@media (max-width: 1024px) {
+    .container-produto {
+        max-width: 92%;
+        gap: 30px;
+        padding: 30px;
+    }
+
+    .coluna-esquerda {
+        min-width: 260px;
+    }
+
+    .imagem-produto {
+        width: 260px;
+        height: 280px;
+    }
+}
+
+/* ---- Tablets pequenos / celulares grandes (≤ 768px) ---- */
+@media (max-width: 768px) {
+    .topo {
+        padding: 14px 20px;
+    }
+
+    #header {
+        flex-wrap: wrap;
+        row-gap: 12px;
+    }
+
+    #logo img {
+        width: 70px;
+    }
+
+    .barra-pesquisa {
+        position: static;
+        left: auto;
+        transform: none;
+        order: 3;
+        width: 100%;
+        height: 44px;
+    }
+
+    .icones-header {
+        gap: 16px;
+    }
+
+    .menu-toggle {
+        display: flex;
+    }
+
+    .menu {
+        padding: 0 16px;
+        position: relative;
+    }
+
+    .menu ul {
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: flex-start;
+        gap: 0;
+        max-height: 0;
+        overflow: hidden;
+        padding-bottom: 0;
+        transition: max-height 0.3s ease, padding 0.3s ease;
+    }
+
+    .menu.aberto ul {
+        max-height: 600px;
+        padding: 8px 0 16px;
+    }
+
+    .menu ul li {
+        width: 100%;
+        text-align: center;
+    }
+
+    .menu ul li a {
+        display: block;
+        padding: 14px 0;
+    }
+
+    .banner {
+        height: 220px;
+    }
+
+    .banner-esquerda,
+    .banner-direita {
+        width: 160px;
+    }
+
+    .banner-centro {
+        top: 30px;
+    }
+
+    .banner-centro h2 {
+        font-size: 22px;
+        text-align: center;
+        padding: 0 10px;
+    }
+
+    /* Produto: imagem em cima, informações embaixo */
+    .container-produto {
+        flex-direction: column;
+        align-items: stretch;
+        margin: 24px auto;
+        padding: 24px;
+        gap: 24px;
+    }
+
+    .coluna-esquerda {
+        min-width: 0;
+        align-items: center;
+    }
+
+    .imagem-produto {
+        width: 100%;
+        max-width: 360px;
+        height: 320px;
+    }
+
+    .nome-produto {
+        font-size: 24px;
+    }
+
+    .info-linha,
+    .linha-quantidade {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .botoes-acao {
+        flex-wrap: wrap;
+    }
+
+    .botoes-acao button {
+        flex: 1 1 140px;
+    }
+}
+
+/* ---- Celulares (≤ 480px) ---- */
+@media (max-width: 480px) {
+    .topo {
+        padding: 12px 16px;
+    }
+
+    #logo img {
+        width: 56px;
+    }
+
+    .icones-header {
+        gap: 10px;
+    }
+
+    .icones-header .email-usuario {
+        display: none;
+    }
+
+    .icone-conta img,
+    .icone-carrinho img {
+        width: 28px !important;
+    }
+
+    .menu ul {
+        gap: 18px;
+    }
+
+    .menu ul li a {
+        font-size: 14px;
+    }
+
+    .container-produto {
+        padding: 18px;
+    }
+
+    .imagem-produto {
+        height: 260px;
+    }
+
+    .nome-produto {
+        font-size: 21px;
+    }
+
+    .preco-valor {
+        font-size: 24px;
+    }
+
+    .opcao-grupo {
+        flex-wrap: wrap;
+    }
+
+    .opcao-grupo select {
+        flex: 1;
+    }
+}

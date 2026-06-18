@@ -417,3 +417,118 @@ table, th, td {
     gap: 10px;
     margin-top: 10px;
 }
+
+/* ============================================================
+   RESPONSIVIDADE
+   ============================================================ */
+
+/* ---- Tablets (≤ 900px) ---- */
+@media (max-width: 900px) {
+    .corpo-config {
+        padding: 30px 20px;
+        gap: 16px;
+    }
+
+    .menu-config {
+        flex-direction: row;
+        flex-wrap: wrap;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .menu-config h2 {
+        width: 100%;
+        text-align: center;
+    }
+
+    .menu-config hr {
+        display: none;
+    }
+
+    .btn-menu {
+        flex: 1 1 auto;
+    }
+
+    .config {
+        width: 100%;
+    }
+}
+
+/* ---- Celulares (≤ 600px) ---- */
+@media (max-width: 600px) {
+    #header,
+    #header-2 {
+        height: auto;
+        padding: 16px 0;
+    }
+
+    #logo img {
+        width: 80px;
+    }
+
+    .corpo-config {
+        padding: 20px 14px;
+    }
+
+    .menu-config {
+        flex-direction: column;
+    }
+
+    .btn-menu {
+        width: 100%;
+    }
+
+    .config {
+        padding: 16px;
+    }
+
+    .config-topo {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+    }
+
+    .config-topo h2 {
+        font-size: 1.3rem;
+    }
+
+    #btn-novo {
+        width: 100%;
+    }
+
+    .config-meio {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .input-buscar {
+        display: flex;
+        width: 100%;
+    }
+
+    #buscar-modulo,
+    #buscar-usuario {
+        width: 100%;
+        flex: 1;
+    }
+
+    .btn-config {
+        width: 100%;
+    }
+
+    /* Tabelas ganham rolagem horizontal em vez de espremer o conteúdo */
+    .config-tabela {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+        min-width: 560px;
+    }
+
+    .modal {
+        width: 92%;
+        padding: 20px;
+    }
+}
