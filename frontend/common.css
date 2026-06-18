@@ -24,3 +24,18 @@ body,html {
 .logo-home img {
     max-height:80px
 }
+
+/* ============================================================
+   BASE RESPONSIVA (vale para todas as páginas)
+   ============================================================ */
+html {
+    overflow-x: hidden;
+}
+
+img {
+    max-width: 100%;
+}
+
+table {
+    max-width: 100%;
+}

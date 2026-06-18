@@ -98,6 +98,43 @@ body {
   color: var(--branco);
   font-size: 14px;
 }
+
+/* Botão hambúrguer — escondido no desktop, exibido apenas no mobile (ver media queries) */
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.menu-toggle span {
+  display: block;
+  width: 100%;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--branco);
+  transition: transform 0.25s ease, opacity 0.2s ease;
+}
+
+/* Anima o ícone para um "X" quando o menu está aberto */
+.menu-toggle.ativo span:nth-child(1) {
+  transform: translateY(8px) rotate(45deg);
+}
+.menu-toggle.ativo span:nth-child(2) {
+  opacity: 0;
+}
+.menu-toggle.ativo span:nth-child(3) {
+  transform: translateY(-8px) rotate(-45deg);
+}
+
 .menu {
   background-color: var(--preto);
   padding: 15px 40px;
@@ -410,375 +447,6 @@ body {
   cursor: pointer;
 }
 
-/* carrinho */
-
-.topo {
-  background-color: purple;
-  padding: 15px 30px;
-}
-
-.usuario p {
-  color: white;
-  margin: 0;
-  font-size: 14px;
-}
-
-.usuario span {
-  color: #ddd;
-  font-size: 12px;
-}
-
-/* Barrinha */
-
-.barra {
-  background-color: white;
-
-  padding: 20px 30px;
-
-  border: 1px solid #ccc;
-}
-
-.barra h1 {
-  margin: 0;
-  font-weight: 400;
-}
-
-/* Endereço */
-
-.endereco {
-  background-color: white;
-
-  width: 90%;
-  margin: 30px auto;
-
-  border: 1px solid #ccc;
-  border-radius: 20px;
-
-  padding: 25px;
-}
-
-.endereco h2 {
-  margin-top: 0;
-  color: #e35d6a;
-}
-
-.endereco p {
-  margin: 5px 0;
-}
-
-/* Container */
-
-.pagamento-container {
-  width: 90%;
-  margin: auto;
-}
-
-/* pedido */
-
-.pedido-box {
-  background-color: white;
-  border: 1px solid #ccc;
-}
-
-/* Topo pedido*/
-
-.pedido-topo {
-  display: flex;
-  justify-content: space-around;
-
-  padding: 20px;
-
-  border-bottom: 1px solid #ccc;
-}
-
-/* Produto */
-
-.produto {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-
-  padding: 25px;
-
-  border-bottom: 1px solid #ccc;
-}
-
-.produto-info {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.produto-info img {
-  width: 100px;
-  height: 100px;
-
-  object-fit: cover;
-}
-
-.preco {
-  color: red;
-  font-size: 28px;
-}
-
-.quantidade {
-  font-size: 24px;
-}
-
-/* linhas */
-
-.linha {
-  display: flex;
-  justify-content: space-between;
-
-  padding: 20px;
-
-  border-bottom: 1px solid #ccc;
-}
-
-/* metodo de pagamento */
-
-.metodo {
-  padding: 20px;
-
-  border-bottom: 1px solid #ccc;
-}
-
-.botoes {
-  display: flex;
-  gap: 15px;
-  margin-top: 20px;
-}
-
-.botoes button {
-  padding: 12px 20px;
-
-  background-color: white;
-
-  border: 1px solid #999;
-
-  cursor: pointer;
-
-  transition: 0.3s;
-}
-
-.botoes button:hover {
-  background-color: purple;
-  color: white;
-}
-
-/* Total */
-
-.total {
-  display: flex;
-  justify-content: flex-end;
-
-  padding: 30px;
-}
-
-.valores {
-  text-align: right;
-}
-
-.valores p {
-  margin: 10px 0;
-}
-
-.valores h2 {
-  color: red;
-}
-
-/* Finalizar o pagamento */
-
-.finalizar {
-  display: flex;
-  justify-content: flex-end;
-
-  padding: 20px 30px 40px;
-}
-
-.finalizar button {
-  background-color: black;
-  color: white;
-
-  border: none;
-
-  padding: 15px 35px;
-
-  font-size: 16px;
-
-  cursor: pointer;
-
-  transition: 0.3s;
-}
-
-.finalizar button:hover {
-  transform: scale(1.05);
-}
-
-/* caminho */
-
-.topo {
-  background-color: purple;
-  padding: 15px 40px;
-}
-
-.logo h2 {
-  color: white;
-  margin: 0;
-  font-style: italic;
-}
-
-.logo span {
-  color: pink;
-  font-size: 12px;
-}
-
-/* container */
-
-.pedido-container {
-  width: 90%;
-  margin: 40px auto;
-}
-
-.pedido-card {
-  background-color: white;
-  border: 1px solid #ccc;
-}
-
-/* Topo card */
-
-.pedido-topo {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  padding: 30px;
-}
-
-.pedido-topo h2 {
-  font-size: 38px;
-  font-weight: 500;
-}
-
-.pedido-topo a {
-  color: gray;
-  text-decoration: none;
-}
-
-/* Produto */
-
-.produto {
-  padding-left: 30px;
-  padding-bottom: 30px;
-}
-
-.produto img {
-  width: 130px;
-  height: 130px;
-  object-fit: cover;
-}
-
-/* Status do pedido */
-
-.status {
-  border-top: 1px solid #ccc;
-  border-bottom: 1px solid #ccc;
-
-  text-align: center;
-
-  padding: 40px;
-}
-
-.status h2 {
-  font-size: 42px;
-  margin-bottom: 10px;
-}
-
-.status p {
-  color: gray;
-  margin-bottom: 50px;
-}
-
-/* Linha(caminho do pedido) */
-
-.linha-status {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  position: relative;
-
-  width: 80%;
-  margin: auto;
-}
-
-.linha-status::before {
-  content: "";
-
-  position: absolute;
-
-  width: 100%;
-  height: 3px;
-
-  background-color: #ccc;
-
-  top: 10px;
-  z-index: 1;
-}
-
-.etapa {
-  position: relative;
-  z-index: 2;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.bola {
-  width: 20px;
-  height: 20px;
-
-  border-radius: 50%;
-
-  background-color: white;
-  border: 2px solid gray;
-}
-
-.ativa .bola {
-  background-color: purple;
-  border: 2px solid purple;
-}
-
-.etapa span {
-  margin-top: 10px;
-  font-size: 14px;
-}
-
-/* Parte de baixo*/
-
-.infos {
-  display: flex;
-  justify-content: space-around;
-
-  padding: 40px;
-}
-
-.caixa {
-  border: 1px solid #ccc;
-
-  padding: 20px;
-
-  width: 300px;
-
-  text-align: center;
-}
-
-.caixa h3 {
-  margin-bottom: 20px;
-}
-
 /*endereco*/
 
 .endereco-item {
@@ -923,100 +591,252 @@ body {
   margin-top: 8px;
 }
 
-/* responsivo */
+/* ============================================================
+   RESPONSIVIDADE
+   ============================================================ */
 
-@media (max-width: 980px) {
-  .barra-pesquisa {
-    width: 350px;
-    transform: translateX(-70%);
+/* ---- Tablets (≤ 1024px) ---- */
+@media (max-width: 1024px) {
+  .produtos-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 
-  .icones-header {
+  .mais-vendidos-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ---- Tablets pequenos / celulares grandes (≤ 768px) ---- */
+@media (max-width: 768px) {
+  .topo {
+    padding: 14px 20px;
   }
 
-  .icone-conta {
+  /* Header passa a quebrar em duas linhas: logo+ícones em cima, busca embaixo */
+  #header {
+    flex-wrap: wrap;
+    row-gap: 12px;
   }
 
   #logo img {
     width: 70px;
   }
 
+  .barra-pesquisa {
+    position: static;
+    left: auto;
+    transform: none;
+    order: 3;
+    width: 100%;
+    height: 44px;
+  }
+
+  .icones-header {
+    gap: 16px;
+  }
+
+  .menu-toggle {
+    display: flex;
+  }
+
+  .menu {
+    padding: 0 16px;
+    position: relative;
+  }
+
+  /* Menu fechado por padrão: altura zero e conteúdo escondido */
   .menu ul {
-    flex-direction: row;
-    gap: 15px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 0;
+    max-height: 0;
+    overflow: hidden;
+    padding-bottom: 0;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+  }
+
+  /* JS adiciona/remove esta classe ao clicar no botão hambúrguer */
+  .menu.aberto ul {
+    max-height: 600px;
+    padding: 8px 0 16px;
+  }
+
+  .menu ul li {
+    width: 100%;
+    text-align: center;
+  }
+
+  .menu ul li a {
+    display: block;
+    padding: 14px 0;
+  }
+
+  /* A barra deslizante não faz sentido em layout de coluna */
+  .menu ul .nav-indicator {
+    display: none;
+  }
+
+  .banner {
+    height: 220px;
+  }
+
+  .banner-esquerda,
+  .banner-direita {
+    width: 160px;
+  }
+
+  .banner-centro {
+    top: 30px;
+  }
+
+  .banner-centro h2 {
+    font-size: 22px;
+    text-align: center;
+    padding: 0 10px;
+  }
+
+  .frete {
+    padding: 6px 16px;
+    font-size: 13px;
+  }
+
+  .produtos,
+  .mais-vendidos {
+    padding: 28px 20px;
+  }
+
+  .produtos-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
 
   .produtos-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .produto-card img {
+    height: 260px;
   }
 
   .mais-vendidos-grid {
     grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
   }
 
-  .banner {
-    height: 300px;
+  .pagina-titulo {
+    padding: 28px 20px;
+  }
+
+  .pagina-titulo h1 {
+    font-size: 24px;
+  }
+
+  .login-container {
+    margin-top: 30px;
+    padding: 0 16px;
+  }
+
+  .login-form {
+    width: 100%;
+    max-width: 360px;
+    padding: 20px 0;
+  }
+
+  .login-form input {
+    width: 100%;
+  }
+
+  .endereco {
+    width: 100%;
+    padding: 18px;
+  }
+
+  .modal-end-box {
+    padding: 24px 22px;
+    width: 92%;
+  }
+
+  .modal-end-form {
+    grid-template-columns: 1fr;
   }
 }
 
-@media (max-width: 758px) {
-  body {
-  }
-
-  .barra-pesquisa {
-    width: 250px;
-    transform: translateX(-80%);
-  }
-
-  .icone-conta {
+/* ---- Celulares (≤ 480px) ---- */
+@media (max-width: 480px) {
+  .topo {
+    padding: 12px 16px;
   }
 
   #logo img {
-    width: 60px;
+    width: 56px;
   }
 
-  .menu ul {
+  .icones-header {
     gap: 10px;
   }
 
-  .produtos-grid {
-    grid-template-columns: 1fr;
+  /* Esconde os textos "Fazer Login" / "Carrinho" e mantém só os ícones */
+  .icones-header .email-usuario {
+    display: none;
   }
 
-  .mais-vendidos-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .banner {
-  }
-}
-
-@media (max-width 650px) {
-  .barra-pesquisa {
-    width: 200px;
-    transform: translateX(-90%);
-  }
-
-  .icone-conta {
-  }
-
-  #logo img {
-    width: 50px;
+  .icone-conta img,
+  .icone-carrinho img {
+    width: 28px !important;
   }
 
   .menu ul {
-    gap: 5px;
+    gap: 18px;
+  }
+
+  .menu ul li a {
+    font-size: 14px;
+  }
+
+  .banner {
+    height: 190px;
+  }
+
+  .banner-esquerda,
+  .banner-direita {
+    width: 110px;
+  }
+
+  .banner-centro h2 {
+    font-size: 18px;
   }
 
   .produtos-grid {
     grid-template-columns: 1fr;
   }
 
-  .mais-vendidos-grid {
-    grid-template-columns: 1fr;
+  .produto-card img {
+    height: 320px;
   }
 
-  .banner {
-    height: 350px;
+  .mais-vendidos-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .mais-vendidos-card img {
+    width: 110px;
+    height: 110px;
+  }
+
+  .login-form input {
+    height: 50px;
+  }
+
+  .modal-end-acoes {
+    flex-direction: column-reverse;
+    gap: 8px;
+  }
+
+  .modal-end-acoes button {
+    width: 100%;
   }
 }

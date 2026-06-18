@@ -230,6 +230,17 @@
             font-size: 1rem;
         }
         .carrinho-vazio a { color: var(--roxo); }
+
+        /* Responsividade específica desta página */
+        @media (max-width: 600px) {
+            .endereco-form,
+            .cartao-linha {
+                grid-template-columns: 1fr;
+            }
+            .modal {
+                padding: 2rem 1.5rem;
+            }
+        }
     </style>
 </head>
 <body>
