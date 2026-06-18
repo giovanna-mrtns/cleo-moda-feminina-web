@@ -306,6 +306,30 @@ body {
   color: #333;
 }
 
+/* ============================================================
+   Título das páginas de categoria
+   (Lançamentos, Roupas, Acessórios, Promoções)
+   ============================================================ */
+.pagina-titulo {
+  background-color: var(--preto);
+  padding: 36px 40px;
+  text-align: center;
+}
+
+.pagina-titulo h1 {
+  color: #fff;
+  font-family: Mina;
+  font-size: 30px;
+  letter-spacing: 1px;
+}
+
+.pagina-titulo p {
+  color: #d8d8d8;
+  font-family: Jost, sans-serif;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
 .login-container {
   font-family: Mina;
   display: flex;
@@ -967,14 +991,13 @@ body {
   }
 }
 
-@media (max-width 655px) {
+@media (max-width 650px) {
   .barra-pesquisa {
     width: 200px;
     transform: translateX(-90%);
   }
 
-  .icone-conta, .icone-carrinho {
-    
+  .icone-conta {
   }
 
   #logo img {

@@ -40,6 +40,21 @@ body {
   padding: 0.55rem 2rem;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+.topbar-logo {
+  display: flex;
+  align-items: center;
+}
+.topbar-logo img {
+  height: 42px;
+  width: auto;
+  display: block;
+}
+.topbar-conta {
+  display: flex;
+  align-items: center;
   gap: 0.75rem;
 }
 .topbar-avatar {
