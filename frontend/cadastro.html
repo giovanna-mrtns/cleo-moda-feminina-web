@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastre-se já – Cléo MF</title>
+    <link rel="stylesheet" href="common.css">
     <link rel="stylesheet" href="style2.css">
     <style>
         .toast {
@@ -21,7 +22,8 @@
             opacity: 0;
             transition: opacity 0.3s ease, transform 0.3s ease;
             z-index: 9999;
-            white-space: nowrap;
+            max-width: 90vw;
+            text-align: center;
         }
         .toast.visivel {
             opacity: 1;
@@ -32,6 +34,7 @@
         }
     </style>
     <link rel="stylesheet" href="common.css">
+<script src="script.js"></script>
 </head>
 <body>
 
@@ -49,27 +52,32 @@
             <img src="imgs/icone-loupe-gris 6.png" alt="Buscar" width="30px">
         </div>
         <div class="icones-header">
-            <div class="icone-conta">
+            <a href="login.html" class="icone-conta">
                 <img src="imgs/logo-mulher-minha conta.png" alt="Minha Conta" width="35px">
-                <div class="info-conta">
-                    <a href="login.html" class="email-usuario">Fazer Login</a>
+                <div class="info-conta" id="info-conta">
+                    <p class="email-usuario">Fazer Login</p>
                 </div>
-            </div>
-            <div class="icone-carrinho">
+            </a>
+            <a href="carrinho.html" class="icone-carrinho" style="position: relative;">
                 <img src="imgs/carrinho 1.png" alt="Carrinho" width="35px">
-                <a href="Carrinho.html" class="email-usuario">Carrinho</a>
-            </div>
+                <p class="email-usuario">Carrinho</p>
+            </a>
         </div>
+        <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Abrir menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+        </button>
    </div>
 </header>
 
 <nav class="menu">
     <ul>
         <li><a href="index.html">Início</a></li>
-        <li><a href="#">Lançamentos</a></li>
-        <li><a href="#">Roupas</a></li>
-        <li><a href="#">Acessórios</a></li>
-        <li><a href="#">Promoções</a></li>
+        <li><a href="lancamentos.html">Lançamentos</a></li>
+        <li><a href="roupas.html">Roupas</a></li>
+        <li><a href="acessorios.html">Acessórios</a></li>
+        <li><a href="promocoes.html">Promoções</a></li>
     </ul>
 </nav>
 

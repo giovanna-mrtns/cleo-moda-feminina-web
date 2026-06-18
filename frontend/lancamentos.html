@@ -3,73 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cléo Modas Femininas</title>
-    
+    <title>Lançamentos – Cléo Modas Femininas</title>
+
     <link rel="stylesheet" href="style2.css">
     <link rel="stylesheet" href="common.css">
 
-    <style>
-        /* Toast de notificação */
-        .toast {
-            position: fixed;
-            bottom: 32px;
-            left: 50%;
-            transform: translateX(-50%) translateY(80px);
-            background: #2e7d32;
-            color: #fff;
-            padding: 14px 28px;
-            border-radius: 8px;
-            font-family: Jost, sans-serif;
-            font-size: 15px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.25);
-            opacity: 0;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            z-index: 9999;
-            max-width: 90vw;
-            text-align: center;
-        }
-        .toast.visivel {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        /* Área de conta quando logado */
-        .info-conta {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-        .nome-usuario {
-            font-family: Jost, sans-serif;
-            font-weight: bold;
-            color: #fff;
-            font-size: 14px;
-            line-height: 1.2;
-        }
-        .btn-sair {
-            background: none;
-            border: 1px solid rgba(255,255,255,0.5);
-            border-radius: 4px;
-            color: #fff;
-            font-family: Jost, sans-serif;
-            font-size: 12px;
-            padding: 2px 8px;
-            cursor: pointer;
-            text-align: left;
-            transition: background 0.2s;
-        }
-        .btn-sair:hover {
-            background: rgba(255,255,255,0.15);
-        }
-    </style>
-
     <script src="carrinho.js"></script>
-    <link rel="stylesheet" href="common.css">
+    <script src="categorias.js"></script>
 <script src="script.js"></script>
 </head>
 <body>
-
-<div id="toast" class="toast"></div>
 
 <header class="topo">
    <div id="header">
@@ -111,30 +54,22 @@
 
 <nav class="menu">
     <ul>
-        <li><a href="index.html" class="ativo">Início</a></li>
-        <li><a href="lancamentos.html">Lançamentos</a></li>
+        <li><a href="index.html">Início</a></li>
+        <li><a href="lancamentos.html" class="ativo">Lançamentos</a></li>
         <li><a href="roupas.html">Roupas</a></li>
         <li><a href="acessorios.html">Acessórios</a></li>
         <li><a href="promocoes.html">Promoções</a></li>
     </ul>
 </nav>
 
-<div class="banner">
-    <img src="imgs/lado-esquerdo.png" alt="Modelo Esquerda" class="banner-esquerda">
-    <div class="banner-centro">
-        <h2>Seu estilo único aqui!</h2>
-        <div class="frete">
-            <img src="imgs/Coracao (2).png" alt="coração" width="25px">
-            <span>Frete Grátis em todo o Brasil</span>
-            <img src="imgs/Coracao (2).png" alt="coração" width="25px">
-        </div>
-    </div>
-    <img src="imgs/lado-direito.png" alt="Modelo Direita" class="banner-direita">
-</div>
+<section class="pagina-titulo">
+    <h1>LANÇAMENTOS</h1>
+    <p>As novidades mais recentes da Cléo Modas Femininas</p>
+</section>
 
 <section class="produtos">
     <div class="produtos-header">
-        <h2>TODOS OS PRODUTOS</h2>
+        <h2>NOVIDADES</h2>
         <select class="ordenar" id="ordenar-select">
             <option value="recentes">Ordenar por: Mais Recentes</option>
             <option value="menor-preco">Ordenar por: Menor Preço</option>
@@ -144,39 +79,7 @@
     <div class="produtos-grid" id="produtos-grid"></div>
 </section>
 
-<section class="mais-vendidos">
-    <h2>MAIS VENDIDOS</h2>
-    <div class="mais-vendidos-grid">
-        <div class="mais-vendidos-card">
-            <img src="imgs/bolsas.jpg" alt="Bolsas">
-            <span>Bolsas</span>
-        </div>
-        <div class="mais-vendidos-card">
-            <img src="imgs/blusas.jpg" alt="Blusas">
-            <span>Blusas</span>
-        </div>
-        <div class="mais-vendidos-card">
-            <img src="imgs/vestidos.jpg" alt="Vestidos">
-            <span>Vestidos</span>
-        </div>
-        <div class="mais-vendidos-card">
-            <img src="imgs/calçajeans.jpg" alt="Calças">
-            <span>Calças</span>
-        </div>
-    </div>
-</section>
-
 <script>
-    /* ============================================================
-       FUNÇÕES AUXILIARES
-       ============================================================ */
-    function mostrarToast(msg) {
-        const toast = document.getElementById('toast');
-        toast.textContent = msg;
-        toast.classList.add('visivel');
-        setTimeout(() => toast.classList.remove('visivel'), 4000);
-    }
-
     function atualizarHeader() {
         const auth = getAuth();
         const infoConta = document.getElementById('info-conta');
@@ -202,10 +105,12 @@
             const resposta = await fetch(`${API_BASE}/produtos`);
             if (!resposta.ok) throw new Error('Falha ao buscar produtos');
             const produtos = await resposta.json();
-            todosProdutos = produtos;
-            listaAtual = produtos;
 
-            if (produtos.length === 0) {
+            // Lançamentos = todos os produtos, com os mais recentes primeiro
+            todosProdutos = ordenarPorMaisRecente(produtos);
+            listaAtual = todosProdutos;
+
+            if (todosProdutos.length === 0) {
                 grid.innerHTML = '<p style="font-family: Mina;">Nenhum produto cadastrado ainda.</p>';
                 return;
             }
@@ -267,10 +172,6 @@
         });
     }
 
-    /* ============================================================
-       BARRA DESLIZANTE — definida ANTES do window.onload
-       ============================================================ */
-    console.log("FUNÇÃO DA BARRA CARREGADA");
     function iniciarBarraDeslizante() {
         const ul = document.querySelector('.menu ul');
         if (!ul) return;
@@ -281,14 +182,10 @@
         ul.appendChild(indicator);
 
         function moverBarraPara(el) {
-        const ulRect = ul.getBoundingClientRect();
-        const linkRect = el.getBoundingClientRect();
-
-        indicator.style.left =
-        (linkRect.left - ulRect.left) + 'px';
-
-        indicator.style.width =
-        linkRect.width + 'px';
+            const ulRect = ul.getBoundingClientRect();
+            const linkRect = el.getBoundingClientRect();
+            indicator.style.left = (linkRect.left - ulRect.left) + 'px';
+            indicator.style.width = linkRect.width + 'px';
         }
 
         const ativo = ul.querySelector('a.ativo');
@@ -310,24 +207,10 @@
         });
     }
 
-    /* ============================================================
-       INICIALIZAÇÃO — window.onload
-       ============================================================ */
     window.onload = function () {
-        // 1. Atualiza header (login/logout)
         atualizarHeader();
-
-        // 2. Toast de boas-vindas após login
-        const nomeLogin = sessionStorage.getItem('loginFeito');
-        if (nomeLogin) {
-            sessionStorage.removeItem('loginFeito');
-            mostrarToast(`✓ Bem-vindo(a), ${nomeLogin.split(' ')[0]}!`);
-        }
-
-        // 3. Carrega produtos da API
         carregarProdutos();
 
-        // 4. Busca ao digitar
         const campoBusca = document.getElementById('busca-produto');
         const selectOrdenar = document.getElementById('ordenar-select');
 
@@ -341,46 +224,18 @@
             renderizarProdutos(ordenarProdutos(listaAtual, selectOrdenar.value));
         });
 
-        // 5. Busca ao clicar na lupa
         const lupa = document.querySelector('.barra-pesquisa img');
         lupa.style.cursor = 'pointer';
         lupa.addEventListener('click', () => {
             campoBusca.dispatchEvent(new Event('input'));
         });
 
-        // 6. Ordenação ao trocar a opção do select
         selectOrdenar.addEventListener('change', () => {
             renderizarProdutos(ordenarProdutos(listaAtual, selectOrdenar.value));
         });
 
-        // 7. Barra deslizante do menu
         iniciarBarraDeslizante();
     };
-</script>
-
-<!-- Barra admin -->
-<style>
-    .admin-bar { display: none; position: fixed; top: 0; left: 0; right: 0; background: #111; color: #fff; padding: 10px; z-index: 10000; font-family: Arial, sans-serif; }
-    .admin-bar a { color: #fff; margin-right: 15px; text-decoration: none; }
-    body.admin-visible { padding-top: 45px; }
-</style>
-<div id="adminBar" class="admin-bar">
-    <strong>Painel Administrativo</strong>
-    <a href="configuracao-de-usuario.html">Usuários</a>
-    <a href="configuracao-de-perfil.html">Perfis</a>
-    <a href="configuracao-de-modulos.html">Módulos</a>
-</div>
-<script>
-    (function () {
-        try {
-            const auth = JSON.parse(localStorage.getItem('auth') || '{}');
-            const perfil = (auth.nomePerfil || '').toLowerCase();
-            if (perfil.includes('admin')) {
-                document.getElementById('adminBar').style.display = 'block';
-                document.body.classList.add('admin-visible');
-            }
-        } catch (e) {}
-    })();
 </script>
 
 <script src="gerente-sidebar.js"></script>

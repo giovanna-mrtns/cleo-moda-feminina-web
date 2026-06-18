@@ -10,7 +10,32 @@
 --cinza-borda:#e2dde6;
 --cinza-texto:#6b6275;
 }
-*{margin:0;padding:0;box-sizing:border-box}
-body,html{font-family:Jost,sans-serif}
-.topo,.topbar,#header,#header-2,.menu{background-color:var(--roxo)}
-.logo-home img{max-height:80px}
+* {
+    margin:0;padding:0;box-sizing:border-box
+}
+
+body,html {
+    font-family:Jost,sans-serif
+}
+
+.topo,.topbar,#header,#header-2 {
+    background-color:var(--roxo)
+}
+.logo-home img {
+    max-height:80px
+}
+
+/* ============================================================
+   BASE RESPONSIVA (vale para todas as páginas)
+   ============================================================ */
+html {
+    overflow-x: hidden;
+}
+
+img {
+    max-width: 100%;
+}
+
+table {
+    max-width: 100%;
+}
