@@ -52,16 +52,23 @@
             <img src="imgs/icone-loupe-gris 6.png" alt="Buscar" width="30px">
         </div>
         <div class="icones-header">
-            <div class="icone-conta">
+            <a href="login.html" class="icone-conta">
                 <img src="imgs/logo-mulher-minha conta.png" alt="Minha Conta" width="35px">
-                <div class="info-conta">
-                    <a href="login.html" class="email-usuario">Fazer Login</a>
+                <div class="info-conta" id="info-conta">
+                    <p class="email-usuario">Fazer Login</p>
                 </div>
-            </div>
-            <div class="icone-carrinho">
+            </a>
+            <a href="carrinho.html" class="icone-carrinho" style="position: relative;">
                 <img src="imgs/carrinho 1.png" alt="Carrinho" width="35px">
-                <a href="Carrinho.html" class="email-usuario">Carrinho</a>
-            </div>
+                <span id="contador-carrinho" style="
+                    position: absolute; top: -6px; right: -6px;
+                    background: #851B87; color: #fff; font-size: 11px;
+                    font-family: Jost, sans-serif; border-radius: 50%;
+                    min-width: 18px; height: 18px; display: none;
+                    align-items: center; justify-content: center; text-align: center;
+                "></span>
+                <p class="email-usuario">Carrinho</p>
+            </a>
         </div>
    </div>
 </header>

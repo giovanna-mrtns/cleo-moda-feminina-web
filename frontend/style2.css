@@ -967,13 +967,14 @@ body {
   }
 }
 
-@media (max-width 650px) {
+@media (max-width 655px) {
   .barra-pesquisa {
     width: 200px;
     transform: translateX(-90%);
   }
 
-  .icone-conta {
+  .icone-conta, .icone-carrinho {
+    
   }
 
   #logo img {
