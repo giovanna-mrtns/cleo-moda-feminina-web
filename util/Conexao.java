@@ -138,27 +138,7 @@ public class Conexao {
                 FOREIGN KEY (id_perfil) REFERENCES perfil(id),
                 FOREIGN KEY (id_modulo) REFERENCES modulo(id)
             )
-
-            
         """);
-
-        conn.createStatement().executeUpdate("""
-    CREATE TABLE IF NOT EXISTS endereco (
-        id                INT AUTO_INCREMENT PRIMARY KEY,
-        id_usuario        INT NOT NULL,
-        apelido           VARCHAR(50),
-        nome_destinatario VARCHAR(150) NOT NULL,
-        rua               VARCHAR(255) NOT NULL,
-        numero            VARCHAR(20) NOT NULL,
-        bairro            VARCHAR(100) NOT NULL,
-        cidade            VARCHAR(100) NOT NULL,
-        estado            VARCHAR(2) NOT NULL,
-        cep               VARCHAR(9) NOT NULL,
-        telefone          VARCHAR(20),
-        principal         BOOLEAN DEFAULT FALSE,
-        FOREIGN KEY (id_usuario) REFERENCES usuario(id)
-    )
-""");
 
         // Dados iniciais — só insere se a tabela estiver vazia
         var rs = conn.createStatement().executeQuery("SELECT COUNT(*) FROM perfil");
